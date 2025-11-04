@@ -10,9 +10,9 @@
 
     <style>
         :root {
-            --primary: #1e3a8a; /* Biru tua elegan */
-            --secondary: #2563eb; /* Biru utama */
-            --accent: #60a5fa; /* Biru muda */
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #60a5fa;
             --background: #f0f4ff;
             --card-bg: #ffffff;
             --text-dark: #1e293b;
@@ -20,9 +20,7 @@
             --shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
@@ -44,13 +42,15 @@
             animation: fadeIn 0.8s ease;
         }
 
+        /* ✅ Logo tanpa bingkai, bayangan, atau latar belakang */
         .login-card img {
-            width: 90px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+            border: none;
+            box-shadow: none;
+            background: none;
         }
 
         h2 {
@@ -106,9 +106,7 @@
             transition: 0.3s ease;
         }
 
-        button:hover {
-            background: var(--accent);
-        }
+        button:hover { background: var(--accent); }
 
         .error {
             color: #b91c1c;
@@ -145,7 +143,7 @@
 <body>
 
     <div class="login-card">
-        <!-- ✅ Ganti link logo agar ambil dari public/assets/images/logo.png -->
+        <!-- ✅ Logo sekolah tanpa bingkai -->
         <img src="{{ asset('assets/images/logo.png') }}" alt="Logo SMKN 1 Talaga">
 
         <h2>Website Inventory</h2>
