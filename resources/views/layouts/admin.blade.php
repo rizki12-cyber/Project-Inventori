@@ -280,14 +280,10 @@ footer {
                 {{ request()->routeIs('barang.*') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Data Barang
             </a>
-            <a href="#" class="list-group-item list-group-item-action slide-in-left delay-2">
-                <i class="bi bi-arrow-left-right"></i> Transaksi
-            </a>
             <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action slide-in-left delay-3
-    {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
-    <i class="bi bi-file-earmark-text"></i> Laporan
-</a>
-
+                {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                <i class="bi bi-file-earmark-text"></i> Laporan
+            </a>
             <a href="#" class="list-group-item list-group-item-action slide-in-left delay-4">
                 <i class="bi bi-people"></i> Data User
             </a>
@@ -312,11 +308,12 @@ footer {
                         <i class="bi bi-chevron-down"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-person-circle"></i> Profil
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.profile') }}">
+                                <i class="bi bi-person"></i> Profil
                             </a>
                         </li>
+
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item logout" href="#"
