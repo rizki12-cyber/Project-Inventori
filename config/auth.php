@@ -7,7 +7,8 @@ return [
     | Authentication Defaults
     |--------------------------------------------------------------------------
     |
-    | Menentukan guard dan password reset default untuk aplikasi.
+    | Guard dan password reset broker default untuk aplikasi.
+    | Sekarang hanya pakai satu guard utama: "web".
     |
     */
 
@@ -22,27 +23,22 @@ return [
     |--------------------------------------------------------------------------
     |
     | Setiap guard memiliki driver dan provider masing-masing.
-    | Kita menambahkan guard khusus untuk admin dan petugas.
+    | Kita hanya butuh satu guard saja (web) untuk semua role:
+    | admin, wakasek, dan kabeng.
     |
     */
 
     'guards' => [
-        // Guard default (tidak dipakai langsung)
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
 
-        // 🔹 Guard untuk Admin
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'admins',
-        ],
-
-        // 🔹 Guard untuk Petugas
-        'petugas' => [
-            'driver' => 'session',
-            'provider' => 'petugas',
+        // Jika nanti kamu ingin menambah API login (opsional)
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false,
         ],
     ],
 
@@ -51,8 +47,8 @@ return [
     | User Providers
     |--------------------------------------------------------------------------
     |
-    | Provider menentukan bagaimana user diambil dari database.
-    | Kita pakai model yang sama (User) tapi provider berbeda.
+    | Provider menentukan bagaimana user diambil dari database atau model.
+    | Di sini kita hanya pakai satu model: App\Models\User
     |
     */
 
@@ -62,23 +58,19 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'admins' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
-
-        'petugas' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
+        // Jika ingin pakai query builder manual:
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Password Reset
+    | Password Reset Configuration
     |--------------------------------------------------------------------------
     |
-    | Pengaturan token reset password.
+    | Pengaturan token reset password untuk user.
     |
     */
 
@@ -86,7 +78,7 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
+            'expire' => 60, // dalam menit
             'throttle' => 60,
         ],
     ],
@@ -96,8 +88,8 @@ return [
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
     |
-    | Jumlah detik sebelum konfirmasi password kadaluarsa.
-    | Default: 3 jam (10800 detik)
+    | Waktu sebelum konfirmasi password kadaluarsa (dalam detik).
+    | Default: 3 jam (10800 detik).
     |
     */
 

@@ -1,6 +1,6 @@
-@extends('layouts.petugas')
+@extends('layouts.wakasek')
 
-@section('title', 'Dashboard Petugas')
+@section('title', 'Dashboard Wakasek')
 
 @section('content')
 <style>
@@ -8,7 +8,7 @@
         background: #f8f9fa;
     }
 
-    /* Animasi untuk container dashboard */
+    /* Animasi container dashboard */
     .dashboard-container {
         opacity: 0;
         transform: translateY(30px);
@@ -28,6 +28,7 @@
         transition: transform 0.3s, box-shadow 0.3s;
         cursor: default;
     }
+
     .stat-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 12px 25px rgba(0,0,0,0.2);
@@ -37,6 +38,7 @@
         font-weight: 600;
         font-size: 1.1rem;
     }
+
     .stat-card .card-text {
         font-size: 2rem;
         font-weight: bold;
@@ -94,7 +96,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Chart dengan animasi slide-up
     const ctx = document.getElementById('barangChart').getContext('2d');
     const barangChart = new Chart(ctx, {
         type: 'bar',

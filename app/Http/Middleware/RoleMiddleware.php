@@ -9,12 +9,12 @@ class RoleMiddleware
 {
     public function handle($request, Closure $next, $role)
     {
-        // Tentukan guard berdasarkan role
-        $guard = $role === 'admin' ? 'admin' : 'petugas';
-
-        // Cek apakah user login dengan guard yang sesuai
-        if (!Auth::guard($guard)->check()) {
+        if (!Auth::check()) {
             return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        if (Auth::user()->role !== $role) {
+            return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
 
         return $next($request);

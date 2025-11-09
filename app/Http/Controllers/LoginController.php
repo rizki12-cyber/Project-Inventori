@@ -22,60 +22,39 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validasi input
+        // ✅ Validasi input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:4',
         ]);
 
-        // Ambil user berdasarkan email
+        // ✅ Ambil user berdasarkan email
         $user = User::where('email', $request->email)->first();
 
-        // Cek apakah user dan password sesuai
+        // ✅ Cek user dan password
         if (!$user || !Hash::check($request->password, $user->password)) {
             return back()->with('error', 'Email atau password salah.');
         }
 
-        // Tentukan guard berdasarkan role user
-        $guard = match ($user->role) {
-            'admin' => 'admin',
-            'petugas' => 'petugas',
-            default => null
-        };
-
-        if (!$guard) {
-            return back()->with('error', 'Role pengguna tidak valid.');
-        }
-
-        // Login menggunakan guard yang sesuai
-        Auth::guard($guard)->login($user);
-
-        // Regenerasi session ID untuk keamanan
+        // ✅ Login dengan guard default (web)
+        Auth::login($user);
         $request->session()->regenerate();
 
-        // Arahkan berdasarkan role
+        // ✅ Arahkan sesuai role
         return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard')->with('success', 'Selamat datang, Admin!'),
-            'petugas' => redirect()->route('petugas.dashboard')->with('success', 'Selamat datang, Petugas!'),
-            default => redirect('/login'),
+            'admin'   => redirect()->route('admin.dashboard')->with('success', 'Selamat datang, Admin!'),
+            'wakasek' => redirect()->route('wakasek.dashboard')->with('success', 'Selamat datang, Wakasek!'),
+            'kabeng'  => redirect()->route('kabeng.dashboard')->with('success', 'Selamat datang, Kabeng!'),
+            default   => redirect('/login')->with('error', 'Role tidak dikenali.'),
         };
     }
 
     /**
-     * Logout dari guard yang sedang aktif
+     * Logout dari sistem
      */
     public function logout(Request $request)
     {
-        // Logout hanya dari guard yang sedang aktif
-        if (Auth::guard('admin')->check()) {
-            Auth::guard('admin')->logout();
-        }
-
-        if (Auth::guard('petugas')->check()) {
-            Auth::guard('petugas')->logout();
-        }
-
-        // Invalidate hanya session aktif (bukan flush semua)
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

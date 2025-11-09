@@ -10,27 +10,19 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Kolom yang bisa diisi mass-assignment
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role', // ✅ tambahkan role
+        'role',      // admin, wakasek, kabeng
+        'jurusan',   // nullable (hanya untuk kabeng)
     ];
 
-    /**
-     * Kolom yang disembunyikan saat serialisasi
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Tipe data kolom tertentu
-     */
     protected function casts(): array
     {
         return [

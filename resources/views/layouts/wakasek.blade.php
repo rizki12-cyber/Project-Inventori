@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>@yield('title', 'Dashboard Petugas')</title>
+<title>@yield('title', 'Dashboard Wakasek')</title>
 
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -112,29 +112,32 @@ footer {
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">SMKN 1 TALAGA</div>
         <div class="list-group list-group-flush">
-            <a href="{{ route('petugas.dashboard') }}" class="list-group-item list-group-item-action">
+            <a href="{{ route('wakasek.dashboard') }}" class="list-group-item list-group-item-action">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <!-- sementara route belum ada -->
             <a href="#" class="list-group-item list-group-item-action">
                 <i class="bi bi-box-seam"></i> Data Barang
-            </a>
-            <a href="#" class="list-group-item list-group-item-action">
-                <i class="bi bi-arrow-left-right"></i> Transaksi Barang
             </a>
             <a href="#" class="list-group-item list-group-item-action">
                 <i class="bi bi-file-earmark-text"></i> Laporan
             </a>
             <a href="#" class="list-group-item list-group-item-action">
+                <i class="bi bi-eye"></i> Lihat Barang Kabeng
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
                 <i class="bi bi-person-circle"></i> Profil
             </a>
-            <a href="{{ route('logout') }}"
+
+            <!-- Logout -->
+            <a href="#"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                class="list-group-item list-group-item-action">
                 <i class="bi bi-box-arrow-right"></i> Logout
             </a>
 
-            <form id="logout-form" action="{{ route('logout') }}" method="GET" class="d-none"></form>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
         </div>
     </div>
 

@@ -247,104 +247,22 @@ footer {
 
 /* Animations */
 @keyframes fadeInUp {
-    from { 
-        opacity: 0; 
-        transform: translateY(20px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInLeft {
-    from { 
-        opacity: 0; 
-        transform: translateX(-20px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateX(0); 
-    }
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
-.fade-in-up {
-    animation: fadeInUp 0.5s ease forwards;
-}
-
-.slide-in-left {
-    animation: slideInLeft 0.4s ease forwards;
-}
+.fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+.slide-in-left { animation: slideInLeft 0.4s ease forwards; }
 
 .delay-1 { animation-delay: 0.1s; }
 .delay-2 { animation-delay: 0.2s; }
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
-
-/* Responsive */
-@media (max-width: 768px) {
-    #sidebar-wrapper {
-        position: fixed;
-        height: 100%;
-        z-index: 1000;
-    }
-    
-    #wrapper.toggled #sidebar-wrapper {
-        margin-left: 0;
-    }
-    
-    #page-content-wrapper {
-        width: 100%;
-    }
-    
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        z-index: 999;
-        display: none;
-    }
-    
-    #wrapper.toggled .overlay {
-        display: block;
-    }
-}
-
-/* Stats Cards */
-.stats-card {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: var(--transition);
-    overflow: hidden;
-    animation: fadeInUp 0.5s ease forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.stats-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.stats-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
-
-.bg-primary { background-color: #3498db; }
-.bg-success { background-color: #2ecc71; }
-.bg-warning { background-color: #f39c12; }
-.bg-danger { background-color: #e74c3c; }
 </style>
 </head>
 <body>
@@ -362,8 +280,7 @@ footer {
                 {{ request()->routeIs('barang.*') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Data Barang
             </a>
-            <a href="" class="list-group-item list-group-item-action slide-in-left delay-2
-               ">
+            <a href="#" class="list-group-item list-group-item-action slide-in-left delay-2">
                 <i class="bi bi-arrow-left-right"></i> Transaksi
             </a>
             <a href="#" class="list-group-item list-group-item-action slide-in-left delay-3">
@@ -375,12 +292,9 @@ footer {
         </div>
     </div>
 
-    <!-- Overlay for mobile -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- Page Content -->
     <div id="page-content-wrapper">
-        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
             <div class="container-fluid">
                 <button class="btn btn-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
@@ -403,7 +317,7 @@ footer {
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item logout" href="{{ route('logout') }}"
+                            <a class="dropdown-item logout" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
@@ -413,66 +327,37 @@ footer {
             </div>
         </nav>
 
-        <!-- Scrollable Content -->
         <div id="main-content">
             @yield('content')
         </div>
 
-        <!-- Footer -->
         <footer>
             &copy; {{ date('Y') }} SMKN 1 TALAGA - Sistem Inventori Barang. All rights reserved.
         </footer>
     </div>
 </div>
 
-<!-- Logout Form -->
-<form id="logout-form" action="{{ route('logout') }}" method="GET" class="d-none"></form>
+<!-- ✅ FIXED Logout Form (POST + CSRF) -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+    @csrf
+</form>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Sidebar Toggle & Active Link Management -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const wrapper = document.getElementById('wrapper');
     const overlay = document.getElementById('overlay');
     
-    // Toggle sidebar
     sidebarToggle.addEventListener('click', () => {
         wrapper.classList.toggle('toggled');
     });
     
-    // Close sidebar when clicking overlay (mobile)
     overlay.addEventListener('click', () => {
         wrapper.classList.toggle('toggled');
     });
-    
-    // Add animation classes to content cards
-    const contentCards = document.querySelectorAll('.content-card, .stats-card');
-    contentCards.forEach((card, index) => {
-        card.style.animationDelay = `${0.1 * (index % 5)}s`;
-    });
-    
-    // Simulate active link based on current page
-    function setActiveLink() {
-        const currentPath = window.location.pathname;
-        const sidebarLinks = document.querySelectorAll('#sidebar-wrapper .list-group-item');
-        
-        sidebarLinks.forEach(link => {
-            link.classList.remove('active');
-            const href = link.getAttribute('href');
-            
-            // Check for exact match or if current path starts with the href
-            if (href && href !== '#' && 
-                (currentPath === href || currentPath.startsWith(href + '/'))) {
-                link.classList.add('active');
-            }
-        });
-    }
-    
-    // Set active link on page load
-    setActiveLink();
 });
 </script>
 
