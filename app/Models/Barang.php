@@ -10,9 +10,10 @@ class Barang extends Model
 {
     use HasFactory;
 
-    // 🔹 Tambahkan ini
+    // 🔹 Nama tabel (opsional, default Laravel menebak dari nama model)
     protected $table = 'barang';
 
+    // 🔹 Mass assignable
     protected $fillable = [
         'kode_barang',
         'nama_barang',
@@ -21,16 +22,24 @@ class Barang extends Model
         'kondisi',
         'lokasi',
         'tanggal_pembelian',
-        'keterangan'
+        'keterangan',
+        'user_id', // 🔹 penting untuk relasi ke user
     ];
 
+    // 🔹 Casting
     protected $casts = [
         'tanggal_pembelian' => 'date',
     ];
 
-    // Relasi ke Transaksi
+    // 🔹 Relasi ke Transaksi (1 barang bisa punya banyak transaksi)
     public function transaksi()
     {
         return $this->hasMany(Transaksi::class);
+    }
+
+    // 🔹 Relasi ke User (barang dimiliki siapa)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

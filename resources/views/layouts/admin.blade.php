@@ -283,9 +283,11 @@ footer {
             <a href="#" class="list-group-item list-group-item-action slide-in-left delay-2">
                 <i class="bi bi-arrow-left-right"></i> Transaksi
             </a>
-            <a href="#" class="list-group-item list-group-item-action slide-in-left delay-3">
-                <i class="bi bi-file-earmark-text"></i> Laporan
-            </a>
+            <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action slide-in-left delay-3
+    {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+    <i class="bi bi-file-earmark-text"></i> Laporan
+</a>
+
             <a href="#" class="list-group-item list-group-item-action slide-in-left delay-4">
                 <i class="bi bi-people"></i> Data User
             </a>
