@@ -115,9 +115,10 @@ footer {
             <a href="{{ route('wakasek.dashboard') }}" class="list-group-item list-group-item-action">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
-                <i class="bi bi-box-seam"></i> Data Barang
-            </a>
+            <a href="{{ route('wakasek.barang.index') }}" class="list-group-item list-group-item-action">
+    <i class="bi bi-box-seam"></i> Data Barang
+</a>
+
             <a href="#" class="list-group-item list-group-item-action">
                 <i class="bi bi-file-earmark-text"></i> Laporan
             </a>

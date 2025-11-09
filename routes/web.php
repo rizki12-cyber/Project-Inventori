@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\WakasekBarangController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,8 +55,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function () {
     Route::get('/dashboard', fn() => view('wakasek.dashboard'))->name('wakasek.dashboard');
     Route::get('/laporan', fn() => view('wakasek.laporan'))->name('wakasek.laporan');
-    Route::get('/lihat-barang-kabeng', fn() => view('wakasek.lihat-barang-kabeng'))->name('wakasek.lihat.barang.kabeng');
-});
+
+    // route CRUD barang wakasek
+    Route::resource('barang', WakasekBarangController::class, [
+        'as' => 'wakasek'
+    ]);
+}); 
+ 
 
 
 // ==========================
