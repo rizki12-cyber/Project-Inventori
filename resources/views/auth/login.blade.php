@@ -9,72 +9,84 @@
 
     <style>
         :root {
-            --primary: #0a3a78; /* biru navy sesuai logo */
-            --accent: #fcd34d; /* kuning emas lembut */
+            --primary: #1e3a8a;
+            --secondary: #e2e8f0;
+            --accent: #fbbf24;
             --text-dark: #1e293b;
+            --white: #ffffff;
             --shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            --bg-light: #f8fafc;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: var(--bg-light);
-            height: 100vh;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .login-container {
-            width: 850px;
-            height: 520px;
+            width: 900px;
+            max-width: 100%;
+            min-height: 520px;
             display: flex;
-            border-radius: 18px;
+            flex-wrap: wrap;
+            border-radius: 22px;
             overflow: hidden;
             box-shadow: var(--shadow);
-            background: white;
+            background: var(--white);
         }
 
         /* kiri */
         .left-side {
             flex: 1;
-            background: linear-gradient(135deg, var(--primary), #1e40af);
+            min-width: 300px;
+            background: linear-gradient(145deg, #e0e7ff, #cbd5e1);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            color: white;
-            position: relative;
+            text-align: center;
+            padding: 40px 20px;
         }
 
         .left-side img {
-            width: 200px;
+            width: 180px;
             height: auto;
-            margin-bottom: 18px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .left-side img:hover {
+            transform: scale(1.05);
         }
 
         .left-side h2 {
             font-size: 22px;
             font-weight: 600;
-            text-align: center;
+            color: var(--primary);
             line-height: 1.4;
         }
 
         /* kanan */
         .right-side {
             flex: 1;
-            background: white;
+            min-width: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: var(--white);
             position: relative;
+            padding: 30px;
         }
 
         .right-side::before {
@@ -82,32 +94,32 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to right, rgba(252, 211, 77, 0.15), transparent);
+            background: linear-gradient(to bottom right, rgba(27, 60, 138, 0.08), transparent);
         }
 
         .login-box {
-            background: #fff;
-            padding: 40px 35px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            width: 80%;
-            max-width: 340px;
-            text-align: center;
             position: relative;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 45px 40px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            animation: fadeIn 0.7s ease;
             z-index: 1;
-            animation: fadeUp 0.8s ease;
         }
 
-        @keyframes fadeUp {
-            from { transform: translateY(40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-box h3 {
             color: var(--primary);
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .form-group {
@@ -118,44 +130,48 @@
         label {
             font-size: 13px;
             color: #475569;
-            display: block;
             margin-bottom: 5px;
+            display: block;
         }
 
         input {
             width: 100%;
             padding: 10px 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid #cbd5e1;
             font-size: 14px;
             outline: none;
-            transition: 0.25s;
+            transition: all 0.25s ease;
+            background: #f9fafb;
         }
 
         input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.3);
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.3);
+            background: #fff;
         }
 
         button {
             width: 100%;
-            padding: 11px;
-            background: var(--primary);
-            color: white;
+            padding: 12px;
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: #ffffff;
             font-weight: 600;
-            transition: 0.3s;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-size: 15px;
         }
 
         button:hover {
-            background: #1e40af;
             transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(30, 58, 138, 0.4);
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
         }
 
         .bottom-text {
-            margin-top: 12px;
+            margin-top: 14px;
             font-size: 13px;
             color: #475569;
         }
@@ -164,6 +180,10 @@
             color: var(--primary);
             font-weight: 500;
             text-decoration: none;
+        }
+
+        .bottom-text a:hover {
+            color: #0f172a;
         }
 
         .error {
@@ -176,18 +196,77 @@
             padding: 10px;
         }
 
+        /* --- RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .login-container {
+                width: 95%;
+            }
+            .left-side h2 {
+                font-size: 20px;
+            }
+            .login-box {
+                padding: 35px 30px;
+            }
+        }
+
         @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
             .login-container {
                 flex-direction: column;
+                width: 95%;
                 height: auto;
-                width: 90%;
             }
 
             .left-side, .right-side {
-                flex: unset;
+                flex: none;
                 width: 100%;
                 height: auto;
-                padding: 40px 20px;
+                padding: 30px 20px;
+            }
+
+            .left-side {
+                order: 1;
+            }
+
+            .right-side {
+                order: 2;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .login-box {
+                width: 100%;
+                padding: 25px 20px;
+                box-shadow: none;
+                background: transparent;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-side h2 {
+                font-size: 18px;
+            }
+
+            .login-box h3 {
+                font-size: 18px;
+            }
+
+            input {
+                font-size: 13px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 13px;
             }
         }
     </style>
