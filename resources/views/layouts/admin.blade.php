@@ -276,7 +276,7 @@ footer {
                 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <a href="{{ route('barang.index') }}" class="list-group-item list-group-item-action slide-in-left delay-1
+            <a href="{{ route('admin.barang.index') }}" class="list-group-item list-group-item-action slide-in-left delay-1
                 {{ request()->routeIs('barang.*') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Data Barang
             </a>
@@ -284,8 +284,10 @@ footer {
                 {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i> Laporan
             </a>
-            <a href="#" class="list-group-item list-group-item-action slide-in-left delay-4">
-                <i class="bi bi-people"></i> Data User
+            <a href="{{ route('admin.datauser.index') }}" 
+                class="list-group-item list-group-item-action slide-in-left delay-4
+                {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i> Data User
             </a>
         </div>
     </div>

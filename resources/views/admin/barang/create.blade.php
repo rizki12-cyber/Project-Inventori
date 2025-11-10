@@ -58,7 +58,7 @@
             </div>
         @endif
 
-        <form action="{{ route('barang.store') }}" method="POST">
+        <form action="{{ route('admin.barang.store') }}" method="POST">
             @csrf
 
             <div class="mb-3">
@@ -108,7 +108,7 @@
             <button type="submit" class="btn btn-success me-2">
                 <i class="bi bi-save"></i> Simpan
             </button>
-            <a href="{{ route('barang.index') }}" class="btn btn-secondary">
+            <a href="{{ route('admin.barang.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </form>

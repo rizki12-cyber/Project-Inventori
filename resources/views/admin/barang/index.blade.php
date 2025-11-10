@@ -88,7 +88,7 @@
 <div class="container mt-5 data-container">
     <h2 class="mb-4 text-primary">Data Barang</h2>
 
-    <a href="{{ route('barang.create') }}" class="btn btn-primary mb-3">
+    <a href="{{ route('admin.barang.create') }}" class="btn btn-primary mb-3">
         <i class="bi bi-plus-circle"></i> Tambah Barang
     </a>
 
@@ -134,10 +134,10 @@
                             <td>{{ \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') }}</td>
                             <td class="aksi">
                                 <div class="action-buttons">
-                                    <a href="{{ route('barang.edit', $b->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                                    <a href="{{ route('admin.barang.edit', $b->id) }}" class="btn btn-sm btn-warning" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <form action="{{ route('barang.destroy', $b->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.barang.destroy', $b->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus barang ini?')" title="Hapus">
