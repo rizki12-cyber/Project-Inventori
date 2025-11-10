@@ -5,7 +5,7 @@
 @section('content')
 <style>
     body {
-        background: #f0f4ff;
+        background: #eef2ff;
         font-family: 'Poppins', sans-serif;
     }
 
@@ -23,7 +23,7 @@
     .card-header {
         border-top-left-radius: 25px;
         border-top-right-radius: 25px;
-        background: linear-gradient(135deg, #f59e0b, #d97706);
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
         color: white;
         font-weight: 600;
         font-size: 1.2rem;
@@ -39,15 +39,15 @@
 
     .form-control, .form-select, textarea {
         border-radius: 12px;
-        border: 1px solid #d1d5db;
+        border: 1px solid #cbd5e1;
         transition: all 0.25s ease-in-out;
         padding: 0.6rem 1rem;
         font-size: 0.95rem;
     }
 
     .form-control:focus, .form-select:focus, textarea:focus {
-        border-color: #f59e0b;
-        box-shadow: 0 0 0 0.25rem rgba(245,158,11,0.2);
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 0.25rem rgba(59,130,246,0.25);
         outline: none;
     }
 
@@ -58,15 +58,15 @@
         transition: all 0.3s ease;
     }
 
-    .btn-warning {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
         border: none;
         color: white;
     }
 
-    .btn-warning:hover {
+    .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(245,158,11,0.3);
+        box-shadow: 0 8px 20px rgba(59,130,246,0.35);
     }
 
     .btn-secondary {
@@ -145,7 +145,7 @@
 
                 <div class="d-flex flex-wrap gap-3 justify-content-end">
                     <a href="{{ route('wakasek.barang.index') }}" class="btn btn-secondary">Batal</a>
-                    <button type="submit" class="btn btn-warning">Update</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
         </div>

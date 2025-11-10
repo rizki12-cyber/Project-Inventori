@@ -5,81 +5,106 @@
 @section('content')
 <style>
     body {
-        background: #f0f4ff;
+        background: linear-gradient(135deg, #e0e7ff, #f8fafc);
         font-family: 'Poppins', sans-serif;
+        color: #1e293b;
     }
 
+    /* Animasi */
+    .fadeInUp {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Card dengan efek glass */
     .card {
-        border-radius: 25px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
     .card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
     }
 
     .card-header {
-        border-top-left-radius: 25px;
-        border-top-right-radius: 25px;
-        background: linear-gradient(135deg, #4f46e5, #3b82f6);
+        border: none;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
         color: white;
-        font-weight: 600;
-        font-size: 1.2rem;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
         text-align: center;
-        padding: 1rem 1.5rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        font-size: 1.3rem;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 4px 15px rgba(37,99,235,0.25);
     }
 
+    /* Label & Input */
     .form-label {
         font-weight: 600;
         color: #1e293b;
+        font-size: 0.95rem;
     }
 
     .form-control, .form-select, textarea {
         border-radius: 12px;
         border: 1px solid #d1d5db;
-        transition: all 0.25s ease-in-out;
         padding: 0.6rem 1rem;
         font-size: 0.95rem;
+        transition: all 0.25s ease;
+        background-color: #ffffffcc;
     }
 
     .form-control:focus, .form-select:focus, textarea:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 0.25rem rgba(59,130,246,0.2);
+        border-color: #2563eb;
+        box-shadow: 0 0 0 0.25rem rgba(37,99,235,0.25);
         outline: none;
+        background-color: #fff;
     }
 
+    /* Tombol */
     .btn {
         border-radius: 12px;
         font-weight: 600;
-        padding: 0.55rem 1.25rem;
+        padding: 0.6rem 1.3rem;
         transition: all 0.3s ease;
     }
 
     .btn-success {
         background: linear-gradient(135deg, #10b981, #059669);
         border: none;
+        color: white;
     }
-
     .btn-success:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+        box-shadow: 0 10px 22px rgba(16,185,129,0.35);
     }
 
     .btn-secondary {
-        background: #6b7280;
-        color: white;
+        background: #64748b;
         border: none;
+        color: white;
     }
-
     .btn-secondary:hover {
-        background: #4b5563;
+        background: #475569;
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(75,85,99,0.3);
+        box-shadow: 0 10px 22px rgba(71,85,105,0.3);
     }
 
+    /* Responsif */
     @media (max-width: 576px) {
         .btn {
             width: 100%;
@@ -87,11 +112,12 @@
     }
 </style>
 
-<div class="container py-5">
-    <div class="card mx-auto shadow-sm" style="max-width: 720px;">
+<div class="container py-5 fadeInUp">
+    <div class="card mx-auto" style="max-width: 740px;">
         <div class="card-header">
-            <h5 class="mb-0">Tambah Barang Baru</h5>
+            <i class="bi bi-plus-circle me-2"></i>Tambah Barang Baru
         </div>
+
         <div class="card-body p-4">
             <form action="{{ route('wakasek.barang.store') }}" method="POST">
                 @csrf
@@ -125,6 +151,7 @@
                             <option value="">-- Pilih --</option>
                             <option value="Baik" {{ old('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
                             <option value="Rusak" {{ old('kondisi') == 'Rusak' ? 'selected' : '' }}>Rusak</option>
+                            <option value="Hilang" {{ old('kondisi') == 'Hilang' ? 'selected' : '' }}>Hilang</option>
                         </select>
                     </div>
                 </div>
@@ -142,7 +169,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan" class="form-control" rows="3">{{ old('keterangan') }}</textarea>
+                    <textarea name="keterangan" class="form-control" rows="3" placeholder="Tambahkan catatan atau deskripsi tambahan...">{{ old('keterangan') }}</textarea>
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 justify-content-end">
@@ -150,7 +177,7 @@
                         <i class="bi bi-save"></i> Simpan
                     </button>
                     <a href="{{ route('wakasek.barang.index') }}" class="btn btn-secondary d-flex align-items-center gap-2">
-                        <i class="bi bi-x-circle"></i> Batal
+                        <i class="bi bi-arrow-left"></i> Kembali
                     </a>
                 </div>
             </form>

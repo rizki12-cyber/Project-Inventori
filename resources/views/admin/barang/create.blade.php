@@ -4,11 +4,17 @@
 
 @section('content')
 <style>
-    /* Animasi fade-slide untuk container */
+    body {
+        background: linear-gradient(135deg, #eef2ff, #f8fafc);
+        font-family: 'Poppins', sans-serif;
+        color: #1e293b;
+    }
+
+    /* Animasi fade-slide */
     .form-container {
+        animation: fadeSlideIn 0.7s ease forwards;
         opacity: 0;
-        transform: translateY(30px);
-        animation: fadeSlideIn 0.8s forwards;
+        transform: translateY(20px);
     }
 
     @keyframes fadeSlideIn {
@@ -18,41 +24,85 @@
         }
     }
 
-    /* Card & shadow */
+    /* Card styling */
     .card {
-        border-radius: 15px;
         border: none;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
+        border-radius: 16px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+        transition: 0.3s ease;
     }
     .card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Header */
+    .page-title {
+        font-weight: 700;
+        font-size: 1.8rem;
+        background: linear-gradient(90deg, #2563eb, #1e40af);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Form styling */
+    .form-label {
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .form-control, .form-select, textarea {
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        padding: 10px 14px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus, .form-select:focus, textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
     /* Tombol */
-    .btn-success, .btn-secondary {
+    .btn-success {
+        background: linear-gradient(90deg, #16a34a, #22c55e);
+        border: none;
         border-radius: 50px;
-        padding: 0.5rem 1.2rem;
+        padding: 10px 22px;
+        font-weight: 600;
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .btn-success:hover {
-        transform: scale(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(16, 185, 129, 0.4);
     }
-    .btn-secondary:hover {
-        transform: scale(1.03);
+
+    .btn-secondary {
+        border-radius: 50px;
+        padding: 10px 22px;
+        font-weight: 600;
+    }
+
+    /* Alert */
+    .alert {
+        border-radius: 10px;
+        font-size: 0.9rem;
     }
 </style>
 
-<div class="container mt-5 form-container">
-    <h2 class="mb-4 text-primary">Tambah Barang Baru</h2>
+<div class="container py-5 form-container">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="page-title"><i class="bi bi-plus-circle-dotted me-2"></i>Tambah Barang Baru</h2>
+    </div>
 
     <div class="card p-4">
         @if($errors->any())
-            <div class="alert alert-danger rounded">
-                <ul class="mb-0">
+            <div class="alert alert-danger">
+                <strong>Oops!</strong> Ada beberapa error:
+                <ul class="mb-0 mt-2">
                     @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                        <li>• {{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
@@ -61,56 +111,60 @@
         <form action="{{ route('admin.barang.store') }}" method="POST">
             @csrf
 
-            <div class="mb-3">
-                <label class="form-label">Kode Barang</label>
-                <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}" required>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Kode Barang</label>
+                    <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Nama Barang</label>
+                    <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Kategori</label>
+                    <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Jumlah</label>
+                    <input type="number" name="jumlah" class="form-control" value="{{ old('jumlah') }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Kondisi</label>
+                    <select name="kondisi" class="form-select" required>
+                        <option value="Baik" {{ old('kondisi')=='Baik'?'selected':'' }}>Baik</option>
+                        <option value="Rusak" {{ old('kondisi')=='Rusak'?'selected':'' }}>Rusak</option>
+                        <option value="Hilang" {{ old('kondisi')=='Hilang'?'selected':'' }}>Hilang</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Lokasi</label>
+                    <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi') }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Tanggal Pembelian</label>
+                    <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian') }}" required>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Keterangan</label>
+                    <textarea name="keterangan" rows="3" class="form-control">{{ old('keterangan') }}</textarea>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Nama Barang</label>
-                <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}" required>
+            <div class="mt-4 d-flex justify-content-end gap-2">
+                <a href="{{ route('admin.barang.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Kembali
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save2"></i> Simpan
+                </button>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Kategori</label>
-                <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Jumlah</label>
-                <input type="number" name="jumlah" class="form-control" value="{{ old('jumlah') }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Kondisi</label>
-                <select name="kondisi" class="form-control" required>
-                    <option value="Baik" {{ old('kondisi')=='Baik'?'selected':'' }}>Baik</option>
-                    <option value="Rusak" {{ old('kondisi')=='Rusak'?'selected':'' }}>Rusak</option>
-                    <option value="Hilang" {{ old('kondisi')=='Hilang'?'selected':'' }}>Hilang</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Lokasi</label>
-                <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi') }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Tanggal Pembelian</label>
-                <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian') }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Keterangan</label>
-                <textarea name="keterangan" class="form-control">{{ old('keterangan') }}</textarea>
-            </div>
-
-            <button type="submit" class="btn btn-success me-2">
-                <i class="bi bi-save"></i> Simpan
-            </button>
-            <a href="{{ route('admin.barang.index') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Kembali
-            </a>
         </form>
     </div>
 </div>
