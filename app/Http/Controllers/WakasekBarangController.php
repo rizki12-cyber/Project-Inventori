@@ -12,10 +12,13 @@ class WakasekBarangController extends Controller
     {
         $user = Auth::user();
 
-        // Admin lihat semua, wakasek lihat miliknya
-        $barang = $user->role === 'admin'
-            ? Barang::latest()->get()
-            : Barang::where('user_id', $user->id)->latest()->get();
+        if (in_array($user->role, ['admin', 'wakasek'])) {
+            // Admin & Wakasek bisa lihat semua barang
+            $barang = Barang::latest()->get();
+        } else {
+            // Kabeng cuma lihat barang yang dia input sendiri
+            $barang = Barang::where('user_id', $user->id)->latest()->get();
+        }
 
         return view('wakasek.barang.index', compact('barang'));
     }
@@ -42,15 +45,22 @@ class WakasekBarangController extends Controller
 
         Barang::create($validated);
 
-        // pakai route nama wakasek
         return redirect()->route('wakasek.barang.index')
-            ->with('success', 'Barang berhasil ditambahkan');
+            ->with('success', 'Barang berhasil ditambahkan.');
     }
 
     public function edit(Barang $barang)
     {
-        if (Auth::user()->role !== 'admin' && $barang->user_id !== Auth::id()) {
-            abort(403, 'Akses ditolak');
+        $user = Auth::user();
+
+        // Kabeng cuma bisa edit barang miliknya sendiri
+        if ($user->role === 'kabeng' && $barang->user_id !== $user->id) {
+            abort(403, 'Anda tidak diperbolehkan mengedit barang milik orang lain.');
+        }
+
+        // Wakasek & Admin boleh lihat tapi tidak boleh ubah barang kabeng lain
+        if (in_array($user->role, ['wakasek', 'admin']) && $barang->user_id !== $user->id && $user->role !== 'admin') {
+            abort(403, 'Wakasek tidak diperbolehkan mengedit barang milik kabeng.');
         }
 
         return view('wakasek.barang.edit', compact('barang'));
@@ -58,8 +68,11 @@ class WakasekBarangController extends Controller
 
     public function update(Request $request, Barang $barang)
     {
-        if (Auth::user()->role !== 'admin' && $barang->user_id !== Auth::id()) {
-            abort(403, 'Akses ditolak');
+        $user = Auth::user();
+
+        // Kabeng cuma bisa update barang miliknya sendiri
+        if ($user->role === 'kabeng' && $barang->user_id !== $user->id) {
+            abort(403, 'Anda tidak diperbolehkan mengupdate barang milik orang lain.');
         }
 
         $validated = $request->validate([
@@ -76,18 +89,26 @@ class WakasekBarangController extends Controller
         $barang->update($validated);
 
         return redirect()->route('wakasek.barang.index')
-            ->with('success', 'Barang berhasil diupdate');
+            ->with('success', 'Barang berhasil diupdate.');
     }
 
     public function destroy(Barang $barang)
     {
-        if (Auth::user()->role !== 'admin' && $barang->user_id !== Auth::id()) {
-            abort(403, 'Akses ditolak');
+        $user = Auth::user();
+
+        // Kabeng cuma bisa hapus barang miliknya sendiri
+        if ($user->role === 'kabeng' && $barang->user_id !== $user->id) {
+            abort(403, 'Anda tidak diperbolehkan menghapus barang milik orang lain.');
+        }
+
+        // Wakasek gak boleh hapus barang kabeng
+        if ($user->role === 'wakasek' && $barang->user_id !== $user->id) {
+            abort(403, 'Wakasek tidak diperbolehkan menghapus barang milik kabeng.');
         }
 
         $barang->delete();
 
         return redirect()->route('wakasek.barang.index')
-            ->with('success', 'Barang berhasil dihapus');
+            ->with('success', 'Barang berhasil dihapus.');
     }
 }

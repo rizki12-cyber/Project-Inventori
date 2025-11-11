@@ -7,6 +7,8 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WakasekBarangController;
 use App\Http\Controllers\DataUserController;
+use App\Http\Controllers\LaporanWakasekController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +82,11 @@ Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function (
     Route::get('/dashboard', fn() => view('wakasek.dashboard'))->name('wakasek.dashboard');
     Route::get('/laporan', fn() => view('wakasek.laporan'))->name('wakasek.laporan');
 
+    //laporan wakasek
+    Route::get('/laporan', [LaporanwakasekController::class, 'index'])->name('wakasek.laporan.index');
+    Route::get('/laporan/export/pdf', [LaporanWakasekController::class, 'exportPdf'])->name('wakasek.laporan.export.pdf');
+    Route::get('/laporan/export/excel', [LaporanWakasekController::class, 'exportExcel'])->name('wakasek.laporan.export.excel');
+
     // 📦 Barang CRUD untuk wakasek
     Route::resource('barang', WakasekBarangController::class)->names([
         'index'   => 'wakasek.barang.index',
@@ -98,4 +105,18 @@ Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function (
 // ==========================
 Route::middleware(['auth', 'role:kabeng'])->prefix('kabeng')->group(function () {
     Route::get('/dashboard', fn() => view('kabeng.dashboard'))->name('kabeng.dashboard');
+
+    // 📦 CRUD Barang (Kabeng hanya bisa kelola barang miliknya)
+    Route::get('/barang', [BarangController::class, 'index'])->name('kabeng.barang.index');
+    Route::get('/barang/create', [BarangController::class, 'create'])->name('kabeng.barang.create');
+    Route::post('/barang', [BarangController::class, 'store'])->name('kabeng.barang.store');
+
+    // ✏️ Edit barang (hanya jika milik sendiri)
+    Route::get('/barang/{barang}/edit', [BarangController::class, 'edit'])->name('kabeng.barang.edit');
+    Route::put('/barang/{barang}', [BarangController::class, 'update'])->name('kabeng.barang.update');
+
+    // ❌ Hapus barang (hanya jika milik sendiri)
+    Route::delete('/barang/{barang}', [BarangController::class, 'destroy'])->name('kabeng.barang.destroy');
 });
+
+

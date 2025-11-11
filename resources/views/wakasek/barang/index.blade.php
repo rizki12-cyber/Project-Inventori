@@ -10,7 +10,6 @@
         color: #1e293b;
     }
 
-    /* Animasi */
     .table-container {
         animation: fadeSlideIn 0.7s ease forwards;
         opacity: 0;
@@ -20,7 +19,6 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Header section */
     .page-header {
         background: linear-gradient(90deg, #2563eb, #1e3a8a);
         color: white;
@@ -33,7 +31,6 @@
         letter-spacing: 0.3px;
     }
 
-    /* Card */
     .card {
         border: none;
         border-radius: 14px;
@@ -41,7 +38,6 @@
         overflow: hidden;
     }
 
-    /* Table style */
     .table thead {
         background: #e0e7ff;
         color: #1e3a8a;
@@ -57,7 +53,6 @@
         transition: background-color 0.2s;
     }
 
-    /* Badge kondisi */
     .badge {
         font-size: 0.85rem;
         padding: 0.45em 0.8em;
@@ -66,7 +61,6 @@
     .badge.bg-success { background: #16a34a !important; }
     .badge.bg-danger { background: #dc2626 !important; }
 
-    /* Buttons */
     .btn-action {
         border-radius: 10px;
         padding: 6px 12px;
@@ -89,7 +83,6 @@
         box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
         .table-responsive {
             overflow-x: auto;
@@ -144,16 +137,22 @@
                             <td>{{ \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') }}</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ route('wakasek.barang.edit', $b->id) }}" 
-                                       class="btn btn-warning btn-action text-white" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button type="button" 
-                                            class="btn btn-danger btn-action btn-delete" 
-                                            data-id="{{ $b->id }}" 
-                                            title="Hapus">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                    @if($b->user_id == Auth::id())
+                                        <!-- Barang milik wakasek sendiri -->
+                                        <a href="{{ route('wakasek.barang.edit', $b->id) }}" 
+                                           class="btn btn-warning btn-action text-white" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" 
+                                                class="btn btn-danger btn-action btn-delete" 
+                                                data-id="{{ $b->id }}" 
+                                                title="Hapus">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    @else
+                                        <!-- Barang dari kabeng -->
+                                        <span class="text-muted fst-italic">Hanya bisa dilihat</span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -175,8 +174,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
-        // Hapus barang
         document.querySelectorAll('.btn-delete').forEach(function(button) {
             button.addEventListener('click', function() {
                 let barangId = this.dataset.id;
@@ -202,7 +199,6 @@
             });
         });
 
-        // Notif sukses
         @if(session('success'))
             Swal.fire({
                 toast: true,

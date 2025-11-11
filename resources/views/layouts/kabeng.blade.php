@@ -127,7 +127,7 @@
             <a href="{{ route('kabeng.dashboard') }}" class="list-group-item list-group-item-action">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{{ route('kabeng.barang.index') }}"" class="list-group-item list-group-item-action">
                 <i class="bi bi-box"></i> Data Barang Jurusan
             </a>
             <a href="#" class="list-group-item list-group-item-action">

@@ -13,7 +13,8 @@ class RoleMiddleware
             return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        if (Auth::user()->role !== $role) {
+        // Case-insensitive & trim spasi
+        if (strtolower(trim(Auth::user()->role)) !== strtolower($role)) {
             return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
 

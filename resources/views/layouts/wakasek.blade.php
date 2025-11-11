@@ -58,12 +58,21 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
 }
 
 #sidebar-wrapper .list-group-item:hover {
     background-color: #34495e;
     color: #fff;
     transform: translateX(5px);
+}
+
+/* ACTIVE LINK */
+#sidebar-wrapper .list-group-item.active {
+    background-color: #3d566e; /* biru keabu-abuan kalem */
+    color: #fff;
+    font-weight: 600;
+    box-shadow: inset 4px 0 0 #1f8ef1; /* garis biru elegan di kiri */
 }
 
 /* Page Content */
@@ -112,20 +121,28 @@ footer {
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">SMKN 1 TALAGA</div>
         <div class="list-group list-group-flush">
-            <a href="{{ route('wakasek.dashboard') }}" class="list-group-item list-group-item-action">
+            <a href="{{ route('wakasek.dashboard') }}"
+               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <a href="{{ route('wakasek.barang.index') }}" class="list-group-item list-group-item-action">
-    <i class="bi bi-box-seam"></i> Data Barang
-</a>
 
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{{ route('wakasek.barang.index') }}"
+               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.barang.*') ? 'active' : '' }}">
+                <i class="bi bi-box-seam"></i> Data Barang
+            </a>
+
+            <a href="{{ route('wakasek.laporan.index') }}"
+               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.laporan.*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i> Laporan
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+
+            <a href="#"
+               class="list-group-item list-group-item-action">
                 <i class="bi bi-eye"></i> Lihat Barang Kabeng
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+
+            <a href="#"
+               class="list-group-item list-group-item-action">
                 <i class="bi bi-person-circle"></i> Profil
             </a>
 

@@ -9,95 +9,136 @@ use Illuminate\Support\Facades\Auth;
 class BarangController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan semua data barang berdasarkan role user.
      */
     public function index()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // 🔹 Admin lihat semua barang
-        if ($user->role === 'admin') {
-            $barang = Barang::latest()->get();
-        } 
-        // 🔹 Wakasek & Kabeng hanya lihat barang miliknya
-        else {
-            $barang = Barang::where('user_id', $user->id)->latest()->get();
-        }
-
-        return view('admin.barang.index', compact('barang'));
+    if (in_array($user->role, ['admin', 'wakasek'])) {
+        // Admin & Wakasek bisa lihat semua barang
+        $barang = Barang::latest()->get();
+        $view = 'admin.barang.index';
+    } elseif ($user->role === 'kabeng') {
+        // Kabeng hanya lihat barang miliknya / jurusannya sendiri
+        $barang = Barang::where('user_id', $user->id)
+                        ->orWhere('jurusan', $user->jurusan)
+                        ->latest()
+                        ->get();
+        $view = 'kabeng.barang.index';
+    } else {
+        abort(403, 'Anda tidak memiliki akses.');
     }
 
+    return view($view, compact('barang'));
+}
+
+
     /**
-     * Show the form for creating a new resource.
+     * Form tambah barang.
      */
     public function create()
     {
-        return view('admin.barang.create');
+        $user = Auth::user();
+
+        if (!in_array($user->role, ['admin', 'kabeng'])) {
+            abort(403, 'Anda tidak memiliki izin menambahkan barang.');
+        }
+
+        $view = $user->role === 'kabeng' ? 'kabeng.barang.create' : 'admin.barang.create';
+        return view($view);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Simpan barang baru.
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
+        if (!in_array($user->role, ['admin', 'kabeng'])) {
+            abort(403, 'Anda tidak memiliki izin menambahkan barang.');
+        }
+
         $validated = $request->validate([
             'kode_barang' => 'required|unique:barang',
             'nama_barang' => 'required',
             'kategori' => 'required',
-            'jumlah' => 'required|integer',
+            'jumlah' => 'required|integer|min:0',
             'kondisi' => 'required',
             'lokasi' => 'required',
             'tanggal_pembelian' => 'required|date',
             'keterangan' => 'nullable',
         ]);
 
-        // 🔹 Tambahkan user_id otomatis
-        $validated['user_id'] = Auth::id();
+        // Kabeng otomatis simpan user_id sendiri
+        $validated['user_id'] = $user->role === 'kabeng' ? $user->id : ($request->user_id ?? $user->id);
 
         Barang::create($validated);
 
-        return redirect()->route('admin.barang.index')
-            ->with('success', 'Barang berhasil ditambahkan');
+        // Redirect sesuai role
+        $route = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
+        return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Form edit barang (hanya admin).
      */
     public function edit(Barang $barang)
-    {
+{
+    $user = Auth::user();
+
+    if ($user->role === 'admin') {
         return view('admin.barang.edit', compact('barang'));
+    } elseif ($user->role === 'kabeng' && $barang->user_id == $user->id) {
+        return view('kabeng.barang.edit', compact('barang'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Barang $barang)
-    {
-        $validated = $request->validate([
-            'kode_barang' => 'required|unique:barang,kode_barang,' . $barang->id,
-            'nama_barang' => 'required',
-            'kategori' => 'required',
-            'jumlah' => 'required|integer',
-            'kondisi' => 'required',
-            'lokasi' => 'required',
-            'tanggal_pembelian' => 'required|date',
-            'keterangan' => 'nullable',
-        ]);
+    abort(403, 'Anda tidak memiliki izin untuk mengedit barang ini.');
+}
 
-        $barang->update($validated);
+public function update(Request $request, Barang $barang)
+{
+    $user = Auth::user();
 
-        return redirect()->route('admin.barang.index')
-            ->with('success', 'Barang berhasil diupdate');
+    if (!in_array($user->role, ['admin', 'kabeng'])) {
+        abort(403, 'Anda tidak memiliki izin untuk memperbarui barang ini.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Barang $barang)
-    {
+    // kabeng cuma boleh update barang miliknya sendiri
+    if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
+        abort(403, 'Anda tidak dapat memperbarui barang milik orang lain.');
+    }
+
+    $validated = $request->validate([
+        'kode_barang' => 'required|unique:barang,kode_barang,' . $barang->id,
+        'nama_barang' => 'required',
+        'kategori' => 'required',
+        'jumlah' => 'required|integer|min:0',
+        'kondisi' => 'required',
+        'lokasi' => 'required',
+        'tanggal_pembelian' => 'required|date',
+        'keterangan' => 'nullable',
+    ]);
+
+    $barang->update($validated);
+
+    $redirect = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
+    return redirect()->route($redirect)->with('success', 'Barang berhasil diperbarui.');
+}
+
+public function destroy(Barang $barang)
+{
+    $user = Auth::user();
+
+    if ($user->role === 'admin' || ($user->role === 'kabeng' && $barang->user_id == $user->id)) {
         $barang->delete();
 
-        return redirect()->route('admin.barang.index')
-            ->with('success', 'Barang berhasil dihapus');
+        $redirect = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
+        return redirect()->route($redirect)->with('success', 'Barang berhasil dihapus.');
     }
+
+    abort(403, 'Anda tidak memiliki izin untuk menghapus barang ini.');
+}
+
 }
