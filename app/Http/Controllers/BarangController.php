@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class BarangController extends Controller
 {
@@ -12,27 +13,24 @@ class BarangController extends Controller
      * Tampilkan semua data barang berdasarkan role user.
      */
     public function index()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (in_array($user->role, ['admin', 'wakasek'])) {
-        // Admin & Wakasek bisa lihat semua barang
-        $barang = Barang::latest()->get();
-        $view = 'admin.barang.index';
-    } elseif ($user->role === 'kabeng') {
-        // Kabeng hanya lihat barang miliknya / jurusannya sendiri
-        $barang = Barang::where('user_id', $user->id)
-                        ->orWhere('jurusan', $user->jurusan)
-                        ->latest()
-                        ->get();
-        $view = 'kabeng.barang.index';
-    } else {
-        abort(403, 'Anda tidak memiliki akses.');
+        if (in_array($user->role, ['admin', 'wakasek'])) {
+            $barang = Barang::latest()->get();
+            $view = 'admin.barang.index';
+        } elseif ($user->role === 'kabeng') {
+            $barang = Barang::where('user_id', $user->id)
+                            ->orWhere('jurusan', $user->jurusan)
+                            ->latest()
+                            ->get();
+            $view = 'kabeng.barang.index';
+        } else {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
+
+        return view($view, compact('barang'));
     }
-
-    return view($view, compact('barang'));
-}
-
 
     /**
      * Form tambah barang.
@@ -53,93 +51,127 @@ class BarangController extends Controller
      * Simpan barang baru.
      */
     public function store(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (!in_array($user->role, ['admin', 'kabeng'])) {
-        abort(403, 'Anda tidak memiliki izin menambahkan barang.');
+        if (!in_array($user->role, ['admin', 'kabeng'])) {
+            abort(403, 'Anda tidak memiliki izin menambahkan barang.');
+        }
+
+        $validated = $request->validate([
+            'kode_barang' => 'required|unique:barang',
+            'nama_barang' => 'required',
+            'kategori' => 'required',
+            'jumlah' => 'required|integer|min:0',
+            'kondisi' => 'required',
+            'lokasi' => 'required',
+            'tanggal_pembelian' => 'required|date',
+            'keterangan' => 'nullable|string',
+            'spesifikasi' => 'nullable|string',
+            'sumber_dana' => 'nullable|string',
+            'tanggal_penghapusan' => 'nullable|date',
+            'foto' => 'nullable|image|max:2048', // max 2MB
+        ]);
+
+        // Simpan user_id
+        $validated['user_id'] = $user->role === 'kabeng' ? $user->id : ($request->user_id ?? $user->id);
+
+        // Simpan file foto jika ada
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/foto_barang', $filename);
+            $validated['foto'] = $filename;
+        }
+
+        Barang::create($validated);
+
+        $route = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
+        return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
     }
-
-    $validated = $request->validate([
-        'kode_barang' => 'required|unique:barang',
-        'nama_barang' => 'required',
-        'kategori' => 'required',
-        'jumlah' => 'required|integer|min:0',
-        'kondisi' => 'required',
-        'lokasi' => 'required',
-        'tanggal_pembelian' => 'required|date',
-        'keterangan' => 'nullable',
-    ]);
-
-    // Simpan user_id
-    $validated['user_id'] = $user->role === 'kabeng' ? $user->id : ($request->user_id ?? $user->id);
-
-    // Simpan barang dengan kode_barang dari input (tidak diubah)
-    Barang::create($validated);
-
-    $route = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
-    return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
-}
-
 
     /**
-     * Form edit barang (hanya admin).
+     * Form edit barang.
      */
     public function edit(Barang $barang)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if ($user->role === 'admin') {
-        return view('admin.barang.edit', compact('barang'));
-    } elseif ($user->role === 'kabeng' && $barang->user_id == $user->id) {
-        return view('kabeng.barang.edit', compact('barang'));
+        if ($user->role === 'admin') {
+            return view('admin.barang.edit', compact('barang'));
+        } elseif ($user->role === 'kabeng' && $barang->user_id == $user->id) {
+            return view('kabeng.barang.edit', compact('barang'));
+        }
+
+        abort(403, 'Anda tidak memiliki izin untuk mengedit barang ini.');
     }
 
-    abort(403, 'Anda tidak memiliki izin untuk mengedit barang ini.');
-}
+    /**
+     * Update barang.
+     */
+    public function update(Request $request, Barang $barang)
+    {
+        $user = Auth::user();
 
-public function update(Request $request, Barang $barang)
-{
-    $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kabeng'])) {
+            abort(403, 'Anda tidak memiliki izin untuk memperbarui barang ini.');
+        }
 
-    if (!in_array($user->role, ['admin', 'kabeng'])) {
-        abort(403, 'Anda tidak memiliki izin untuk memperbarui barang ini.');
-    }
+        if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
+            abort(403, 'Anda tidak dapat memperbarui barang milik orang lain.');
+        }
 
-    // kabeng cuma boleh update barang miliknya sendiri
-    if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
-        abort(403, 'Anda tidak dapat memperbarui barang milik orang lain.');
-    }
+        $validated = $request->validate([
+            'kode_barang' => 'required|unique:barang,kode_barang,' . $barang->id,
+            'nama_barang' => 'required',
+            'kategori' => 'required',
+            'jumlah' => 'required|integer|min:0',
+            'kondisi' => 'required',
+            'lokasi' => 'required',
+            'tanggal_pembelian' => 'required|date',
+            'keterangan' => 'nullable|string',
+            'spesifikasi' => 'nullable|string',
+            'sumber_dana' => 'nullable|string',
+            'tanggal_penghapusan' => 'nullable|date',
+            'foto' => 'nullable|image|max:2048',
+        ]);
 
-    $validated = $request->validate([
-        'kode_barang' => 'required|unique:barang,kode_barang,' . $barang->id,
-        'nama_barang' => 'required',
-        'kategori' => 'required',
-        'jumlah' => 'required|integer|min:0',
-        'kondisi' => 'required',
-        'lokasi' => 'required',
-        'tanggal_pembelian' => 'required|date',
-        'keterangan' => 'nullable',
-    ]);
+        // Handle upload foto baru, hapus foto lama jika ada
+        if ($request->hasFile('foto')) {
+            if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
+                Storage::delete('public/foto_barang/' . $barang->foto);
+            }
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/foto_barang', $filename);
+            $validated['foto'] = $filename;
+        }
 
-    $barang->update($validated);
-
-    $redirect = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
-    return redirect()->route($redirect)->with('success', 'Barang berhasil diperbarui.');
-}
-
-public function destroy(Barang $barang)
-{
-    $user = Auth::user();
-
-    if ($user->role === 'admin' || ($user->role === 'kabeng' && $barang->user_id == $user->id)) {
-        $barang->delete();
+        $barang->update($validated);
 
         $redirect = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
-        return redirect()->route($redirect)->with('success', 'Barang berhasil dihapus.');
+        return redirect()->route($redirect)->with('success', 'Barang berhasil diperbarui.');
     }
 
-    abort(403, 'Anda tidak memiliki izin untuk menghapus barang ini.');
-}
+    /**
+     * Hapus barang.
+     */
+    public function destroy(Barang $barang)
+    {
+        $user = Auth::user();
 
+        if ($user->role === 'admin' || ($user->role === 'kabeng' && $barang->user_id == $user->id)) {
+            // Hapus foto dari storage
+            if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
+                Storage::delete('public/foto_barang/' . $barang->foto);
+            }
+
+            $barang->delete();
+
+            $redirect = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
+            return redirect()->route($redirect)->with('success', 'Barang berhasil dihapus.');
+        }
+
+        abort(403, 'Anda tidak memiliki izin untuk menghapus barang ini.');
+    }
 }

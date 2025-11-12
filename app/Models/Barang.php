@@ -22,13 +22,18 @@ class Barang extends Model
         'kondisi',
         'lokasi',
         'tanggal_pembelian',
+        'tanggal_penghapusan', // kolom baru
+        'spesifikasi',        // kolom baru
+        'sumber_dana',        // kolom baru
+        'foto',               // kolom baru
         'keterangan',
-        'user_id', // 🔹 penting untuk relasi ke user
+        'user_id',            // 🔹 penting untuk relasi ke user
     ];
 
     // 🔹 Casting
     protected $casts = [
         'tanggal_pembelian' => 'date',
+        'tanggal_penghapusan' => 'date', // kolom baru
     ];
 
     // 🔹 Relasi ke Transaksi (1 barang bisa punya banyak transaksi)

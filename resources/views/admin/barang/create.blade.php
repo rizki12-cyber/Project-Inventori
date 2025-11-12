@@ -10,7 +10,6 @@
         color: #1e293b;
     }
 
-    /* Animasi fade-slide */
     .form-container {
         animation: fadeSlideIn 0.7s ease forwards;
         opacity: 0;
@@ -24,7 +23,6 @@
         }
     }
 
-    /* Card styling */
     .card {
         border: none;
         border-radius: 16px;
@@ -37,7 +35,6 @@
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
     }
 
-    /* Header */
     .page-title {
         font-weight: 700;
         font-size: 1.8rem;
@@ -47,7 +44,6 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Form styling */
     .form-label {
         font-weight: 600;
         color: #334155;
@@ -64,7 +60,6 @@
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
-    /* Tombol */
     .btn-success {
         background: linear-gradient(90deg, #16a34a, #22c55e);
         border: none;
@@ -84,7 +79,6 @@
         font-weight: 600;
     }
 
-    /* Alert */
     .alert {
         border-radius: 10px;
         font-size: 0.9rem;
@@ -108,7 +102,8 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.barang.store') }}" method="POST">
+        <!-- enctype multipart/form-data untuk upload file -->
+        <form action="{{ route('admin.barang.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row g-3">
@@ -151,9 +146,28 @@
                     <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian') }}" required>
                 </div>
 
+                <div class="col-md-6">
+                    <label class="form-label">Tanggal Penghapusan</label>
+                    <input type="date" name="tanggal_penghapusan" class="form-control" value="{{ old('tanggal_penghapusan') }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Sumber Dana</label>
+                    <input type="text" name="sumber_dana" class="form-control" value="{{ old('sumber_dana') }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Foto Barang</label>
+                    <input type="file" name="foto" class="form-control" accept="image/*">
+                </div>
+
                 <div class="col-12">
                     <label class="form-label">Keterangan</label>
                     <textarea name="keterangan" rows="3" class="form-control">{{ old('keterangan') }}</textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Spesifikasi</label>
+                    <textarea name="spesifikasi" rows="3" class="form-control">{{ old('spesifikasi') }}</textarea>
                 </div>
             </div>
 
