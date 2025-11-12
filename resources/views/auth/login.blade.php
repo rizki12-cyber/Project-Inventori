@@ -2,19 +2,19 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Login | Website Inventory SMKN 1 Talaga</title>
+    <title>Masuk | Sistem Inventori SMKN 1 Talaga</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #1e3a8a;
-            --secondary: #e2e8f0;
-            --accent: #fbbf24;
-            --text-dark: #1e293b;
-            --white: #ffffff;
-            --shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --utama: #1e3a8a;
+            --sekunder: #e2e8f0;
+            --aksen: #fbbf24;
+            --teks-gelap: #1e293b;
+            --putih: #ffffff;
+            --bayangan: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -33,7 +33,7 @@
             padding: 20px;
         }
 
-        .login-container {
+        .kotak-login {
             width: 900px;
             max-width: 100%;
             min-height: 520px;
@@ -41,12 +41,12 @@
             flex-wrap: wrap;
             border-radius: 22px;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            background: var(--white);
+            box-shadow: var(--bayangan);
+            background: var(--putih);
         }
 
-        /* kiri */
-        .left-side {
+        /* Bagian kiri */
+        .bagian-kiri {
             flex: 1;
             min-width: 300px;
             background: linear-gradient(145deg, #e0e7ff, #cbd5e1);
@@ -58,7 +58,7 @@
             padding: 40px 20px;
         }
 
-        .left-side img {
+        .bagian-kiri img {
             width: 180px;
             height: auto;
             margin-bottom: 15px;
@@ -66,30 +66,30 @@
             transition: transform 0.3s ease;
         }
 
-        .left-side img:hover {
+        .bagian-kiri img:hover {
             transform: scale(1.05);
         }
 
-        .left-side h2 {
+        .bagian-kiri h2 {
             font-size: 22px;
             font-weight: 600;
-            color: var(--primary);
+            color: var(--utama);
             line-height: 1.4;
         }
 
-        /* kanan */
-        .right-side {
+        /* Bagian kanan */
+        .bagian-kanan {
             flex: 1;
             min-width: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--white);
+            background: var(--putih);
             position: relative;
             padding: 30px;
         }
 
-        .right-side::before {
+        .bagian-kanan::before {
             content: "";
             position: absolute;
             width: 100%;
@@ -97,7 +97,7 @@
             background: linear-gradient(to bottom right, rgba(27, 60, 138, 0.08), transparent);
         }
 
-        .login-box {
+        .kotak-form {
             position: relative;
             background: #ffffff;
             border-radius: 16px;
@@ -106,17 +106,17 @@
             max-width: 360px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.08);
             text-align: center;
-            animation: fadeIn 0.7s ease;
+            animation: muncul 0.7s ease;
             z-index: 1;
         }
 
-        @keyframes fadeIn {
+        @keyframes muncul {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .login-box h3 {
-            color: var(--primary);
+        .kotak-form h3 {
+            color: var(--utama);
             font-size: 21px;
             font-weight: 600;
             margin-bottom: 22px;
@@ -146,7 +146,7 @@
         }
 
         input:focus {
-            border-color: var(--accent);
+            border-color: var(--aksen);
             box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.3);
             background: #fff;
         }
@@ -170,23 +170,23 @@
             background: linear-gradient(135deg, #3b82f6, #1e3a8a);
         }
 
-        .bottom-text {
+        .teks-bawah {
             margin-top: 14px;
             font-size: 13px;
             color: #475569;
         }
 
-        .bottom-text a {
-            color: var(--primary);
+        .teks-bawah a {
+            color: var(--utama);
             font-weight: 500;
             text-decoration: none;
         }
 
-        .bottom-text a:hover {
+        .teks-bawah a:hover {
             color: #0f172a;
         }
 
-        .error {
+        .pesan-error {
             color: #b91c1c;
             background: #fee2e2;
             border: 1px solid #fecaca;
@@ -196,15 +196,15 @@
             padding: 10px;
         }
 
-        /* --- RESPONSIVE --- */
+        /* Responsif */
         @media (max-width: 992px) {
-            .login-container {
+            .kotak-login {
                 width: 95%;
             }
-            .left-side h2 {
+            .bagian-kiri h2 {
                 font-size: 20px;
             }
-            .login-box {
+            .kotak-form {
                 padding: 35px 30px;
             }
         }
@@ -214,32 +214,32 @@
                 padding: 0;
             }
 
-            .login-container {
+            .kotak-login {
                 flex-direction: column;
                 width: 95%;
                 height: auto;
             }
 
-            .left-side, .right-side {
+            .bagian-kiri, .bagian-kanan {
                 flex: none;
                 width: 100%;
                 height: auto;
                 padding: 30px 20px;
             }
 
-            .left-side {
+            .bagian-kiri {
                 order: 1;
             }
 
-            .right-side {
+            .bagian-kanan {
                 order: 2;
             }
 
-            .left-side img {
+            .bagian-kiri img {
                 width: 130px;
             }
 
-            .login-box {
+            .kotak-form {
                 width: 100%;
                 padding: 25px 20px;
                 box-shadow: none;
@@ -252,11 +252,11 @@
         }
 
         @media (max-width: 480px) {
-            .left-side h2 {
+            .bagian-kiri h2 {
                 font-size: 18px;
             }
 
-            .login-box h3 {
+            .kotak-form h3 {
                 font-size: 18px;
             }
 
@@ -272,38 +272,38 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <!-- kiri -->
-        <div class="left-side">
+    <div class="kotak-login">
+        <!-- Bagian kiri -->
+        <div class="bagian-kiri">
             <img src="{{ asset('assets/images/logo1.png') }}" alt="Logo SMKN 1 Talaga">
-            <h2>Website Inventory<br>SMKN 1 Talaga</h2>
+            <h2>Sistem Inventori<br>SMKN 1 Talaga</h2>
         </div>
 
-        <!-- kanan -->
-        <div class="right-side">
-            <div class="login-box">
-                <h3>Masuk ke Akun Anda</h3>
+        <!-- Bagian kanan -->
+        <div class="bagian-kanan">
+            <div class="kotak-form">
+                <h3>Masuk ke Akun</h3>
 
                 @if (session('error'))
-                    <div class="error">{{ session('error') }}</div>
+                    <div class="pesan-error">{{ session('error') }}</div>
                 @endif
 
                 <form action="{{ route('login.process') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="email">Alamat Email</label>
-                        <input type="email" name="email" id="email" placeholder="Masukkan email anda" required>
+                        <input type="email" name="email" id="email" placeholder="Masukkan alamat email Anda" required>
                     </div>
 
                     <div class="form-group">
                         <label for="password">Kata Sandi</label>
-                        <input type="password" name="password" id="password" placeholder="Masukkan kata sandi" required>
+                        <input type="password" name="password" id="password" placeholder="Masukkan kata sandi Anda" required>
                     </div>
 
                     <button type="submit">Masuk</button>
 
-                    <p class="bottom-text">
-                        Belum punya akun? <a href="#">Hubungi Admin</a>
+                    <p class="teks-bawah">
+                        Belum memiliki akun? <a href="#">Hubungi Administrator</a>
                     </p>
                 </form>
             </div>
