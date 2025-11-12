@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>@yield('title', 'Admin Dashboard')</title>
+<title>@yield('title', 'Dashboard Admin')</title>
 
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -14,10 +14,12 @@
 
 <style>
 :root {
-    --sidebar-bg: #2c3e50;
-    --sidebar-active: #3498db;
-    --sidebar-hover: #34495e;
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --sidebar-bg: #ffffff;
+    --sidebar-text: #2c3e50;
+    --sidebar-hover: #f3f6fa;
+    --sidebar-active-bg: #e8f0fe;
+    --sidebar-active-border: #4285f4;
+    --transition: all 0.3s ease;
 }
 
 body {
@@ -25,6 +27,7 @@ body {
     margin: 0;
     height: 100vh;
     overflow: hidden;
+    background-color: #f8f9fa;
 }
 
 #wrapper {
@@ -38,24 +41,30 @@ body {
     min-width: 250px;
     max-width: 250px;
     background-color: var(--sidebar-bg);
-    color: #fff;
-    border-radius: 0 15px 15px 0;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    color: var(--sidebar-text);
+    border-right: 1px solid #e5e7eb;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
-    transition: var(--transition);
     position: relative;
     z-index: 1000;
+    transform: translateX(0);
+    transition: var(--transition);
+    animation: slideInLeft 0.4s ease forwards;
 }
 
 #sidebar-wrapper .sidebar-heading {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
     text-align: center;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 1.2rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    color: #1e293b;
+    letter-spacing: 0.5px;
+    animation: fadeInDown 0.6s ease forwards;
 }
 
+/* Menu Sidebar */
 #sidebar-wrapper .list-group {
     padding: 1rem 0;
     flex-grow: 1;
@@ -64,65 +73,59 @@ body {
 #sidebar-wrapper .list-group-item {
     background-color: transparent;
     border: none;
-    color: #ecf0f1;
+    color: var(--sidebar-text);
     font-weight: 500;
     transition: var(--transition);
-    border-radius: 8px;
-    margin: 4px 8px;
+    border-radius: 10px;
+    margin: 6px 12px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     padding: 12px 16px;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    animation: fadeInUp 0.4s ease forwards;
+    opacity: 0;
 }
 
-#sidebar-wrapper .list-group-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    height: 70%;
-    width: 4px;
-    background-color: var(--sidebar-active);
-    transform: scaleY(0) translateY(-50%);
+#sidebar-wrapper .list-group-item i {
+    font-size: 1.2rem;
+    color: #64748b;
     transition: var(--transition);
-    border-radius: 0 4px 4px 0;
 }
 
 #sidebar-wrapper .list-group-item:hover {
     background-color: var(--sidebar-hover);
-    color: #fff;
-    transform: translateX(5px);
+    transform: translateX(6px);
 }
 
-#sidebar-wrapper .list-group-item:hover::before {
-    transform: scaleY(1) translateY(-50%);
+#sidebar-wrapper .list-group-item:hover i {
+    color: var(--sidebar-active-border);
 }
 
+/* Tautan Aktif */
 #sidebar-wrapper .list-group-item.active {
-    background-color: var(--sidebar-hover);
-    color: #fff;
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-border);
     font-weight: 600;
+    border-left: 4px solid var(--sidebar-active-border);
+    box-shadow: inset 4px 0 0 var(--sidebar-active-border);
+    transform: translateX(4px);
 }
 
-#sidebar-wrapper .list-group-item.active::before {
-    transform: scaleY(1) translateY(-50%);
+#sidebar-wrapper .list-group-item.active i {
+    color: var(--sidebar-active-border);
 }
 
-#sidebar-wrapper .list-group-item i {
-    font-size: 1.1rem;
-    width: 20px;
-    text-align: center;
-}
-
-/* Page Content */
+/* Konten Halaman */
 #page-content-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     transition: var(--transition);
+    background-color: #f8f9fa;
 }
 
 /* Navbar */
@@ -134,6 +137,7 @@ body {
     padding: 0.75rem 1.5rem;
 }
 
+/* Dropdown Pengguna */
 .user-dropdown {
     position: relative;
 }
@@ -149,14 +153,14 @@ body {
 }
 
 .user-profile:hover {
-    background-color: #f8f9fa;
+    background-color: #f1f5f9;
 }
 
 .user-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--sidebar-bg);
+    background-color: var(--sidebar-active-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -193,11 +197,11 @@ body {
     background-color: #ffeaea;
 }
 
-/* Scrollable content */
+/* Konten Utama */
 #main-content {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 24px;
     background-color: #f8f9fa;
 }
 
@@ -208,7 +212,7 @@ body {
     border: none;
     margin-bottom: 20px;
     transition: var(--transition);
-    animation: fadeInUp 0.5s ease forwards;
+    animation: fadeInUp 0.6s ease forwards;
     opacity: 0;
     transform: translateY(20px);
 }
@@ -236,18 +240,19 @@ footer {
     flex-shrink: 0;
 }
 
-/* Sidebar toggled */
+/* Sidebar disembunyikan */
 #wrapper.toggled #sidebar-wrapper {
     margin-left: -250px;
 }
 
-#wrapper.toggled #page-content-wrapper {
-    margin-left: 0;
-}
-
-/* Animations */
+/* Animasi */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -255,9 +260,6 @@ footer {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
 }
-
-.fade-in-up { animation: fadeInUp 0.5s ease forwards; }
-.slide-in-left { animation: slideInLeft 0.4s ease forwards; }
 
 .delay-1 { animation-delay: 0.1s; }
 .delay-2 { animation-delay: 0.2s; }
@@ -272,32 +274,34 @@ footer {
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">SMKN 1 TALAGA</div>
         <div class="list-group list-group-flush">
-            <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action slide-in-left 
+            <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action delay-1 
                 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <a href="{{ route('admin.barang.index') }}" class="list-group-item list-group-item-action slide-in-left delay-1
-                {{ request()->routeIs('barang.*') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.barang.index') }}" class="list-group-item list-group-item-action delay-2
+                {{ request()->routeIs('admin.barang.*') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Data Barang
             </a>
-            <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action slide-in-left delay-3
+
+            <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action delay-3
                 {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i> Laporan
             </a>
-            <a href="{{ route('admin.datauser.index') }}" 
-                class="list-group-item list-group-item-action slide-in-left delay-4
+
+            <a href="{{ route('admin.datauser.index') }}" class="list-group-item list-group-item-action delay-4
                 {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}">
-                    <i class="bi bi-people"></i> Data User
+                <i class="bi bi-people"></i> Data Pengguna
             </a>
         </div>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-
+    <!-- Konten Halaman -->
     <div id="page-content-wrapper">
+        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
             <div class="container-fluid">
-                <button class="btn btn-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                <button class="btn btn-outline-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
                 <h4 class="ms-3 mb-0">@yield('title')</h4>
                 
                 <div class="ms-auto user-dropdown">
@@ -310,17 +314,14 @@ footer {
                         <i class="bi bi-chevron-down"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.profile') }}">
-                                <i class="bi bi-person"></i> Profil
-                            </a>
-                        </li>
-
+                        <li><a class="dropdown-item" href="{{ route('admin.profile') }}">
+                            <i class="bi bi-person"></i> Profil
+                        </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item logout" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="bi bi-box-arrow-right"></i> Logout
+                                <i class="bi bi-box-arrow-right"></i> Keluar
                             </a>
                         </li>
                     </ul>
@@ -333,31 +334,30 @@ footer {
         </div>
 
         <footer>
-            &copy; {{ date('Y') }} SMKN 1 TALAGA - Sistem Inventori Barang. All rights reserved.
+            &copy; {{ date('Y') }} SMKN 1 TALAGA - Sistem Inventori Barang. Seluruh hak cipta dilindungi.
         </footer>
     </div>
 </div>
 
-<!-- ✅ FIXED Logout Form (POST + CSRF) -->
+<!-- Form Keluar -->
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const wrapper = document.getElementById('wrapper');
-    const overlay = document.getElementById('overlay');
-    
+
     sidebarToggle.addEventListener('click', () => {
         wrapper.classList.toggle('toggled');
     });
-    
-    overlay.addEventListener('click', () => {
-        wrapper.classList.toggle('toggled');
+
+    // Animasi masuk untuk item sidebar
+    document.querySelectorAll('#sidebar-wrapper .list-group-item').forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
     });
 });
 </script>
