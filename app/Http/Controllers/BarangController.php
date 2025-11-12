@@ -53,33 +53,34 @@ class BarangController extends Controller
      * Simpan barang baru.
      */
     public function store(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if (!in_array($user->role, ['admin', 'kabeng'])) {
-            abort(403, 'Anda tidak memiliki izin menambahkan barang.');
-        }
-
-        $validated = $request->validate([
-            'kode_barang' => 'required|unique:barang',
-            'nama_barang' => 'required',
-            'kategori' => 'required',
-            'jumlah' => 'required|integer|min:0',
-            'kondisi' => 'required',
-            'lokasi' => 'required',
-            'tanggal_pembelian' => 'required|date',
-            'keterangan' => 'nullable',
-        ]);
-
-        // Kabeng otomatis simpan user_id sendiri
-        $validated['user_id'] = $user->role === 'kabeng' ? $user->id : ($request->user_id ?? $user->id);
-
-        Barang::create($validated);
-
-        // Redirect sesuai role
-        $route = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
-        return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
+    if (!in_array($user->role, ['admin', 'kabeng'])) {
+        abort(403, 'Anda tidak memiliki izin menambahkan barang.');
     }
+
+    $validated = $request->validate([
+        'kode_barang' => 'required|unique:barang',
+        'nama_barang' => 'required',
+        'kategori' => 'required',
+        'jumlah' => 'required|integer|min:0',
+        'kondisi' => 'required',
+        'lokasi' => 'required',
+        'tanggal_pembelian' => 'required|date',
+        'keterangan' => 'nullable',
+    ]);
+
+    // Simpan user_id
+    $validated['user_id'] = $user->role === 'kabeng' ? $user->id : ($request->user_id ?? $user->id);
+
+    // Simpan barang dengan kode_barang dari input (tidak diubah)
+    Barang::create($validated);
+
+    $route = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
+    return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
+}
+
 
     /**
      * Form edit barang (hanya admin).

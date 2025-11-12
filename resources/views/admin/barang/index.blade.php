@@ -213,7 +213,6 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Kode</th>
                         <th>Nama</th>
                         <th>Kategori</th>
                         <th>Jumlah</th>
@@ -227,7 +226,6 @@
                     @forelse($barang as $index => $b)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td class="fw-semibold text-primary">{{ $b->kode_barang }}</td>
                         <td>{{ $b->nama_barang }}</td>
                         <td>{{ $b->kategori }}</td>
                         <td>{{ $b->jumlah }}</td>
