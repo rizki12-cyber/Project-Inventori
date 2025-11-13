@@ -11,7 +11,7 @@ use App\Http\Controllers\LaporanWakasekController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\BarangMasukController;
-
+use App\Http\Controllers\BarangKeluarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +66,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'update'  => 'admin.barangmasuk.update',
         'destroy' => 'admin.barangmasuk.destroy',
         'show'    => 'admin.barangmasuk.show',
+    ]);
+
+    // 🚪 Barang Keluar (fitur baru)
+    Route::resource('barang-keluar', BarangKeluarController::class)->names([
+        'index'   => 'admin.barangkeluar.index',
+        'create'  => 'admin.barangkeluar.create',
+        'store'   => 'admin.barangkeluar.store',
+        'edit'    => 'admin.barangkeluar.edit',
+        'update'  => 'admin.barangkeluar.update',
+        'destroy' => 'admin.barangkeluar.destroy',
+        'show'    => 'admin.barangkeluar.show',
     ]);
 
     // 📊 Laporan

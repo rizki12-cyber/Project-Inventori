@@ -265,7 +265,7 @@ footer {
                 <i class="bi bi-arrow-down-circle"></i> Barang Masuk
             </a>
 
-            <a href="3" class="list-group-item list-group-item-action
+            <a href="{{ route('admin.barangkeluar.index') }}" class="list-group-item list-group-item-action
                 {{ request()->routeIs('admin.barangkeluar.*') ? 'active' : '' }}">
                 <i class="bi bi-arrow-up-circle"></i> Barang Keluar
             </a>
