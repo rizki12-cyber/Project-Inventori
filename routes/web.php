@@ -12,6 +12,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
+use App\Http\Controllers\ProgramKeahlianController;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +119,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'edit'    => 'admin.peminjaman.edit',
         'update'  => 'admin.peminjaman.update',
         'destroy' => 'admin.peminjaman.destroy',
+    ]);
+
+    Route::resource('programkeahlian', ProgramKeahlianController::class)->names([
+        'index'   => 'admin.programkeahlian.index',
+        'create'  => 'admin.programkeahlian.create',
+        'store'   => 'admin.programkeahlian.store',
+        'edit'    => 'admin.programkeahlian.edit',
+        'update'  => 'admin.programkeahlian.update',
+        'destroy' => 'admin.programkeahlian.destroy',
     ]);
 });
 

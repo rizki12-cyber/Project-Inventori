@@ -235,6 +235,37 @@ footer {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
 }
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    height: 100vh;
+    /* ❌ jangan pakai overflow: hidden di body */
+    overflow: hidden; /* <-- hapus baris ini */
+    background-color: #f8f9fa;
+}
+
+#sidebar-wrapper {
+    min-width: 250px;
+    max-width: 250px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    border-right: 1px solid #e5e7eb;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1000;
+    transform: translateX(0);
+    transition: var(--transition);
+    animation: slideInLeft 0.4s ease forwards;
+
+    /* ✅ Tambahan agar sidebar bisa di-scroll */
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 </style>
 </head>
 <body>
@@ -283,6 +314,18 @@ footer {
             <a href="{{ route('admin.datauser.index') }}" class="list-group-item list-group-item-action
                 {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Data Pengguna
+            </a>
+            {{-- 🔹 Tambahan baru --}}
+            <a href="{{ route('admin.programkeahlian.index') }}" 
+            class="list-group-item list-group-item-action
+            {{ request()->routeIs('admin.programkeahlian.*') ? 'active' : '' }}">
+             <i class="bi bi-book"></i> Data Program Keahlian
+         </a>
+         
+
+            <a href="" class="list-group-item list-group-item-action
+            {{ request()->routeIs('admin.konsentrasikeahlian.*') ? 'active' : '' }}">
+            <i class="bi bi-diagram-3"></i> Data Konsentrasi Keahlian
             </a>
         </div>
     </div>
