@@ -325,8 +325,9 @@ body {
          </a>
          
 
-            <a href="{{ route('admin.konsentrasi.index') }}" class="list-group-item list-group-item-action
-            {{ request()->routeIs('admin.konsentrasikeahlian.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.konsentrasi.index') }}" 
+            class="list-group-item list-group-item-action
+            {{ request()->routeIs('admin.konsentrasi.*') ? 'active' : '' }}">
             <i class="bi bi-diagram-3"></i> Data Konsentrasi Keahlian
             </a>
         </div>
