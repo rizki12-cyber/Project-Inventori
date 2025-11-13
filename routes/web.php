@@ -13,6 +13,8 @@ use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\ProgramKeahlianController;
+use App\Http\Controllers\KonsentrasiKeahlianController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +60,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'show'    => 'admin.barang.show',
     ]);
 
-    // 🚚 Barang Masuk (fitur baru)
+    // 🚚 Barang Masuk
     Route::resource('barang-masuk', BarangMasukController::class)->names([
         'index'   => 'admin.barangmasuk.index',
         'create'  => 'admin.barangmasuk.create',
@@ -69,7 +71,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'show'    => 'admin.barangmasuk.show',
     ]);
 
-    // 🚪 Barang Keluar (fitur baru)
+    // 🚪 Barang Keluar
     Route::resource('barang-keluar', BarangKeluarController::class)->names([
         'index'   => 'admin.barangkeluar.index',
         'create'  => 'admin.barangkeluar.create',
@@ -121,6 +123,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'destroy' => 'admin.peminjaman.destroy',
     ]);
 
+    // 🎓 Program Keahlian
     Route::resource('programkeahlian', ProgramKeahlianController::class)->names([
         'index'   => 'admin.programkeahlian.index',
         'create'  => 'admin.programkeahlian.create',
@@ -129,7 +132,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'update'  => 'admin.programkeahlian.update',
         'destroy' => 'admin.programkeahlian.destroy',
     ]);
+
+    // 🧩 Konsentrasi Keahlian (fitur baru)
+    Route::resource('konsentrasikeahlian', KonsentrasiKeahlianController::class)->names([
+        'index'   => 'admin.konsentrasi.index',
+        'create'  => 'admin.konsentrasi.create',
+        'store'   => 'admin.konsentrasi.store',
+        'edit'    => 'admin.konsentrasi.edit',
+        'update'  => 'admin.konsentrasi.update',
+        'destroy' => 'admin.konsentrasi.destroy',
+        'show'    => 'admin.konsentrasi.show',
+    ]);
 });
+
 
 
 // ==========================
