@@ -91,18 +91,17 @@
     </div>
 
     <div class="card p-4">
-        @if($errors->any())
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <strong>Oops!</strong> Ada beberapa error:
                 <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>• {{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
 
-        <!-- enctype multipart/form-data untuk upload file -->
         <form action="{{ route('admin.barang.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -124,15 +123,16 @@
 
                 <div class="col-md-6">
                     <label class="form-label">Jumlah</label>
-                    <input type="number" name="jumlah" class="form-control" value="{{ old('jumlah') }}" required>
+                    <input type="number" name="jumlah" class="form-control" min="0" value="{{ old('jumlah') }}" required>
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label">Kondisi</label>
                     <select name="kondisi" class="form-select" required>
-                        <option value="Baik" {{ old('kondisi')=='Baik'?'selected':'' }}>Baik</option>
-                        <option value="Rusak" {{ old('kondisi')=='Rusak'?'selected':'' }}>Rusak</option>
-                        <option value="Hilang" {{ old('kondisi')=='Hilang'?'selected':'' }}>Hilang</option>
+                        <option value="">-- Pilih Kondisi --</option>
+                        <option value="Baik" {{ old('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
+                        <option value="Rusak" {{ old('kondisi') == 'Rusak' ? 'selected' : '' }}>Rusak</option>
+                        <option value="Hilang" {{ old('kondisi') == 'Hilang' ? 'selected' : '' }}>Hilang</option>
                     </select>
                 </div>
 
@@ -162,12 +162,13 @@
                 </div>
 
                 <div class="col-12">
-                    <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan" rows="3" class="form-control">{{ old('keterangan') }}</textarea>
-                </div>
-                <div class="col-12">
                     <label class="form-label">Spesifikasi</label>
-                    <textarea name="spesifikasi" rows="3" class="form-control">{{ old('spesifikasi') }}</textarea>
+                    <textarea name="spesifikasi" rows="3" class="form-control" placeholder="Masukkan spesifikasi barang...">{{ old('spesifikasi') }}</textarea>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Keterangan</label>
+                    <textarea name="keterangan" rows="3" class="form-control" placeholder="Keterangan tambahan...">{{ old('keterangan') }}</textarea>
                 </div>
             </div>
 

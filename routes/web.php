@@ -8,6 +8,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WakasekBarangController;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanWakasekController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\BarangMasukController;
 
 
 /*
@@ -39,7 +42,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // 🔹 ADMIN AREA
 // ==========================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    // Dashboard
+
+    // 🧭 Dashboard
     Route::get('/dashboard', fn() => view('admin.dashboard'))->name('admin.dashboard');
 
     // 📦 Barang CRUD
@@ -53,6 +57,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'show'    => 'admin.barang.show',
     ]);
 
+    // 🚚 Barang Masuk (fitur baru)
+    Route::resource('barang-masuk', BarangMasukController::class)->names([
+        'index'   => 'admin.barangmasuk.index',
+        'create'  => 'admin.barangmasuk.create',
+        'store'   => 'admin.barangmasuk.store',
+        'edit'    => 'admin.barangmasuk.edit',
+        'update'  => 'admin.barangmasuk.update',
+        'destroy' => 'admin.barangmasuk.destroy',
+        'show'    => 'admin.barangmasuk.show',
+    ]);
+
     // 📊 Laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('admin.laporan.index');
     Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('admin.laporan.export.pdf');
@@ -62,7 +77,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::post('/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
 
-    // 👥 Data User (fitur baru)
+    // 👥 Data User
     Route::resource('datauser', DataUserController::class)->names([
         'index'   => 'admin.datauser.index',
         'create'  => 'admin.datauser.create',
@@ -71,6 +86,27 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'update'  => 'admin.datauser.update',
         'destroy' => 'admin.datauser.destroy',
         'show'    => 'admin.datauser.show',
+    ]);
+
+    // 🚛 Supplier
+    Route::resource('supplier', SupplierController::class)->names([
+        'index'   => 'admin.supplier.index',
+        'create'  => 'admin.supplier.create',
+        'store'   => 'admin.supplier.store',
+        'edit'    => 'admin.supplier.edit',
+        'update'  => 'admin.supplier.update',
+        'destroy' => 'admin.supplier.destroy',
+        'show'    => 'admin.supplier.show',
+    ]);
+
+    // 📚 Peminjaman
+    Route::resource('peminjaman', PeminjamanController::class)->names([
+        'index'   => 'admin.peminjaman.index',
+        'create'  => 'admin.peminjaman.create',
+        'store'   => 'admin.peminjaman.store',
+        'edit'    => 'admin.peminjaman.edit',
+        'update'  => 'admin.peminjaman.update',
+        'destroy' => 'admin.peminjaman.destroy',
     ]);
 });
 

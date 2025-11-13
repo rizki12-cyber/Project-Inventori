@@ -205,31 +205,6 @@ body {
     background-color: #f8f9fa;
 }
 
-.content-card {
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: none;
-    margin-bottom: 20px;
-    transition: var(--transition);
-    animation: fadeInUp 0.6s ease forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.content-card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.content-card .card-header {
-    background-color: white;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    padding: 1.25rem 1.5rem;
-    border-radius: 12px 12px 0 0 !important;
-    font-weight: 600;
-}
-
-/* Footer */
 footer {
     text-align: center;
     padding: 12px 0;
@@ -260,11 +235,6 @@ footer {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
 }
-
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
 </style>
 </head>
 <body>
@@ -274,22 +244,43 @@ footer {
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">SMKN 1 TALAGA</div>
         <div class="list-group list-group-flush">
-            <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action delay-1 
+
+            <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action 
                 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
 
-            <a href="{{ route('admin.barang.index') }}" class="list-group-item list-group-item-action delay-2
+            <a href="{{ route('admin.barang.index') }}" class="list-group-item list-group-item-action
                 {{ request()->routeIs('admin.barang.*') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Data Barang
             </a>
 
-            <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action delay-3
+            <a href="{{ route('admin.supplier.index') }}" class="list-group-item list-group-item-action
+                {{ request()->routeIs('admin.supplier.*') ? 'active' : '' }}">
+                <i class="bi bi-truck"></i> Data Supplier
+            </a>
+
+            <a href="{{ route('admin.barangmasuk.index') }}"" class="list-group-item list-group-item-action
+                {{ request()->routeIs('admin.barangmasuk.*') ? 'active' : '' }}">
+                <i class="bi bi-arrow-down-circle"></i> Barang Masuk
+            </a>
+
+            <a href="3" class="list-group-item list-group-item-action
+                {{ request()->routeIs('admin.barangkeluar.*') ? 'active' : '' }}">
+                <i class="bi bi-arrow-up-circle"></i> Barang Keluar
+            </a>
+
+            <a href="{{ route('admin.peminjaman.index') }}" class="list-group-item list-group-item-action
+                {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-text"></i> Peminjaman
+            </a>
+
+            <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action
                 {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i> Laporan
             </a>
 
-            <a href="{{ route('admin.datauser.index') }}" class="list-group-item list-group-item-action delay-4
+            <a href="{{ route('admin.datauser.index') }}" class="list-group-item list-group-item-action
                 {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Data Pengguna
             </a>
@@ -339,7 +330,7 @@ footer {
     </div>
 </div>
 
-<!-- Form Keluar -->
+<!-- Form Logout -->
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
@@ -353,11 +344,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     sidebarToggle.addEventListener('click', () => {
         wrapper.classList.toggle('toggled');
-    });
-
-    // Animasi masuk untuk item sidebar
-    document.querySelectorAll('#sidebar-wrapper .list-group-item').forEach((item, index) => {
-        item.style.animationDelay = `${index * 0.1}s`;
     });
 });
 </script>
