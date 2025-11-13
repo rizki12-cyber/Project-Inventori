@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-
+    <link rel="icon" href="{{ asset('assets/images/logo1.png') }}" type="image/png" sizes="32x32">
+    
     <style>
         :root {
             --utama: #1e3a8a;
