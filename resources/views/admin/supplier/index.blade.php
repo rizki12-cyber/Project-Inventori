@@ -217,7 +217,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4" style="animation: popIn 0.8s 1.2s both;">
         <form action="{{ route('admin.supplier.index') }}" method="GET" class="search-form">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cari nama atau telepon supplier..." value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control" placeholder="Cari nama supplier..." value="{{ request('search') }}">
                 <button class="btn btn-primary-custom btn-search" type="submit"><i class="bi bi-search"></i></button>
                 @if(request('search'))
                     <a href="{{ route('admin.supplier.index') }}" class="btn btn-danger ms-2" title="Reset Pencarian" style="border-radius: 8px;"><i class="bi bi-x-lg"></i></a>

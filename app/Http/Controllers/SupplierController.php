@@ -7,11 +7,23 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    public function index()
-    {
-        $suppliers = Supplier::latest()->paginate(10);
-        return view('admin.supplier.index', compact('suppliers'));
+    public function index(Request $request)
+{
+    $query = Supplier::query();
+
+    // Filter search hanya berdasarkan nama_supplier
+    if ($request->has('search') && $request->search != '') {
+        $search = $request->search;
+        $query->where('nama_supplier', 'like', "%{$search}%");
     }
+
+    // Ambil data terbaru, paginasi 10 per halaman
+    $suppliers = $query->latest()->paginate(10);
+    $suppliers->appends($request->all()); // agar query search tetap terbawa saat pindah halaman
+
+    return view('admin.supplier.index', compact('suppliers'));
+}
+
 
     public function create()
     {
