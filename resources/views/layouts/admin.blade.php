@@ -7,23 +7,20 @@
 
 <link rel="icon" href="{{ asset('assets/images/logo1.png') }}" type="image/png" sizes="32x32">
 
-<!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 :root {
+    --primary-color: #4285f4; /* Warna Biru Baru */
     --sidebar-bg: #ffffff;
     --sidebar-text: #2c3e50;
     --sidebar-hover: #f3f6fa;
     --sidebar-active-bg: #e8f0fe;
-    --sidebar-active-border: #4285f4;
+    --sidebar-active-border: var(--primary-color);
     --transition: all 0.3s ease;
 }
 
@@ -31,7 +28,7 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     height: 100vh;
-    background-color: #f8f9fa; /* ❌ hapus overflow hidden */
+    background-color: #f8f9fa;
 }
 
 #wrapper {
@@ -59,6 +56,7 @@ body {
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-bottom: 20px;
 }
 
 #sidebar-wrapper .sidebar-heading {
@@ -67,7 +65,7 @@ body {
     text-align: center;
     padding: 1.2rem 0;
     border-bottom: 1px solid #f0f0f0;
-    color: #1e293b;
+    color: var(--primary-color);
     letter-spacing: 0.5px;
     animation: fadeInDown 0.6s ease forwards;
 }
@@ -96,6 +94,10 @@ body {
     opacity: 0;
 }
 
+#sidebar-wrapper .list-group-item span {
+    transition: var(--transition);
+}
+
 #sidebar-wrapper .list-group-item i {
     font-size: 1.2rem;
     color: #64748b;
@@ -104,7 +106,7 @@ body {
 
 #sidebar-wrapper .list-group-item:hover {
     background-color: var(--sidebar-hover);
-    transform: translateX(6px);
+    transform: translateX(3px);
 }
 
 #sidebar-wrapper .list-group-item:hover i {
@@ -117,7 +119,7 @@ body {
     font-weight: 600;
     border-left: 4px solid var(--sidebar-active-border);
     box-shadow: inset 4px 0 0 var(--sidebar-active-border);
-    transform: translateX(4px);
+    transform: translateX(0);
 }
 
 #sidebar-wrapper .list-group-item.active i {
@@ -142,6 +144,25 @@ body {
     background-color: white;
     padding: 0.75rem 1.5rem;
 }
+
+/* Style tambahan untuk Logo dan Nama Sekolah di Navbar */
+.header-info {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+}
+.header-info img {
+    height: 30px; /* Ukuran logo */
+    margin-right: 10px;
+}
+.header-info h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #34495e;
+    margin: 0;
+}
+/* Akhir style tambahan */
+
 
 /* Dropdown Pengguna */
 .user-dropdown {
@@ -246,71 +267,71 @@ footer {
 <body>
 
 <div id="wrapper">
-    <!-- Sidebar -->
     <div id="sidebar-wrapper">
-        <div class="sidebar-heading">SMKN 1 TALAGA</div>
+        <div class="sidebar-heading">INVENTORI</div>
         <div class="list-group list-group-flush">
 
             <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action 
-                {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <i class="bi bi-speedometer2"></i> Dashboard
+                {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" style="animation-delay: 0.1s;">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
             </a>
 
             <a href="{{ route('admin.barang.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.barang.*') ? 'active' : '' }}">
-                <i class="bi bi-box-seam"></i> Data Barang
+                {{ request()->routeIs('admin.barang.*') ? 'active' : '' }}" style="animation-delay: 0.2s;">
+                <i class="bi bi-box-seam"></i> <span>Data Barang</span>
             </a>
 
             <a href="{{ route('admin.supplier.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.supplier.*') ? 'active' : '' }}">
-                <i class="bi bi-truck"></i> Data Supplier
+                {{ request()->routeIs('admin.supplier.*') ? 'active' : '' }}" style="animation-delay: 0.3s;">
+                <i class="bi bi-truck"></i> <span>Data Supplier</span>
             </a>
 
             <a href="{{ route('admin.barangmasuk.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.barangmasuk.*') ? 'active' : '' }}">
-                <i class="bi bi-arrow-down-circle"></i> Barang Masuk
+                {{ request()->routeIs('admin.barangmasuk.*') ? 'active' : '' }}" style="animation-delay: 0.4s;">
+                <i class="bi bi-arrow-down-circle"></i> <span>Barang Masuk</span>
             </a>
 
             <a href="{{ route('admin.barangkeluar.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.barangkeluar.*') ? 'active' : '' }}">
-                <i class="bi bi-arrow-up-circle"></i> Barang Keluar
+                {{ request()->routeIs('admin.barangkeluar.*') ? 'active' : '' }}" style="animation-delay: 0.5s;">
+                <i class="bi bi-arrow-up-circle"></i> <span>Barang Keluar</span>
             </a>
 
             <a href="{{ route('admin.peminjaman.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}">
-                <i class="bi bi-journal-text"></i> Peminjaman
+                {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}" style="animation-delay: 0.6s;">
+                <i class="bi bi-journal-text"></i> <span>Peminjaman</span>
             </a>
 
             <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
-                <i class="bi bi-file-earmark-text"></i> Laporan
+                {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}" style="animation-delay: 0.7s;">
+                <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
             </a>
 
             <a href="{{ route('admin.datauser.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}">
-                <i class="bi bi-people"></i> Data Pengguna
+                {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}" style="animation-delay: 0.8s;">
+                <i class="bi bi-people"></i> <span>Data Pengguna</span>
             </a>
 
             <a href="{{ route('admin.programkeahlian.index') }}" class="list-group-item list-group-item-action
-            {{ request()->routeIs('admin.programkeahlian.*') ? 'active' : '' }}">
-                <i class="bi bi-book"></i> Data Program Keahlian
+            {{ request()->routeIs('admin.programkeahlian.*') ? 'active' : '' }}" style="animation-delay: 0.9s;">
+                <i class="bi bi-book"></i> <span>Data Program Keahlian</span>
             </a>
 
             <a href="{{ route('admin.konsentrasi.index') }}" class="list-group-item list-group-item-action
-            {{ request()->routeIs('admin.konsentrasi.*') ? 'active' : '' }}">
-                <i class="bi bi-diagram-3"></i> Data Konsentrasi Keahlian
+            {{ request()->routeIs('admin.konsentrasi.*') ? 'active' : '' }}" style="animation-delay: 1.0s;">
+                <i class="bi bi-diagram-3"></i> <span>Data Konsentrasi Keahlian</span>
             </a>
         </div>
     </div>
 
-    <!-- Konten Halaman -->
     <div id="page-content-wrapper">
-        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
             <div class="container-fluid">
                 <button class="btn btn-outline-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
-                <h4 class="ms-3 mb-0">@yield('title')</h4>
                 
+                <div class="header-info d-none d-sm-flex">
+                    <img src="{{ asset('assets/images/logo1.png') }}" alt="Logo Sekolah" class="me-2">
+                    <h5>SMKN 1 TALAGA</h5>
+                </div>
                 <div class="ms-auto user-dropdown">
                     <div class="user-profile" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-avatar">A</div>
@@ -346,12 +367,10 @@ footer {
     </div>
 </div>
 
-<!-- Form Logout -->
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -365,7 +384,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Yield Scripts -->
 @yield('scripts')
 
 </body>
