@@ -14,6 +14,9 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
 :root {
     --sidebar-bg: #ffffff;
@@ -28,8 +31,7 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     height: 100vh;
-    overflow: hidden;
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; /* ❌ hapus overflow hidden */
 }
 
 #wrapper {
@@ -53,6 +55,10 @@ body {
     transform: translateX(0);
     transition: var(--transition);
     animation: slideInLeft 0.4s ease forwards;
+
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #sidebar-wrapper .sidebar-heading {
@@ -66,7 +72,6 @@ body {
     animation: fadeInDown 0.6s ease forwards;
 }
 
-/* Menu Sidebar */
 #sidebar-wrapper .list-group {
     padding: 1rem 0;
     flex-grow: 1;
@@ -106,7 +111,6 @@ body {
     color: var(--sidebar-active-border);
 }
 
-/* Tautan Aktif */
 #sidebar-wrapper .list-group-item.active {
     background-color: var(--sidebar-active-bg);
     color: var(--sidebar-active-border);
@@ -237,37 +241,6 @@ footer {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
 }
-
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    height: 100vh;
-    /* ❌ jangan pakai overflow: hidden di body */
-    overflow: hidden; /* <-- hapus baris ini */
-    background-color: #f8f9fa;
-}
-
-#sidebar-wrapper {
-    min-width: 250px;
-    max-width: 250px;
-    background-color: var(--sidebar-bg);
-    color: var(--sidebar-text);
-    border-right: 1px solid #e5e7eb;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.03);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    z-index: 1000;
-    transform: translateX(0);
-    transition: var(--transition);
-    animation: slideInLeft 0.4s ease forwards;
-
-    /* ✅ Tambahan agar sidebar bisa di-scroll */
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
 </style>
 </head>
 <body>
@@ -293,7 +266,7 @@ body {
                 <i class="bi bi-truck"></i> Data Supplier
             </a>
 
-            <a href="{{ route('admin.barangmasuk.index') }}"" class="list-group-item list-group-item-action
+            <a href="{{ route('admin.barangmasuk.index') }}" class="list-group-item list-group-item-action
                 {{ request()->routeIs('admin.barangmasuk.*') ? 'active' : '' }}">
                 <i class="bi bi-arrow-down-circle"></i> Barang Masuk
             </a>
@@ -317,18 +290,15 @@ body {
                 {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Data Pengguna
             </a>
-            {{-- 🔹 Tambahan baru --}}
-            <a href="{{ route('admin.programkeahlian.index') }}" 
-            class="list-group-item list-group-item-action
-            {{ request()->routeIs('admin.programkeahlian.*') ? 'active' : '' }}">
-             <i class="bi bi-book"></i> Data Program Keahlian
-         </a>
-         
 
-            <a href="{{ route('admin.konsentrasi.index') }}" 
-            class="list-group-item list-group-item-action
+            <a href="{{ route('admin.programkeahlian.index') }}" class="list-group-item list-group-item-action
+            {{ request()->routeIs('admin.programkeahlian.*') ? 'active' : '' }}">
+                <i class="bi bi-book"></i> Data Program Keahlian
+            </a>
+
+            <a href="{{ route('admin.konsentrasi.index') }}" class="list-group-item list-group-item-action
             {{ request()->routeIs('admin.konsentrasi.*') ? 'active' : '' }}">
-            <i class="bi bi-diagram-3"></i> Data Konsentrasi Keahlian
+                <i class="bi bi-diagram-3"></i> Data Konsentrasi Keahlian
             </a>
         </div>
     </div>
@@ -383,6 +353,7 @@ body {
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -393,6 +364,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<!-- Yield Scripts -->
+@yield('scripts')
 
 </body>
 </html>
