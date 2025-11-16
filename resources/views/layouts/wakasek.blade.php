@@ -1,197 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>@yield('title', 'Dashboard Wakasek')</title>
 
-<!-- Bootstrap CSS -->
+<link rel="icon" href="{{ asset('assets/images/logo1.png') }}" type="image/png" sizes="32x32">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
+:root {
+    --primary-color: #4285f4;
+    --sidebar-bg: #ffffff;
+    --sidebar-text: #2c3e50;
+    --sidebar-hover: #f3f6fa;
+    --sidebar-active-bg: #e8f0fe;
+    --sidebar-active-border: var(--primary-color);
+    --transition: all 0.3s ease;
+}
+
 body {
     font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
     margin: 0;
-    height: 100vh;
-    overflow: hidden;
 }
 
 #wrapper {
     display: flex;
     height: 100vh;
-    transition: all 0.3s ease;
+    transition: var(--transition);
 }
 
-/* Sidebar */
+/* SIDEBAR */
 #sidebar-wrapper {
     min-width: 250px;
     max-width: 250px;
-    background-color: #2c3e50;
-    color: #fff;
-    border-radius: 0 15px 15px 0;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid #e5e7eb;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
-    transition: all 0.3s ease;
+    overflow-y: auto;
+    padding-bottom: 20px;
+    animation: slideInLeft .4s ease forwards;
 }
 
-#sidebar-wrapper .sidebar-heading {
-    font-size: 1.5rem;
+.sidebar-heading {
+    font-size: 1.4rem;
     font-weight: 700;
     text-align: center;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 1.2rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--primary-color);
+    letter-spacing: .5px;
+    animation: fadeInDown .6s ease forwards;
 }
 
-#sidebar-wrapper .list-group-item {
+#sidebar-wrapper .list-group {
+    padding: 1rem 0;
+    flex-grow: 1;
+}
+
+.list-group-item {
     background-color: transparent;
     border: none;
-    color: #ecf0f1;
-    font-weight: 500;
-    transition: all 0.2s;
-    border-radius: 8px;
-    margin: 4px 8px;
+    color: var(--sidebar-text);
+    border-radius: 10px;
+    margin: 6px 12px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    position: relative;
+    gap: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    animation: fadeInUp .4s ease forwards;
+    opacity: 0;
 }
 
-#sidebar-wrapper .list-group-item:hover {
-    background-color: #34495e;
-    color: #fff;
-    transform: translateX(5px);
+.list-group-item i {
+    font-size: 1.2rem;
+    color: #64748b;
+    transition: var(--transition);
 }
 
-/* ACTIVE LINK */
-#sidebar-wrapper .list-group-item.active {
-    background-color: #3d566e; /* biru keabu-abuan kalem */
-    color: #fff;
+.list-group-item:hover {
+    background-color: var(--sidebar-hover);
+    transform: translateX(3px);
+}
+
+.list-group-item:hover i {
+    color: var(--primary-color);
+}
+
+.list-group-item.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--primary-color);
     font-weight: 600;
-    box-shadow: inset 4px 0 0 #1f8ef1; /* garis biru elegan di kiri */
+    border-left: 4px solid var(--primary-color);
+    box-shadow: inset 4px 0 0 var(--primary-color);
 }
 
-/* Page Content */
+.list-group-item.active i {
+    color: var(--primary-color);
+}
+
+/* PAGE WRAPPER */
 #page-content-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    background: #f8f9fa;
 }
 
-/* Navbar */
+/* NAVBAR */
 .navbar {
+    background: #fff;
+    padding: .75rem 1.5rem;
     border-radius: 0 0 15px 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
 }
 
-/* Scrollable content */
+/* LOGO + TITLE */
+.header-info {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.header-info img {
+    height: 30px;
+    margin-right: 10px;
+}
+
+.header-info h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #34495e;
+}
+
+/* USER DROPDOWN */
+.user-dropdown {
+    position: relative;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.user-profile:hover {
+    background-color: #f1f5f9;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.dropdown-menu {
+    border: none;
+    border-radius: 10px;
+    min-width: 200px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+}
+
+.dropdown-item {
+    padding: .75rem 1rem;
+    border-radius: 6px;
+}
+
+.dropdown-item.logout {
+    color: #e74c3c;
+}
+
+.dropdown-item.logout:hover {
+    background-color: #ffeaea;
+}
+
+/* CONTENT */
 #main-content {
     flex: 1;
+    padding: 24px;
     overflow-y: auto;
-    padding: 20px;
 }
 
-/* Footer */
 footer {
+    background: #fff;
     text-align: center;
     padding: 12px 0;
-    background-color: #fff;
     border-top: 1px solid #dee2e6;
-    font-size: 0.9rem;
-    color: #6c757d;
-    flex-shrink: 0;
 }
 
-/* Sidebar toggled */
+/* SIDEBAR TOGGLE */
 #wrapper.toggled #sidebar-wrapper {
-    margin-left: -260px;
+    margin-left: -250px;
+}
+
+/* ANIMATIONS */
+@keyframes fadeInUp {
+    from {transform: translateY(20px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+}
+
+@keyframes fadeInDown {
+    from {transform: translateY(-10px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+}
+
+@keyframes slideInLeft {
+    from {transform: translateX(-20px); opacity: 0;}
+    to {transform: translateX(0); opacity: 1;}
 }
 </style>
 </head>
+
 <body>
 
 <div id="wrapper">
-    <!-- Sidebar -->
+
+    <!-- SIDEBAR -->
     <div id="sidebar-wrapper">
-        <div class="sidebar-heading">SMKN 1 TALAGA</div>
+        <div class="sidebar-heading">INVENTORI</div>
         <div class="list-group list-group-flush">
+
             <a href="{{ route('wakasek.dashboard') }}"
-               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.dashboard') ? 'active' : '' }}">
+               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.dashboard') ? 'active' : '' }}"
+               style="animation-delay:.1s;">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
 
             <a href="{{ route('wakasek.barang.index') }}"
-               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.barang.*') ? 'active' : '' }}">
+               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.barang.*') ? 'active' : '' }}"
+               style="animation-delay:.2s;">
                 <i class="bi bi-box-seam"></i> Data Barang
             </a>
 
             <a href="{{ route('wakasek.laporan.index') }}"
-               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.laporan.*') ? 'active' : '' }}">
+               class="list-group-item list-group-item-action {{ request()->routeIs('wakasek.laporan.*') ? 'active' : '' }}"
+               style="animation-delay:.3s;">
                 <i class="bi bi-file-earmark-text"></i> Laporan
             </a>
 
-            <a href="#"
-               class="list-group-item list-group-item-action">
-                <i class="bi bi-eye"></i> Lihat Barang Kabeng
-            </a>
-
-            <a href="#"
-               class="list-group-item list-group-item-action">
-                <i class="bi bi-person-circle"></i> Profil
-            </a>
-
-            <!-- Logout -->
-            <a href="#"
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-               class="list-group-item list-group-item-action">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                @csrf
-            </form>
         </div>
     </div>
 
-    <!-- Page Content -->
+    <!-- PAGE CONTENT -->
     <div id="page-content-wrapper">
-        <!-- Navbar -->
+
+        <!-- NAVBAR -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
             <div class="container-fluid">
-                <button class="btn btn-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
-                <h4 class="ms-3 mb-0">@yield('title')</h4>
+
+                <button class="btn btn-outline-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
+
+                <div class="header-info d-none d-sm-flex">
+                    <img src="{{ asset('assets/images/logo1.png') }}">
+                    <h5>SMKN 1 TALAGA</h5>
+                </div>
+
+                <!-- USER DROPDOWN -->
+                <div class="ms-auto user-dropdown">
+                    <div class="user-profile" id="userDropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">W</div>
+                        <div class="user-info d-none d-md-block">
+                            <div class="fw-semibold">{{ Auth::user()->name }}</div>
+                            <small class="text-muted">Wakasek</small>
+                        </div>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('wakasek.profile') }}">
+                                <i class="bi bi-person"></i> Profil
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li>
+                            <a class="dropdown-item logout"
+                               href="#"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="bi bi-box-arrow-right"></i> Keluar
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
         </nav>
 
-        <!-- Scrollable Content -->
         <div id="main-content">
             @yield('content')
         </div>
 
-        <!-- Footer -->
         <footer>
-            &copy; {{ date('Y') }} SMKN 1 TALAGA - Sistem Inventori Barang. All rights reserved.
+            © {{ date('Y') }} SMKN 1 TALAGA - Sistem Inventori Barang.
         </footer>
+
     </div>
 </div>
 
-<!-- Bootstrap JS -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Sidebar Toggle -->
 <script>
-const sidebarToggle = document.getElementById('sidebarToggle');
-const wrapper = document.getElementById('wrapper');
-sidebarToggle.addEventListener('click', () => {
-    wrapper.classList.toggle('toggled');
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.getElementById('wrapper').classList.toggle('toggled');
 });
 </script>
+
+@yield('scripts')
 
 </body>
 </html>

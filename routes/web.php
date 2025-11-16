@@ -14,6 +14,7 @@ use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\ProgramKeahlianController;
 use App\Http\Controllers\KonsentrasiKeahlianController;
+use App\Http\Controllers\WakasekProfileController;
 
 
 /*
@@ -169,6 +170,9 @@ Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function (
         'destroy' => 'wakasek.barang.destroy',
         'show'    => 'wakasek.barang.show',
     ]);
+
+        Route::get('/wakasek/profile', [WakasekProfileController::class, 'index'])->name('wakasek.profile');
+        Route::put('/wakasek/profile/update', [WakasekProfileController::class, 'update'])->name('wakasek.profile.update');
 });
 
 
