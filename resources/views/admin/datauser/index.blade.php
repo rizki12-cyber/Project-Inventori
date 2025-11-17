@@ -204,7 +204,7 @@
                                         {{ ucfirst($user->role) }}
                                     </span>
                                 </td>
-                                <td>{{ $user->jurusan ?? '-' }}</td>
+<td>{{ $user->konsentrasi->nama_konsentrasi ?? '-' }}</td>
                                 <td>
                                     <div class="d-flex justify-content-center">
                                         <a href="{{ route('admin.datauser.edit', $user->id) }}" 

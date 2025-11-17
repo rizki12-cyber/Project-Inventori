@@ -29,4 +29,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
         ];
     }
+
+    // app/Models/User.php
+public function konsentrasi()
+{
+    return $this->belongsTo(KonsentrasiKeahlian::class, 'jurusan', 'id');
+}
+
 }

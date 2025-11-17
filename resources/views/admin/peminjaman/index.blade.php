@@ -5,7 +5,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container py-4">
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><i class="bi bi-book-half me-2"></i>Data Peminjaman</h3>
         <a href="{{ route('admin.peminjaman.create') }}" class="btn btn-success">
@@ -13,7 +12,6 @@
         </a>
     </div>
 
-    <!-- Notifikasi -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">
             {{ session('success') }}
@@ -21,7 +19,6 @@
         </div>
     @endif
 
-    <!-- Card & Table -->
     <div class="card shadow-sm border-0">
         <div class="card-body p-3">
             <div class="table-responsive">
@@ -35,7 +32,7 @@
                             <th>Tgl Kembali</th>
                             <th>Kondisi</th>
                             <th>Status</th>
-                            <th style="width:120px;">Aksi</th>
+                            <th style="width:140px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,28 +48,34 @@
                                 @php
                                     $statusClass = match($p->status) {
                                         'Dipinjam' => 'bg-warning text-dark',
-                                        'Kembali' => 'bg-success',
-                                        'Ditolak' => 'bg-danger',
+                                        'Dikembalikan' => 'bg-success',
                                         default => 'bg-secondary'
                                     };
                                 @endphp
                                 <span class="badge {{ $statusClass }}">{{ $p->status }}</span>
                             </td>
                             <td>
-                                <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ route('admin.peminjaman.edit', $p->id) }}" 
-                                       class="btn btn-sm btn-warning" title="Edit">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <form action="{{ route('admin.peminjaman.destroy', $p->id) }}" 
-                                          method="POST" class="d-inline form-delete">
-                                        @csrf @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+    <div class="d-flex justify-content-center gap-1">
+        @if($p->status === 'Dipinjam')
+            <form action="{{ route('admin.peminjaman.kembalikan', $p->id) }}" method="POST">
+                @csrf @method('PATCH')
+                <button type="submit" class="btn btn-sm btn-success" title="Kembalikan">
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
+            </form>
+        @endif
+        <a href="{{ route('admin.peminjaman.edit', $p->id) }}" class="btn btn-sm btn-warning" title="Edit">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+        <form action="{{ route('admin.peminjaman.destroy', $p->id) }}" method="POST" class="d-inline form-delete">
+            @csrf @method('DELETE')
+            <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
+                <i class="bi bi-trash"></i>
+            </button>
+        </form>
+    </div>
+</td>
+
                         </tr>
                         @empty
                         <tr>
@@ -86,7 +89,6 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
             <div class="mt-3 d-flex justify-content-end">
                 {{ $peminjamans->links() }}
             </div>
@@ -95,36 +97,32 @@
 </div>
 
 <script>
-    // SweetAlert Konfirmasi Hapus
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const form = this.closest('.form-delete');
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Data yang dihapus tidak bisa dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if(result.isConfirmed){
-                    form.submit();
-                }
-            });
+document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const form = this.closest('.form-delete');
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if(result.isConfirmed) form.submit();
         });
     });
+});
 
-    // SweetAlert Notifikasi Sukses
-    @if(session('success'))
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil!',
-        text: "{{ session('success') }}",
-        showConfirmButton: false,
-        timer: 1800
-    });
-    @endif
+@if(session('success'))
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil!',
+    text: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 1800
+});
+@endif
 </script>
 @endsection

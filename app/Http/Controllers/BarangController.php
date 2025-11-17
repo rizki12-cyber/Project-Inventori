@@ -13,24 +13,32 @@ class BarangController extends Controller
      * Tampilkan semua data barang berdasarkan role user.
      */
     public function index()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if (in_array($user->role, ['admin', 'wakasek'])) {
-            $barang = Barang::latest()->get();
-            $view = 'admin.barang.index';
-        } elseif ($user->role === 'kabeng') {
-            $barang = Barang::where('user_id', $user->id)
-                            ->orWhere('jurusan', $user->jurusan)
-                            ->latest()
-                            ->get();
-            $view = 'kabeng.barang.index';
-        } else {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
-
-        return view($view, compact('barang'));
+    // Admin lihat semua + bisa edit hapus
+    if ($user->role === 'admin') {
+        $barang = Barang::latest()->get();
+        return view('admin.barang.index', compact('barang'));
     }
+
+    // Wakasek hanya lihat semua barang
+    if ($user->role === 'wakasek') {
+        $barang = Barang::latest()->get();
+        return view('wakasek.barang.index', compact('barang'));
+    }
+
+    // Kabeng lihat barang sesuai jurusan/konsentrasi
+    if ($user->role === 'kabeng') {
+        // Misal $user->jurusan menyimpan id konsentrasi
+        $barang = Barang::where('jurusan', $user->jurusan)->latest()->get();
+        return view('kabeng.barang.index', compact('barang'));
+    }
+
+    abort(403, "Role tidak dikenali");
+}
+
+
 
     /**
      * Form tambah barang.
@@ -70,17 +78,20 @@ class BarangController extends Controller
             'spesifikasi' => 'nullable|string',
             'sumber_dana' => 'nullable|string',
             'tanggal_penghapusan' => 'nullable|date',
-            'foto' => 'nullable|image|max:2048', // max 2MB
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         // Simpan user_id
         $validated['user_id'] = $user->role === 'kabeng' ? $user->id : ($request->user_id ?? $user->id);
 
-        // Simpan file foto jika ada
+        // Upload foto
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/foto_barang', $filename);
+
+            // 🚀 FIX: simpan dengan disk 'public' tanpa menulis public/
+            $file->storeAs('foto_barang', $filename, 'public');
+
             $validated['foto'] = $filename;
         }
 
@@ -114,7 +125,7 @@ class BarangController extends Controller
         $user = Auth::user();
 
         if (!in_array($user->role, ['admin', 'kabeng'])) {
-            abort(403, 'Anda tidak memiliki izin untuk memperbarui barang ini.');
+            abort(403, 'Anda tidak memiliki izin memperbarui barang ini.');
         }
 
         if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
@@ -136,14 +147,20 @@ class BarangController extends Controller
             'foto' => 'nullable|image|max:2048',
         ]);
 
-        // Handle upload foto baru, hapus foto lama jika ada
+        // Upload foto baru
         if ($request->hasFile('foto')) {
+
+            // Hapus foto lama
             if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
                 Storage::delete('public/foto_barang/' . $barang->foto);
             }
+
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/foto_barang', $filename);
+
+            // 🚀 FIX PATH
+            $file->storeAs('foto_barang', $filename, 'public');
+
             $validated['foto'] = $filename;
         }
 
@@ -161,6 +178,7 @@ class BarangController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'admin' || ($user->role === 'kabeng' && $barang->user_id == $user->id)) {
+
             // Hapus foto dari storage
             if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
                 Storage::delete('public/foto_barang/' . $barang->foto);
@@ -172,6 +190,23 @@ class BarangController extends Controller
             return redirect()->route($redirect)->with('success', 'Barang berhasil dihapus.');
         }
 
-        abort(403, 'Anda tidak memiliki izin untuk menghapus barang ini.');
+        abort(403, 'Anda tidak memiliki izin menghapus barang ini.');
     }
+
+    public function show(Barang $barang)
+{
+    $user = Auth::user();
+
+    if ($user->role === 'admin') {
+        return view('admin.barang.detail', compact('barang'));
+    }
+
+    if ($user->role === 'kabeng' || $user->role === 'wakasek') {
+        return view($user->role.'.barang.detail', compact('barang'));
+    }
+
+    abort(403);
 }
+
+}
+    

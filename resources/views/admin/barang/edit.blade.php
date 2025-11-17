@@ -176,7 +176,7 @@
 
                 <div class="col-md-6">
                     <label class="form-label">Tanggal Pembelian</label>
-                    <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian', $barang->tanggal_pembelian) }}" required>
+                    <input type="date" name="tanggal_pembelian" class="form-control"value="{{ old('tanggal_pembelian', \Carbon\Carbon::parse($barang->tanggal_pembelian)->format('Y-m-d')) }}" required>
                 </div>
 
                 <div class="col-md-6">

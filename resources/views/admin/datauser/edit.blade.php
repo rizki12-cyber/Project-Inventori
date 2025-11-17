@@ -135,14 +135,17 @@
         </div>
 
         <div class="mb-3" id="jurusanField" style="{{ $user->role == 'kabeng' ? '' : 'display:none;' }}">
-            <label>Jurusan</label>
-            <select name="jurusan" class="form-select">
-                <option value="">-- Pilih Jurusan --</option>
-                @foreach(['TKR','TSM','PPLG','TKJ','AKL','BDP'] as $jur)
-                    <option value="{{ $jur }}" {{ $user->jurusan == $jur ? 'selected' : '' }}>{{ $jur }}</option>
-                @endforeach
-            </select>
-        </div>
+    <label>Jurusan</label>
+    <select name="jurusan" class="form-select">
+        <option value="">-- Pilih Jurusan --</option>
+        @foreach($konsentrasiKeahlians as $jurusan)
+            <option value="{{ $jurusan->id }}" {{ $user->jurusan == $jurusan->id ? 'selected' : '' }}>
+                {{ $jurusan->nama_konsentrasi }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 
         <div class="d-flex justify-content-between mt-4">
             <a href="{{ route('admin.datauser.index') }}" class="btn btn-secondary">
@@ -161,4 +164,5 @@
         jurusanField.style.display = this.value === 'kabeng' ? 'block' : 'none';
     });
 </script>
+
 @endsection

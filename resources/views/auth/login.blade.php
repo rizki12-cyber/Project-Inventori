@@ -277,7 +277,7 @@
         <!-- Bagian kiri -->
         <div class="bagian-kiri">
             <img src="{{ asset('assets/images/logo1.png') }}" alt="Logo SMKN 1 Talaga">
-            <h2>Sistem Inventori<br>SMKN 1 Talaga</h2>
+            <h2>Sistem Inventaris<br>SMKN 1 Talaga</h2>
         </div>
 
         <!-- Bagian kanan -->
@@ -303,9 +303,13 @@
 
                     <button type="submit">Masuk</button>
 
-                    <p class="teks-bawah">
-                        Belum memiliki akun? <a href="#">Hubungi Administrator</a>
-                    </p>
+                            <p class="teks-bawah">
+                                Belum memiliki akun? 
+                                <a href="https://wa.me/628991554555?text=Saya%20ingin%20masuk%20ke%20sistem%20inventaris%20barang%20SMKN%201%20Talaga%2C%20tetapi%20saya%20belum%20mempunyai%20akun." 
+                                target="_blank">
+                                Hubungi Administrator
+                                </a>
+                            </p>
                 </form>
             </div>
         </div>

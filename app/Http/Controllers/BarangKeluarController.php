@@ -73,4 +73,38 @@ class BarangKeluarController extends Controller
         return redirect()->route('admin.barangkeluar.index')
             ->with('success', 'Data barang keluar berhasil dihapus!');
     }
+
+    public function edit($id)
+{
+    $barangKeluar = BarangKeluar::findOrFail($id);
+    $barang = Barang::all(); // untuk dropdown
+
+    return view('admin.barangkeluar.edit', compact('barangKeluar', 'barang'));
+}
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'id_barang' => 'required',
+        'tanggal_keluar' => 'required|date',
+        'jumlah' => 'required|integer|min:1',
+        'lokasi' => 'nullable|string',
+        'penerima' => 'nullable|string',
+        'keterangan' => 'nullable|string',
+    ]);
+
+    $bk = BarangKeluar::findOrFail($id);
+
+    $bk->update([
+        'id_barang' => $request->id_barang,
+        'tanggal_keluar' => $request->tanggal_keluar,
+        'jumlah' => $request->jumlah,
+        'lokasi' => $request->lokasi,
+        'penerima' => $request->penerima,
+        'keterangan' => $request->keterangan,
+    ]);
+
+    return redirect()->route('admin.barangkeluar.index')->with('success', 'Data berhasil diperbarui!');
+}
+
 }

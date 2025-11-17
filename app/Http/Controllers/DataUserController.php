@@ -5,19 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\KonsentrasiKeahlian;
 
 class DataUserController extends Controller
 {
     public function index()
-    {
-        $users = User::where('role', '!=', 'admin')->get();
-        return view('admin.datauser.index', compact('users'));
-    }
+{
+    $users = User::where('role', '!=', 'admin')->with('konsentrasi')->get();
+    return view('admin.datauser.index', compact('users'));
+}
 
-    public function create()
-    {
-        return view('admin.datauser.create');
-    }
+
+
+
+public function create()
+{
+    $konsentrasiKeahlians = KonsentrasiKeahlian::all(); // ambil semua jurusan
+    return view('admin.datauser.create', compact('konsentrasiKeahlians'));
+}
 
     public function store(Request $request)
     {
@@ -41,9 +46,13 @@ class DataUserController extends Controller
     }
 
     public function edit(User $datauser)
-    {
-        return view('admin.datauser.edit', ['user' => $datauser]);
-    }
+{
+    $konsentrasiKeahlians = KonsentrasiKeahlian::all(); // ambil semua jurusan
+    return view('admin.datauser.edit', [
+        'user' => $datauser,
+        'konsentrasiKeahlians' => $konsentrasiKeahlians
+    ]);
+}
 
     public function update(Request $request, User $datauser)
     {

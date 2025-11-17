@@ -268,7 +268,7 @@ footer {
 
 <div id="wrapper">
     <div id="sidebar-wrapper">
-        <div class="sidebar-heading">INVENTORI</div>
+        <div class="sidebar-heading">INVENTARIS</div>
         <div class="list-group list-group-flush">
 
             <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action 

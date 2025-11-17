@@ -32,9 +32,15 @@
                         <input type="number" name="jumlah" class="form-control" min="1" required placeholder="Jumlah barang">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Kondisi</label>
-                        <input type="text" name="kondisi" class="form-control" placeholder="Contoh: Baik/Rusak">
-                    </div>
+    <label class="form-label">Kondisi</label>
+    <select name="kondisi" class="form-select" required>
+        <option value="">-- Pilih Kondisi --</option>
+        <option value="Baik" {{ old('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
+        <option value="Rusak" {{ old('kondisi') == 'Rusak' ? 'selected' : '' }}>Rusak</option>
+
+    </select>
+</div>
+
                 </div>
 
                 <div class="row">
@@ -52,7 +58,7 @@
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select">
                         <option value="Dipinjam">Dipinjam</option>
-                        <option value="Dikembalikan">Dikembalikan</option>
+                        
                     </select>
                 </div>
 

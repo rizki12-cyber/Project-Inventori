@@ -127,17 +127,16 @@
         </div>
 
         <div class="mb-3" id="jurusanField" style="display:none;">
-            <label>Jurusan</label>
-            <select name="jurusan" class="form-select">
-                <option value="">-- Pilih Jurusan --</option>
-                <option value="TKR">TKR</option>
-                <option value="TSM">TSM</option>
-                <option value="PPLG">PPLG</option>
-                <option value="TKJ">TKJ</option>
-                <option value="AKL">AKL</option>
-                <option value="BDP">BDP</option>
-            </select>
-        </div>
+    <label>Jurusan</label>
+    <select name="jurusan" class="form-select">
+        <option value="">-- Pilih Jurusan --</option>
+        @foreach($konsentrasiKeahlians as $jurusan)
+            <option value="{{ $jurusan->id }}">{{ $jurusan->nama_konsentrasi }}</option>
+        @endforeach
+    </select>
+</div>
+
+
 
         <div class="d-flex justify-content-between mt-4">
             <a href="{{ route('admin.datauser.index') }}" class="btn btn-secondary">

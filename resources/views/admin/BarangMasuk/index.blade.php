@@ -6,6 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container my-4">
+
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3>Data Barang Masuk</h3>
@@ -16,6 +17,7 @@
 
     <div class="card shadow-sm border-0">
         <div class="card-body p-3">
+
             <div class="table-responsive">
                 <table class="table table-hover align-middle text-center">
                     <thead class="table-light">
@@ -25,9 +27,10 @@
                             <th>Supplier</th>
                             <th>Tanggal Masuk</th>
                             <th>Jumlah</th>
-                            <th style="width:120px;">Aksi</th>
+                            <th style="width:140px;">Aksi</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @forelse($barangMasuk as $index => $bm)
                         <tr>
@@ -37,31 +40,44 @@
                             <td>{{ \Carbon\Carbon::parse($bm->tanggal_masuk)->format('d M Y') }}</td>
                             <td>{{ $bm->jumlah }}</td>
                             <td>
-                                <form action="{{ route('admin.barangmasuk.destroy', $bm->id) }}" method="POST" class="d-inline form-delete">
+
+                                <!-- Edit -->
+                                <a href="{{ route('admin.barangmasuk.edit', $bm->id) }}" 
+                                   class="btn btn-primary btn-sm me-1">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <!-- Delete -->
+                                <form action="{{ route('admin.barangmasuk.destroy', $bm->id) }}" 
+                                      method="POST" 
+                                      class="d-inline form-delete">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" class="btn btn-danger btn-sm btn-delete">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
+
                             </td>
                         </tr>
                         @empty
                         <tr>
                             <td colspan="6" class="text-center text-muted py-3">
-                                <i class="bi bi-inbox" style="font-size:1.5rem;"></i> <br>
+                                <i class="bi bi-inbox" style="font-size:1.5rem;"></i><br>
                                 Belum ada data barang masuk
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
 
-            {{-- Jika menggunakan pagination --}}
+            {{-- Pagination opsional --}}
             {{-- <div class="mt-3 d-flex justify-content-end">
                 {{ $barangMasuk->links() }}
             </div> --}}
+
         </div>
     </div>
 </div>
@@ -70,6 +86,7 @@
 document.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', function() {
         const form = this.closest('.form-delete');
+
         Swal.fire({
             title: 'Yakin ingin menghapus?',
             text: "Data yang dihapus tidak bisa dikembalikan!",
@@ -80,14 +97,14 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
             confirmButtonText: 'Ya, hapus!',
             cancelButtonText: 'Batal'
         }).then((result) => {
-            if(result.isConfirmed){
+            if (result.isConfirmed) {
                 form.submit();
             }
         });
     });
 });
 
-// Optional: Notifikasi sukses
+// Notifikasi sukses
 @if(session('success'))
 Swal.fire({
     icon: 'success',
@@ -98,4 +115,5 @@ Swal.fire({
 });
 @endif
 </script>
+
 @endsection

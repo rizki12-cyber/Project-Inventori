@@ -72,6 +72,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'show'    => 'admin.barangmasuk.show',
     ]);
 
+    Route::get('/admin/barangmasuk/{id}/edit', [BarangMasukController::class, 'edit'])->name('admin.barangmasuk.edit');
+    Route::put('/admin/barangmasuk/{id}', [BarangMasukController::class, 'update'])->name('admin.barangmasuk.update');
+
+
     // 🚪 Barang Keluar
     Route::resource('barang-keluar', BarangKeluarController::class)->names([
         'index'   => 'admin.barangkeluar.index',
@@ -82,6 +86,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'destroy' => 'admin.barangkeluar.destroy',
         'show'    => 'admin.barangkeluar.show',
     ]);
+
+    Route::get('/admin/barang/{barang}/detail', [BarangController::class, 'show'])->name('admin.barang.show');
+    Route::get('/kabeng/barang/{barang}/detail', [BarangController::class, 'show'])->name('kabeng.barang.show');
+
+    // Barang Keluar
+Route::get('/admin/barangkeluar/{id}/edit', [BarangKeluarController::class, 'edit'])->name('admin.barangkeluar.edit');
+Route::put('/admin/barangkeluar/{id}', [BarangKeluarController::class, 'update'])->name('admin.barangkeluar.update');
+
 
     // 📊 Laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('admin.laporan.index');
@@ -123,6 +135,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         'update'  => 'admin.peminjaman.update',
         'destroy' => 'admin.peminjaman.destroy',
     ]);
+
+Route::patch('admin/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('admin.peminjaman.kembalikan');
+
 
     // 🎓 Program Keahlian
     Route::resource('programkeahlian', ProgramKeahlianController::class)->names([

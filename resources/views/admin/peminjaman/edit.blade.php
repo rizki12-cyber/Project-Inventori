@@ -55,7 +55,6 @@
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select" required>
                         <option value="Dipinjam" {{ $peminjaman->status == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
-                        <option value="Dikembalikan" {{ $peminjaman->status == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
                     </select>
                 </div>
 

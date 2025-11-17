@@ -108,8 +108,14 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Kode Barang</label>
-                    <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}" required>
+                    <input type="text" 
+                        name="kode_barang" 
+                        class="form-control" 
+                        placeholder="Contoh : K002" 
+                        value="{{ old('kode_barang') }}" 
+                        required>
                 </div>
+
 
                 <div class="col-md-6">
                     <label class="form-label">Nama Barang</label>

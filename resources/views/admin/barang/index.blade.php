@@ -93,66 +93,63 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
         <div class="table-responsive">
             <table class="table align-middle" id="barangTable">
                 <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Foto</th>
-                        <th>Nama</th>
-                        <th>Kategori</th>
-                        <th>Spesifikasi</th>
-                        <th>Jumlah</th>
-                        <th>Kondisi</th>
-                        <th>Lokasi</th>
-                        <th>Tgl Pembelian</th>
-                        <th>Sumber Dana</th>
-                        <th>Tgl Penghapusan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($barang as $index => $b)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>
-                            @if($b->foto)
-                                <img src="{{ asset('storage/foto_barang/' . $b->foto) }}" class="foto-thumb" alt="Foto">
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </td>
-                        <td>{{ $b->nama_barang }}</td>
-                        <td>{{ $b->kategori }}</td>
-                        <td>{{ $b->spesifikasi ?? '-' }}</td>
-                        <td>{{ $b->jumlah }}</td>
-                        <td>
-                            @php
-                                $badgeClass = match($b->kondisi) {
-                                    'Baik' => 'bg-success',
-                                    'Rusak' => 'bg-danger',
-                                    default => 'bg-secondary'
-                                };
-                            @endphp
-                            <span class="badge {{ $badgeClass }}">{{ $b->kondisi }}</span>
-                        </td>
-                        <td>{{ $b->lokasi }}</td>
-                        <td>{{ $b->tanggal_pembelian ? \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') : '-' }}</td>
-                        <td>{{ $b->sumber_dana ?? '-' }}</td>
-                        <td>{{ $b->tanggal_penghapusan ? \Carbon\Carbon::parse($b->tanggal_penghapusan)->format('d M Y') : '-' }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ route('admin.barang.edit', $b->id) }}" class="btn btn-sm btn-warning" title="Edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <form action="{{ route('admin.barang.destroy', $b->id) }}" method="POST" class="d-inline form-delete">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
+    <tr>
+        <th>No</th>
+        <th>Foto</th>
+        <th>Nama</th>
+        <th>Tgl Pembelian</th>
+        <th>Tgl Penghapusan</th>
+        <th>Aksi</th>
+    </tr>
+</thead>
+
+                @forelse($barang as $index => $b)
+<tr>
+    <td>{{ $index + 1 }}</td>
+
+    <td>
+        @if($b->foto)
+            <img src="{{ asset('storage/foto_barang/' . $b->foto) }}" class="foto-thumb" alt="Foto">
+        @else
+            <span class="text-muted">-</span>
+        @endif
+    </td>
+
+    <td>{{ $b->nama_barang }}</td>
+
+    <td>{{ $b->tanggal_pembelian ? \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') : '-' }}</td>
+
+    <td>{{ $b->tanggal_penghapusan ? \Carbon\Carbon::parse($b->tanggal_penghapusan)->format('d M Y') : '-' }}</td>
+
+    <td>
+        <div class="d-flex justify-content-center gap-2">
+
+            <!-- DETAIL -->
+            <a href="{{ route('admin.barang.show', $b->id) }}" 
+               class="btn btn-sm btn-info" title="Detail"
+               style="background:#0ea5e9;border:none;color:white;">
+                <i class="bi bi-eye"></i>
+            </a>
+
+            <!-- EDIT -->
+            <a href="{{ route('admin.barang.edit', $b->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+
+            <!-- DELETE -->
+            <form action="{{ route('admin.barang.destroy', $b->id) }}" method="POST" class="d-inline form-delete">
+                @csrf
+                @method('DELETE')
+                <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+
+        </div>
+    </td>
+</tr>
+@empty
+
                     <tr>
                         <td colspan="12" class="empty-state">
                             <i class="bi bi-inbox"></i>
