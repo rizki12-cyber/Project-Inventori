@@ -3,46 +3,119 @@
 @section('title', 'Tambah Konsentrasi Keahlian')
 
 @section('content')
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0">Tambah Konsentrasi Keahlian</h3>
-        <!--<a href="{{ route('admin.konsentrasi.index') }}" class="btn btn-secondary btn-sm">Kembali</a> !-->
+<div class="container-fluid py-4">
+
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card header-biru-tua shadow-lg border-0">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h2 class="text-white mb-0">
+                                <i class="fas fa-plus-circle me-3"></i>
+                                Tambah Konsentrasi Keahlian
+                            </h2>
+                            <p class="text-white mb-0 mt-2 opacity-75">
+                                Tambahkan konsentrasi keahlian baru ke dalam sistem
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    @if ($errors->any())
-        <div class="alert alert-danger mb-3">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    <!-- Card Form -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 rounded-3">
+                
+                <div class="card-header bg-white py-4 border-bottom">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-edit me-2"></i>
+                        Form Tambah Konsentrasi Keahlian
+                    </h5>
+                </div>
 
-    <form action="{{ route('admin.konsentrasi.store') }}" method="POST" class="card p-4 shadow-sm">
-        @csrf
+                <div class="card-body px-4 py-4">
 
-        <div class="mb-3">
-            <label for="program_keahlian_id" class="form-label">Program Keahlian</label>
-            <select name="program_keahlian_id" id="program_keahlian_id" class="form-select" required>
-                <option value="">-- Pilih Program Keahlian --</option>
-                @foreach($programs as $program)
-                    <option value="{{ $program->id }}" {{ old('program_keahlian_id') == $program->id ? 'selected' : '' }}>
-                        {{ $program->nama_program }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+                    <!-- ERROR Validation -->
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
-        <div class="mb-3">
-            <label for="nama_konsentrasi" class="form-label">Nama Konsentrasi</label>
-            <input type="text" id="nama_konsentrasi" name="nama_konsentrasi" class="form-control" value="{{ old('nama_konsentrasi') }}" required>
-        </div>
+                    <form action="{{ route('admin.konsentrasi.store') }}" method="POST">
+                        @csrf
 
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-success">Simpan</button>
-            <a href="{{ route('admin.konsentrasi.index') }}" class="btn btn-outline-secondary">Batal</a>
+                        <!-- PROGRAM KEAHLIAN Dropdown -->
+                        <div class="mb-4">
+                            <label for="program_keahlian_id" class="form-label fw-semibold">
+                                Program Keahlian
+                            </label>
+                            <select name="program_keahlian_id" 
+                                    id="program_keahlian_id" 
+                                    class="form-select form-select-lg rounded-3"
+                                    required
+                                    style="height: 55px;">
+                                <option value="">-- Pilih Program Keahlian --</option>
+                                @foreach($programs as $program)
+                                    <option value="{{ $program->id }}" 
+                                        {{ old('program_keahlian_id') == $program->id ? 'selected' : '' }}>
+                                        {{ $program->nama_program }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- NAMA KONSENTRASI -->
+                        <div class="mb-4">
+                            <label for="nama_konsentrasi" class="form-label fw-semibold">
+                                Nama Konsentrasi Keahlian
+                            </label>
+                            <input type="text"
+                                   id="nama_konsentrasi"
+                                   name="nama_konsentrasi"
+                                   class="form-control form-control-lg rounded-3"
+                                   placeholder="Masukkan nama konsentrasi keahlian..."
+                                   value="{{ old('nama_konsentrasi') }}"
+                                   required
+                                   style="height: 55px;">
+                        </div>
+
+                        <!-- BUTTON -->
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4">
+                            <i class="fas fa-save me-2"></i> Simpan
+                        </button>
+
+                        <a href="{{ route('admin.konsentrasi.index') }}" 
+                           class="btn btn-secondary btn-lg rounded-pill px-4">
+                            <i class="fas fa-arrow-left me-2"></i> Kembali
+                        </a>
+
+                    </form>
+
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
+
 </div>
+
+<!-- HEADER STYLE -->
+<style>
+.header-biru-tua {
+    background: #1e3a8a !important;
+}
+.header-biru-tua * {
+    color: white !important;
+}
+</style>
+
 @endsection
