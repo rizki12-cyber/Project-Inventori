@@ -93,10 +93,18 @@ Route::get('/admin/barangkeluar/{id}/edit', [BarangKeluarController::class, 'edi
 Route::put('/admin/barangkeluar/{id}', [BarangKeluarController::class, 'update'])->name('admin.barangkeluar.update');
 
 
-    // 📊 Laporan
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('admin.laporan.index');
-    Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('admin.laporan.export.pdf');
-    Route::get('/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('admin.laporan.export.excel');
+   // 📊 Laporan Utama
+Route::get('/laporan', [LaporanController::class, 'index'])
+->name('admin.laporan.index');
+
+// 📤 Export PDF (opsional untuk barang saja)
+Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])
+->name('admin.laporan.export.pdf');
+
+// 📥 Export Excel untuk semua jenis laporan
+Route::get('/laporan/export/{jenis}', [LaporanController::class, 'exportExcel'])
+->name('admin.laporan.export.excel');
+
 
     // 👤 Profil Admin
     Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');

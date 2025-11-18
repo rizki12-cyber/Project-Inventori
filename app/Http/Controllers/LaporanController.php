@@ -4,54 +4,92 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Barang;
+use App\Models\Supplier;
+use App\Models\BarangMasuk;
+use App\Models\BarangKeluar;
+use App\Models\Peminjaman;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\BarangExport;
+use App\Exports\DynamicExport;
 
 class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        // Filter laporan berdasarkan bulan, tahun, jurusan, dan kondisi
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
+        $jenis = $request->jenis ?? 'barang';
+
+        // Filter umum
+        $bulan   = $request->bulan;
+        $tahun   = $request->tahun;
         $jurusan = $request->jurusan;
         $kondisi = $request->kondisi;
 
-        $barang = Barang::with('user')
-            ->when($bulan, fn($q) => $q->whereMonth('tanggal_pembelian', $bulan))
-            ->when($tahun, fn($q) => $q->whereYear('tanggal_pembelian', $tahun))
-            ->when($jurusan, fn($q) => $q->whereHas('user', fn($u) => $u->where('jurusan', $jurusan)))
-            ->when($kondisi, fn($q) => $q->where('kondisi', $kondisi))
-            ->latest()
-            ->get();
+        // Default jurusanList
+        $jurusanList = [];
 
-        $jurusanList = ['TKR', 'TSM', 'PPLG', 'TKJ', 'AKL', 'BDP'];
+        switch ($jenis) {
 
-        return view('admin.laporan.index', compact('barang', 'bulan', 'tahun', 'jurusan', 'kondisi', 'jurusanList'));
+            case 'supplier':
+                $data = Supplier::latest()->get();
+                break;
+
+            case 'barang_masuk':
+                $data = BarangMasuk::with(['barang','supplier'])
+                    ->when($bulan, fn($q) => $q->whereMonth('tanggal_masuk', $bulan))
+                    ->when($tahun, fn($q) => $q->whereYear('tanggal_masuk', $tahun))
+                    ->latest()->get();
+                break;
+
+            case 'barang_keluar':
+                $data = BarangKeluar::with('barang')
+                    ->when($bulan, fn($q) => $q->whereMonth('tanggal_keluar', $bulan))
+                    ->when($tahun, fn($q) => $q->whereYear('tanggal_keluar', $tahun))
+                    ->latest()->get();
+                break;
+
+            case 'peminjaman':
+                $data = Peminjaman::with(['barang','user'])
+                    ->when($bulan, fn($q) => $q->whereMonth('tanggal_pinjam', $bulan))
+                    ->when($tahun, fn($q) => $q->whereYear('tanggal_pinjam', $tahun))
+                    ->latest()->get();
+                break;
+
+            default: // 📌 barang
+                $data = Barang::with('user')
+                    ->when($bulan, fn($q) => $q->whereMonth('tanggal_pembelian', $bulan))
+                    ->when($tahun, fn($q) => $q->whereYear('tanggal_pembelian', $tahun))
+                    ->when($jurusan, fn($q) => $q->whereHas('user', fn($u) => $u->where('jurusan', $jurusan)))
+                    ->when($kondisi, fn($q) => $q->where('kondisi', $kondisi))
+                    ->latest()->get();
+
+                // 📌 hanya barang yang butuh jurusanList
+                $jurusanList = Barang::with('user')
+                    ->get()
+                    ->pluck('user.jurusan')
+                    ->filter()
+                    ->unique()
+                    ->sort()
+                    ->values();
+                break;
+        }
+
+        return view('admin.laporan.index', [
+            'jenis'        => $jenis,
+            'data'         => $data,
+            'barang'       => $data,      // untuk tampilan lama yang masih pakai $barang
+            'jurusanList'  => $jurusanList,
+        ]);
     }
 
     public function exportPdf(Request $request)
     {
-        $barang = $this->getFilteredData($request);
-        $pdf = Pdf::loadView('admin.laporan.pdf', compact('barang'))->setPaper('a4', 'landscape');
+        $barang = Barang::with('user')->get();
+        $pdf = Pdf::loadView('admin.laporan.pdf', compact('barang'));
         return $pdf->download('laporan-barang.pdf');
     }
 
-    public function exportExcel(Request $request)
+    public function exportExcel($jenis)
     {
-        return Excel::download(new BarangExport($request), 'laporan-barang.xlsx');
-    }
-
-    // Fungsi bantu untuk filter data
-    private function getFilteredData($request)
-    {
-        return Barang::with('user')
-            ->when($request->bulan, fn($q) => $q->whereMonth('tanggal_pembelian', $request->bulan))
-            ->when($request->tahun, fn($q) => $q->whereYear('tanggal_pembelian', $request->tahun))
-            ->when($request->jurusan, fn($q) => $q->whereHas('user', fn($u) => $u->where('jurusan', $request->jurusan)))
-            ->when($request->kondisi, fn($q) => $q->where('kondisi', $request->kondisi))
-            ->latest()
-            ->get();
+        return Excel::download(new DynamicExport($jenis), "laporan-{$jenis}.xlsx");
     }
 }
