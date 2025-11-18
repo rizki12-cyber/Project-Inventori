@@ -106,4 +106,11 @@ class PeminjamanController extends Controller
     {
         return Excel::download(new PeminjamanExport, 'peminjaman.xlsx');
     }
+
+    public function create()
+{
+    $barangs = Barang::all();
+    return view('admin.peminjaman.create', compact('barangs'));
+}
+
 }
