@@ -68,6 +68,11 @@
                     <textarea name="spesifikasi" class="form-control" rows="3" placeholder="Detail barang..."></textarea>
                 </div>
 
+                <div class="col-md-12">
+                    <label class="form-label">Keterangan</label>
+                    <textarea name="keterangan" class="form-control" rows="3" placeholder="Opsional: Catatan tambahan tentang barang..."></textarea>
+                </div>
+                
                 <div class="col-md-6">
                     <label class="form-label">Jumlah</label>
                     <input type="number" name="jumlah" class="form-control" required>

@@ -30,10 +30,15 @@ class BarangController extends Controller
 
     // Kabeng lihat barang sesuai jurusan/konsentrasi
     if ($user->role === 'kabeng') {
-    $barang = Barang::where('user_id', $user->id)->latest()->get();
-    return view('kabeng.barang.index', compact('barang'));
-}
-
+        $barang = Barang::where(function($query) use ($user) {
+            $query->where('user_id', $user->id) // Barang kabeng sendiri
+                  ->orWhereHas('user', function($q) {
+                      $q->where('role', 'wakasek'); // Barang input wakasek
+                  });
+        })->latest()->get();
+    
+        return view('kabeng.barang.index', compact('barang'));
+    }
 
     abort(403, "Role tidak dikenali");
 }

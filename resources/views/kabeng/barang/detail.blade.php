@@ -33,6 +33,7 @@
                     <tr><th>Sumber Dana</th><td>{{ $barang->sumber_dana ?? '-' }}</td></tr>
                     <tr><th>Spesifikasi</th><td>{{ $barang->spesifikasi ?? '-' }}</td></tr>
                     <tr><th>Keterangan</th><td>{{ $barang->keterangan ?? '-' }}</td></tr>
+                    <tr><th>Pemilik</th><td>{{ $barang->user->role === 'wakasek' ? $barang->user->name . ' (Wakasek)' : 'Anda sendiri' }}</td></tr>
                 </table>
             </div>
 
