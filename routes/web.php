@@ -73,7 +73,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     ]);
 
     Route::get('/admin/barangmasuk/{id}/edit', [BarangMasukController::class, 'edit'])->name('admin.barangmasuk.edit');
-    Route::put('/admin/barangmasuk/{id}', [BarangMasukController::class, 'update'])->name('admin.barangmasuk.update');
 
 
     // 🚪 Barang Keluar
@@ -88,7 +87,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     ]);
 
     Route::get('/admin/barang/{barang}/detail', [BarangController::class, 'show'])->name('admin.barang.show');
-    Route::get('/kabeng/barang/{barang}/detail', [BarangController::class, 'show'])->name('kabeng.barang.show');
 
     // Barang Keluar
 Route::get('/admin/barangkeluar/{id}/edit', [BarangKeluarController::class, 'edit'])->name('admin.barangkeluar.edit');
@@ -189,6 +187,12 @@ Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function (
         Route::get('/wakasek/profile', [WakasekProfileController::class, 'index'])->name('wakasek.profile');
         Route::put('/wakasek/profile/update', [WakasekProfileController::class, 'update'])->name('wakasek.profile.update');
 });
+// ==========================
+// 🔹 ADMIN AREA
+// ==========================
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    // route admin di sini
+});
 
 
 // ==========================
@@ -197,17 +201,17 @@ Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function (
 Route::middleware(['auth', 'role:kabeng'])->prefix('kabeng')->group(function () {
     Route::get('/dashboard', fn() => view('kabeng.dashboard'))->name('kabeng.dashboard');
 
-    // 📦 CRUD Barang (Kabeng hanya bisa kelola barang miliknya)
     Route::get('/barang', [BarangController::class, 'index'])->name('kabeng.barang.index');
     Route::get('/barang/create', [BarangController::class, 'create'])->name('kabeng.barang.create');
     Route::post('/barang', [BarangController::class, 'store'])->name('kabeng.barang.store');
 
-    // ✏️ Edit barang (hanya jika milik sendiri)
     Route::get('/barang/{barang}/edit', [BarangController::class, 'edit'])->name('kabeng.barang.edit');
     Route::put('/barang/{barang}', [BarangController::class, 'update'])->name('kabeng.barang.update');
 
-    // ❌ Hapus barang (hanya jika milik sendiri)
     Route::delete('/barang/{barang}', [BarangController::class, 'destroy'])->name('kabeng.barang.destroy');
+
+    Route::get('/barang/{barang}/detail', [BarangController::class, 'show'])->name('kabeng.barang.show');
 });
+
 
 

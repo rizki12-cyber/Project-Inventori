@@ -30,10 +30,10 @@ class BarangController extends Controller
 
     // Kabeng lihat barang sesuai jurusan/konsentrasi
     if ($user->role === 'kabeng') {
-        // Misal $user->jurusan menyimpan id konsentrasi
-        $barang = Barang::where('jurusan', $user->jurusan)->latest()->get();
-        return view('kabeng.barang.index', compact('barang'));
-    }
+    $barang = Barang::where('user_id', $user->id)->latest()->get();
+    return view('kabeng.barang.index', compact('barang'));
+}
+
 
     abort(403, "Role tidak dikenali");
 }
@@ -59,47 +59,58 @@ class BarangController extends Controller
      * Simpan barang baru.
      */
     public function store(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if (!in_array($user->role, ['admin', 'kabeng'])) {
-            abort(403, 'Anda tidak memiliki izin menambahkan barang.');
-        }
-
-        $validated = $request->validate([
-            'kode_barang' => 'required|unique:barang',
-            'nama_barang' => 'required',
-            'kategori' => 'required',
-            'jumlah' => 'required|integer|min:0',
-            'kondisi' => 'required',
-            'lokasi' => 'required',
-            'tanggal_pembelian' => 'required|date',
-            'keterangan' => 'nullable|string',
-            'spesifikasi' => 'nullable|string',
-            'sumber_dana' => 'nullable|string',
-            'tanggal_penghapusan' => 'nullable|date',
-            'foto' => 'nullable|image|max:2048',
-        ]);
-
-        // Simpan user_id
-        $validated['user_id'] = $user->role === 'kabeng' ? $user->id : ($request->user_id ?? $user->id);
-
-        // Upload foto
-        if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            // 🚀 FIX: simpan dengan disk 'public' tanpa menulis public/
-            $file->storeAs('foto_barang', $filename, 'public');
-
-            $validated['foto'] = $filename;
-        }
-
-        Barang::create($validated);
-
-        $route = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
-        return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
+    if (!in_array($user->role, ['admin', 'kabeng'])) {
+        abort(403, 'Anda tidak memiliki izin menambahkan barang.');
     }
+
+    $validated = $request->validate([
+        'kode_barang' => 'required|unique:barang',
+        'nama_barang' => 'required',
+        'kategori' => 'required',
+        'jumlah' => 'required|integer|min:0',
+        'kondisi' => 'required',
+        'lokasi' => 'required',
+        'tanggal_pembelian' => 'required|date',
+        'keterangan' => 'nullable|string',
+        'spesifikasi' => 'nullable|string',
+        'sumber_dana' => 'nullable|string',
+        'tanggal_penghapusan' => 'nullable|date',
+        'foto' => 'nullable|image|max:2048',
+    ]);
+
+    // User ID
+    $validated['user_id'] = $user->id;
+
+    // Inject jurusan otomatis untuk kabeng
+    if ($user->role === 'kabeng') {
+        $validated['jurusan'] = $user->programkeahlian?->nama_program;
+    }
+
+    // Admin boleh pilih jurusan manual
+    if ($user->role === 'admin') {
+        $validated['jurusan'] = $request->jurusan;
+    }
+
+    // Upload foto
+    if ($request->hasFile('foto')) {
+        $file = $request->file('foto');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->storeAs('foto_barang', $filename, 'public');
+        $validated['foto'] = $filename;
+    }
+
+    Barang::create($validated);
+
+    $route = $user->role === 'kabeng' 
+        ? 'kabeng.barang.index' 
+        : 'admin.barang.index';
+
+    return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
+}
+
 
     /**
      * Form edit barang.
@@ -193,20 +204,15 @@ class BarangController extends Controller
         abort(403, 'Anda tidak memiliki izin menghapus barang ini.');
     }
 
-    public function show(Barang $barang)
+public function show(Barang $barang)
 {
-    $user = Auth::user();
+    $role = Auth::user()->role;
 
-    if ($user->role === 'admin') {
-        return view('admin.barang.detail', compact('barang'));
-    }
-
-    if ($user->role === 'kabeng' || $user->role === 'wakasek') {
-        return view($user->role.'.barang.detail', compact('barang'));
-    }
-
-    abort(403);
-}
-
+    return match($role) {
+        'admin'  => view('admin.barang.detail', compact('barang')),
+        'kabeng' => view('kabeng.barang.detail', compact('barang')),
+        default  => abort(403),
+    };
+}   
 }
     

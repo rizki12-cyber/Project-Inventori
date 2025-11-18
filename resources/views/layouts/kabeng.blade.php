@@ -179,7 +179,7 @@ footer {
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">KABENG</div>
         <div class="jurusan-text">
-            {{ Auth::user()->jurusan ?? 'Jurusan Tidak Diketahui' }}
+    {{ Auth::user()->konsentrasi?->nama_konsentrasi ?? 'Konsentrasi Tidak Diketahui' }}
         </div>
 
         <div class="list-group list-group-flush">
