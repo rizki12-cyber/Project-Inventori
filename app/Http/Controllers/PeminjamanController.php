@@ -11,18 +11,29 @@ use App\Exports\PeminjamanExport;
 class PeminjamanController extends Controller
 {
     // Tampilkan daftar peminjaman
-    public function index()
-    {
-        $peminjamans = Peminjaman::with('barang')->latest()->paginate(10);
-        return view('admin.peminjaman.index', compact('peminjamans'));
-    }
+    public function index(Request $request)
+{
+    // ambil input search + filter
+    $search = $request->search;
+    $status = $request->status;
 
-    // Form tambah peminjaman
-    public function create()
-    {
-        $barangs = Barang::all();
-        return view('admin.peminjaman.create', compact('barangs'));
-    }
+    $peminjamans = Peminjaman::with('barang')
+        ->when($search, function ($q) use ($search) {
+            $q->where('nama_peminjam', 'like', "%$search%")
+              ->orWhereHas('barang', function ($b) use ($search) {
+                  $b->where('nama_barang', 'like', "%$search%");
+              });
+        })
+        ->when($status, function ($q) use ($status) {
+            $q->where('status', $status);
+        })
+        ->latest()
+        ->paginate(10)
+        ->withQueryString(); // biar pagination ga reset filter/search
+
+    return view('admin.peminjaman.index', compact('peminjamans', 'search', 'status'));
+}
+
 
     // Simpan data peminjaman baru
     public function store(Request $request)
