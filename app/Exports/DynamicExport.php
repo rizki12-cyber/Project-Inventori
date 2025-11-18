@@ -7,9 +7,10 @@ use App\Models\Supplier;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use App\Models\Peminjaman;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class DynamicExport implements FromCollection
+class DynamicExport implements FromArray, WithHeadings
 {
     protected $jenis;
 
@@ -18,53 +19,91 @@ class DynamicExport implements FromCollection
         $this->jenis = $jenis;
     }
 
-    public function collection()
+    public function headings(): array
     {
         switch ($this->jenis) {
+
             case 'supplier':
-                return Supplier::select('id', 'nama', 'telepon', 'alamat', 'created_at')->get();
+                return ['ID', 'Nama Supplier', 'Alamat', 'Telepon', 'Dibuat Pada'];
 
             case 'barang_masuk':
-                return BarangMasuk::with('supplier', 'barang')
-                    ->get()
-                    ->map(function ($b) {
-                        return [
-                            'id' => $b->id,
-                            'barang' => $b->barang->nama_barang,
-                            'supplier' => $b->supplier->nama,
-                            'jumlah' => $b->jumlah,
-                            'tanggal' => $b->tanggal,
-                        ];
-                    });
+                return ['ID', 'Nama Barang', 'Supplier', 'Jumlah', 'Tanggal Masuk'];
 
             case 'barang_keluar':
-                return BarangKeluar::with('barang')
-                    ->get()
-                    ->map(function ($b) {
-                        return [
-                            'id' => $b->id,
-                            'barang' => $b->barang->nama_barang,
-                            'jumlah' => $b->jumlah,
-                            'tanggal' => $b->tanggal,
-                        ];
-                    });
+                return ['ID', 'Nama Barang', 'Jumlah', 'Tanggal Keluar'];
 
             case 'peminjaman':
-                return Peminjaman::with('barang', 'user')
-                    ->get()
-                    ->map(function ($p) {
-                        return [
-                            'id' => $p->id,
-                            'barang' => $p->barang->nama_barang,
-                            'peminjam' => $p->user->name,
-                            'tgl_pinjam' => $p->tanggal_pinjam,
-                            'tgl_kembali' => $p->tanggal_kembali,
-                            'status' => $p->status,
-                        ];
-                    });
+                return ['ID', 'Nama Barang', 'Peminjam', 'Tanggal Pinjam', 'Tanggal Kembali', 'Status'];
 
-            default:
-                return Barang::select('kode_barang','nama_barang','kategori','jumlah','kondisi','lokasi','tanggal_pembelian')->get();
+            default: // barang
+                return ['Kode Barang','Nama Barang','Kategori','Jumlah','Kondisi','Lokasi','Tanggal Pembelian'];
+        }
+    }
+
+    public function array(): array
+    {
+        switch ($this->jenis) {
+
+            case 'supplier':
+                return Supplier::all()->map(function ($s) {
+                    return [
+                        $s->id,
+                        $s->nama_supplier,
+                        $s->alamat,
+                        $s->telepon,
+                        $s->created_at,
+                    ];
+                })->toArray();
+
+
+            case 'barang_masuk':
+                return BarangMasuk::with('barang','supplier')->get()->map(function ($b) {
+                    return [
+                        $b->id,
+                        $b->barang->nama_barang ?? '-',
+                        $b->supplier->nama_supplier ?? '-',
+                        $b->jumlah,
+                        $b->tanggal_masuk,
+                    ];
+                })->toArray();
+
+
+            case 'barang_keluar':
+                return BarangKeluar::with('barang')->get()->map(function ($b) {
+                    return [
+                        $b->id,
+                        $b->barang->nama_barang ?? '-',
+                        $b->jumlah,
+                        $b->tanggal_keluar,
+                    ];
+                })->toArray();
+
+
+            case 'peminjaman':
+                return Peminjaman::with('barang','user')->get()->map(function ($p) {
+                    return [
+                        $p->id,
+                        $p->barang->nama_barang ?? '-',
+                        $p->user->name ?? '-',
+                        $p->tanggal_pinjam,
+                        $p->tanggal_kembali,
+                        $p->status,
+                    ];
+                })->toArray();
+
+
+            default: // barang
+                return Barang::all()->map(function ($b) {
+                    return [
+                        $b->kode_barang,
+                        $b->nama_barang,
+                        $b->kategori,
+                        $b->jumlah,
+                        $b->kondisi,
+                        $b->lokasi,
+                        $b->tanggal_pembelian,
+                    ];
+                })->toArray();
         }
     }
 }

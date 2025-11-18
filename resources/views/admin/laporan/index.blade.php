@@ -108,7 +108,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Kode</th>
-                                <th>Nama</th>
+                                <th>Nama Barang</th>
                                 <th>Kategori</th>
                                 <th>Jumlah</th>
                                 <th>Kondisi</th>
@@ -172,8 +172,10 @@
                                     <td>{{ $d->jumlah }}</td>
                                     <td>{{ $d->kondisi }}</td>
                                     <td>{{ $d->lokasi }}</td>
-                                    <td>{{ $d->tanggal_pembelian }}</td>
-                                    <td>{{ $d->user->jurusan ?? '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($d->tanggal_pembelian)->format('d/m/Y') }}</td>
+
+                                    <td>{{ $d->user->konsentrasi->nama_konsentrasi ?? '-' }}</td>
+
                                 </tr>
 
                             @elseif($jenis == 'supplier')

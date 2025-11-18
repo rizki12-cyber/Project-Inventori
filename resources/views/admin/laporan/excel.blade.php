@@ -2,21 +2,54 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Export Laporan</title>
+    <title>Laporan {{ ucfirst($jenis) }}</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #f2f2f2;
+            font-weight: bold;
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: center;
+        }
+
+        table td {
+            border: 1px solid #999;
+            padding: 7px;
+            vertical-align: top;
+        }
+
+        /* Zebra strip */
+        tbody tr:nth-child(odd) {
+            background: #fafafa;
+        }
+    </style>
 </head>
 <body>
 
-    <h3 style="text-align:center; margin-bottom: 20px;">
-        Laporan {{ ucfirst($jenis) }}
-    </h3>
+    <h3>Laporan {{ ucfirst($jenis) }}</h3>
 
-    <table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse: collapse;">
+    <table>
 
-        {{-- ===========================
-            HEADINGS
-        ============================ --}}
         <thead>
-        <tr style="background:#eee; font-weight:bold;">
+        <tr>
 
             @if($jenis == 'barang')
                 <th>ID</th>
@@ -61,14 +94,11 @@
         </tr>
         </thead>
 
-        {{-- ===========================
-            BODY TABLE
-        ============================ --}}
+
         <tbody>
         @foreach ($data as $item)
             <tr>
 
-                {{-- BARANG --}}
                 @if($jenis == 'barang')
                     <td>{{ $item->id }}</td>
                     <td>{{ $item->kode_barang }}</td>
@@ -80,7 +110,6 @@
                     <td>{{ $item->tanggal_pembelian }}</td>
                     <td>{{ $item->user->jurusan ?? '-' }}</td>
 
-                {{-- SUPPLIER --}}
                 @elseif($jenis == 'supplier')
                     <td>{{ $item->id }}</td>
                     <td>{{ $item->nama_supplier }}</td>
@@ -88,7 +117,6 @@
                     <td>{{ $item->telepon }}</td>
                     <td>{{ $item->email }}</td>
 
-                {{-- BARANG MASUK --}}
                 @elseif($jenis == 'barang_masuk')
                     <td>{{ $item->id }}</td>
                     <td>{{ $item->barang->nama_barang ?? '-' }}</td>
@@ -96,14 +124,12 @@
                     <td>{{ $item->jumlah }}</td>
                     <td>{{ $item->tanggal_masuk }}</td>
 
-                {{-- BARANG KELUAR --}}
                 @elseif($jenis == 'barang_keluar')
                     <td>{{ $item->id }}</td>
                     <td>{{ $item->barang->nama_barang ?? '-' }}</td>
                     <td>{{ $item->jumlah }}</td>
                     <td>{{ $item->tanggal_keluar }}</td>
 
-                {{-- PEMINJAMAN --}}
                 @elseif($jenis == 'peminjaman')
                     <td>{{ $item->id }}</td>
                     <td>{{ $item->barang->nama_barang ?? '-' }}</td>

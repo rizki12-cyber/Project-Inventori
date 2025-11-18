@@ -15,11 +15,11 @@ class WakasekBarangController extends Controller
 
         // Admin & Wakasek bisa lihat semua barang
         if (in_array($user->role, ['admin', 'wakasek'])) {
-            $barang = Barang::latest()->get();
-        } else {
-            // Kabeng cuma lihat barang miliknya
-            $barang = Barang::where('user_id', $user->id)->latest()->get();
-        }
+    $barang = Barang::latest()->get();
+} else {
+    $barang = Barang::where('user_id', $user->id)->latest()->get();
+}
+
 
         return view('wakasek.barang.index', compact('barang'));
     }

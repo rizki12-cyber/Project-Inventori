@@ -65,7 +65,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Peminjam</th>
-                            <th>Barang</th>
+                            <th>Nama Barang</th>
                             <th>Jumlah</th>
                             <th>Tgl Pinjam</th>
                             <th>Tgl Kembali</th>
