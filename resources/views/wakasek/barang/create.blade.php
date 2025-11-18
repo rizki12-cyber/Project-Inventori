@@ -3,185 +3,161 @@
 @section('title', 'Tambah Barang')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
-    body {
-        background: linear-gradient(135deg, #e0e7ff, #f8fafc);
-        font-family: 'Poppins', sans-serif;
-        color: #1e293b;
-    }
+/* Basic body & animation */
+body {
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    font-family: 'Poppins', sans-serif;
+    color: #1e293b;
+}
 
-    /* Animasi */
-    .fadeInUp {
-        opacity: 0;
-        transform: translateY(30px);
-        animation: fadeInUp 0.8s ease-out forwards;
-    }
+.form-container {
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+/* Card */
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    background: #fff;
+    transition: 0.3s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
 
-    /* Card dengan efek glass */
-    .card {
-        border: none;
-        border-radius: 20px;
-        backdrop-filter: blur(12px);
-        background: rgba(255, 255, 255, 0.85);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-    }
+.page-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+}
 
-    .card-header {
-        border: none;
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: white;
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
-        text-align: center;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        font-size: 1.3rem;
-        padding: 1rem 1.25rem;
-        box-shadow: 0 4px 15px rgba(37,99,235,0.25);
-    }
+.form-label { font-weight: 600; color: #334155; }
+.form-control, .form-select, textarea {
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    padding: 10px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus, .form-select:focus, textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
 
-    /* Label & Input */
-    .form-label {
-        font-weight: 600;
-        color: #1e293b;
-        font-size: 0.95rem;
-    }
+.btn-success {
+    background: linear-gradient(90deg, #16a34a, #22c55e);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-weight: 600;
+}
+.btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(16,185,129,0.4); }
 
-    .form-control, .form-select, textarea {
-        border-radius: 12px;
-        border: 1px solid #d1d5db;
-        padding: 0.6rem 1rem;
-        font-size: 0.95rem;
-        transition: all 0.25s ease;
-        background-color: #ffffffcc;
-    }
+.btn-secondary {
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-weight: 600;
+}
 
-    .form-control:focus, .form-select:focus, textarea:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 0.25rem rgba(37,99,235,0.25);
-        outline: none;
-        background-color: #fff;
-    }
-
-    /* Tombol */
-    .btn {
-        border-radius: 12px;
-        font-weight: 600;
-        padding: 0.6rem 1.3rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-success {
-        background: linear-gradient(135deg, #10b981, #059669);
-        border: none;
-        color: white;
-    }
-    .btn-success:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 22px rgba(16,185,129,0.35);
-    }
-
-    .btn-secondary {
-        background: #64748b;
-        border: none;
-        color: white;
-    }
-    .btn-secondary:hover {
-        background: #475569;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 22px rgba(71,85,105,0.3);
-    }
-
-    /* Responsif */
-    @media (max-width: 576px) {
-        .btn {
-            width: 100%;
-        }
-    }
+.alert { border-radius: 10px; font-size: 0.9rem; }
 </style>
 
-<div class="container py-5 fadeInUp">
-    <div class="card mx-auto" style="max-width: 740px;">
-        <div class="card-header">
-            <i class="bi bi-plus-circle me-2"></i>Tambah Barang Baru
-        </div>
+<div class="container py-5 form-container">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="page-title"><i class="bi bi-plus-circle-dotted me-2"></i>Tambah Barang Baru</h2>
+    </div>
 
-        <div class="card-body p-4">
-            <form action="{{ route('wakasek.barang.store') }}" method="POST">
-                @csrf
+    <div class="card p-4">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <strong>Oops!</strong> Ada beberapa error:
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>• {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Kode Barang</label>
-                        <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}" required>
-                        @error('kode_barang')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nama Barang</label>
-                        <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}" required>
-                    </div>
+        <form action="{{ route('wakasek.barang.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Kode Barang</label>
+                    <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nama Barang</label>
+                    <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}" required>
                 </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Kategori</label>
-                        <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Jumlah</label>
-                        <input type="number" name="jumlah" min="1" class="form-control" value="{{ old('jumlah') }}" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Kondisi</label>
-                        <select name="kondisi" class="form-select" required>
-                            <option value="">-- Pilih --</option>
-                            <option value="Baik" {{ old('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
-                            <option value="Rusak" {{ old('kondisi') == 'Rusak' ? 'selected' : '' }}>Rusak</option>
-                            <option value="Hilang" {{ old('kondisi') == 'Hilang' ? 'selected' : '' }}>Hilang</option>
-                        </select>
-                    </div>
+                <div class="col-md-6">
+                    <label class="form-label">Kategori</label>
+                    <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Jumlah</label>
+                    <input type="number" name="jumlah" class="form-control" min="0" value="{{ old('jumlah') }}" required>
                 </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Lokasi</label>
-                        <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi') }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Tanggal Pembelian</label>
-                        <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian') }}" required>
-                    </div>
+                <div class="col-md-6">
+                    <label class="form-label">Kondisi</label>
+                    <select name="kondisi" class="form-select" required>
+                        <option value="">-- Pilih Kondisi --</option>
+                        <option value="Baik" {{ old('kondisi')=='Baik' ? 'selected' : '' }}>Baik</option>
+                        <option value="Rusak" {{ old('kondisi')=='Rusak' ? 'selected' : '' }}>Rusak</option>
+                        <option value="Hilang" {{ old('kondisi')=='Hilang' ? 'selected' : '' }}>Hilang</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Lokasi</label>
+                    <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi') }}" required>
                 </div>
 
-                <div class="mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Tanggal Pembelian</label>
+                    <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian') }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tanggal Penghapusan</label>
+                    <input type="date" name="tanggal_penghapusan" class="form-control" value="{{ old('tanggal_penghapusan') }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Sumber Dana</label>
+                    <input type="text" name="sumber_dana" class="form-control" value="{{ old('sumber_dana') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Foto Barang</label>
+                    <input type="file" name="foto" class="form-control" accept="image/*">
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Spesifikasi</label>
+                    <textarea name="spesifikasi" rows="3" class="form-control">{{ old('spesifikasi') }}</textarea>
+                </div>
+                <div class="col-12">
                     <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan" class="form-control" rows="3" placeholder="Tambahkan catatan atau deskripsi tambahan...">{{ old('keterangan') }}</textarea>
+                    <textarea name="keterangan" rows="3" class="form-control">{{ old('keterangan') }}</textarea>
                 </div>
+            </div>
 
-                <div class="d-flex flex-wrap gap-3 justify-content-end">
-                    <button type="submit" class="btn btn-success d-flex align-items-center gap-2">
-                        <i class="bi bi-save"></i> Simpan
-                    </button>
-                    <a href="{{ route('wakasek.barang.index') }}" class="btn btn-secondary d-flex align-items-center gap-2">
-                        <i class="bi bi-arrow-left"></i> Kembali
-                    </a>
-                </div>
-            </form>
-        </div>
+            <div class="mt-4 d-flex justify-content-end gap-2">
+                <a href="{{ route('wakasek.barang.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Kembali
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save2"></i> Simpan
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

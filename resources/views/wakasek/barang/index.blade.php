@@ -3,154 +3,140 @@
 @section('title', 'Data Barang (Wakasek)')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
-    body {
-        background: linear-gradient(135deg, #eef2ff, #f8fafc);
-        font-family: 'Poppins', sans-serif;
-        color: #1e293b;
-    }
+/* Basic body & animation */
+body { font-family: 'Poppins', sans-serif; color: #1e293b; }
+.data-container { animation: fadeUp 0.8s ease forwards; opacity: 0; transform: translateY(20px); }
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-    .table-container {
-        animation: fadeSlideIn 0.7s ease forwards;
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    @keyframes fadeSlideIn {
-        to { opacity: 1; transform: translateY(0); }
-    }
+/* Header */
+.header-bar {
+    background: linear-gradient(120deg, #2563eb, #1e40af);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.header-bar::after {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+}
+.header-bar h2 { font-weight: 600; z-index: 1; }
 
-    .page-header {
-        background: linear-gradient(90deg, #2563eb, #1e3a8a);
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 14px;
-        box-shadow: 0 5px 18px rgba(37, 99, 235, 0.25);
-    }
-    .page-header h4 {
-        font-weight: 700;
-        letter-spacing: 0.3px;
-    }
+/* Add button */
+.btn-add {
+    background: #ffffff;
+    color: #1e40af;
+    border-radius: 50px;
+    padding: 0.55rem 1.2rem;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: 0.3s;
+}
+.btn-add:hover { background: #e0e7ff; transform: translateY(-2px); }
 
-    .card {
-        border: none;
-        border-radius: 14px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-        overflow: hidden;
-    }
+/* Card & Table */
+.card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.table { border-collapse: separate; border-spacing: 0 0.5rem; text-align: center; }
+.table thead { background: #f1f5f9; color: #334155; font-weight: 600; }
+.table tbody tr { background: #fff; border-radius: 10px; transition: 0.25s; }
+.table tbody tr:hover { transform: scale(1.01); background-color: #f8fafc; box-shadow: 0 3px 10px rgba(37,99,235,0.1); }
 
-    .table thead {
-        background: #e0e7ff;
-        color: #1e3a8a;
-        font-weight: 600;
-    }
-    .table th, .table td {
-        vertical-align: middle;
-        text-align: center;
-        padding: 12px;
-    }
-    .table-hover tbody tr:hover {
-        background-color: #f3f6fd;
-        transition: background-color 0.2s;
-    }
+/* Badge & Buttons */
+.badge { font-size: 0.8rem; padding: 0.4em 0.8em; border-radius: 8px; font-weight: 500; }
+.btn-sm { border-radius: 10px; display: inline-flex; justify-content: center; align-items: center; width: 36px; height: 36px; transition: 0.25s; }
+.btn-warning { background: #facc15; border: none; color: #1e293b; }
+.btn-warning:hover { background: #eab308; transform: translateY(-2px); }
+.btn-danger { background: #ef4444; border: none; color: #fff; }
+.btn-danger:hover { background: #dc2626; transform: translateY(-2px); }
+.btn-info { background: #0ea5e9; border: none; color: #fff; }
+.btn-info:hover { background: #0284c7; transform: translateY(-2px); }
 
-    .badge {
-        font-size: 0.85rem;
-        padding: 0.45em 0.8em;
-        border-radius: 10px;
-    }
-    .badge.bg-success { background: #16a34a !important; }
-    .badge.bg-danger { background: #dc2626 !important; }
+/* Empty state */
+.empty-state { text-align: center; padding: 3rem 1rem; color: #94a3b8; }
+.empty-state i { font-size: 3rem; margin-bottom: 0.5rem; color: #cbd5e1; }
 
-    .btn-action {
-        border-radius: 10px;
-        padding: 6px 12px;
-        font-size: 14px;
-        transition: all 0.2s;
-    }
-    .btn-action:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-    }
+/* Foto thumbnail */
+.foto-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
 
-    .btn-success {
-        background: linear-gradient(90deg, #16a34a, #22c55e);
-        border: none;
-        font-weight: 600;
-        border-radius: 50px;
-    }
-    .btn-success:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-    }
-
-    @media (max-width: 768px) {
-        .table-responsive {
-            overflow-x: auto;
-        }
-        .btn-action {
-            padding: 5px 8px;
-            font-size: 13px;
-        }
-    }
+/* Search box */
+.search-box { position: relative; width: 250px; }
+.search-box input { padding-right: 2.5rem; }
+.search-box i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #64748b; }
 </style>
 
-<div class="container-fluid py-4">
+<div class="container py-5 data-container">
     <!-- Header -->
-    <div class="page-header mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h4 class="mb-0"><i class="bi bi-box-seam me-2"></i>Data Barang</h4>
-        <a href="{{ route('wakasek.barang.create') }}" class="btn btn-success d-flex align-items-center gap-2">
-            <i class="bi bi-plus-circle"></i> Tambah Barang
-        </a>
+    <div class="header-bar mb-4">
+        <h2><i class="bi bi-box-seam me-2"></i>Data Barang</h2>
+        <a href="{{ route('wakasek.barang.create') }}" class="btn btn-add"><i class="bi bi-plus-circle"></i> Tambah Barang</a>
     </div>
 
-    <!-- Table Card -->
-    <div class="card table-container">
-        <div class="card-body table-responsive">
-            <table class="table table-hover align-middle mb-0">
+    <!-- Search -->
+    <div class="d-flex justify-content-end mb-3">
+        <div class="search-box">
+            <input type="text" class="form-control" id="searchInput" placeholder="Cari barang...">
+            <i class="bi bi-search"></i>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card p-4">
+        <div class="table-responsive">
+            <table class="table align-middle" id="barangTable">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Kode Barang</th>
-                        <th>Nama Barang</th>
-                        <th>Kategori</th>
-                        <th>Jumlah</th>
-                        <th>Kondisi</th>
-                        <th>Lokasi</th>
-                        <th>Tanggal Pembelian</th>
+                        <th>No</th>
+                        <th>Foto</th>
+                        <th>Nama</th>
+                        <th>Tgl Pembelian</th>
+                        <th>Tgl Penghapusan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($barang as $b)
+                    @forelse($barang as $index => $b)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td><span class="fw-semibold text-primary">{{ $b->kode_barang }}</span></td>
-                            <td class="text-start">{{ $b->nama_barang }}</td>
-                            <td>{{ $b->kategori }}</td>
-                            <td>{{ $b->jumlah }}</td>
+                            <td>{{ $index + 1 }}</td>
                             <td>
-                                <span class="badge bg-{{ $b->kondisi == 'Rusak' ? 'danger' : 'success' }}">
-                                    {{ $b->kondisi }}
-                                </span>
+                                @if($b->foto)
+                                    <img src="{{ asset('storage/foto_barang/' . $b->foto) }}" class="foto-thumb" alt="Foto">
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
                             </td>
-                            <td>{{ $b->lokasi }}</td>
-                            <td>{{ \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') }}</td>
+                            <td>{{ $b->nama_barang }}</td>
+                            <td>{{ $b->tanggal_pembelian ? \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') : '-' }}</td>
+                            <td>{{ $b->tanggal_penghapusan ? \Carbon\Carbon::parse($b->tanggal_penghapusan)->format('d M Y') : '-' }}</td>
                             <td>
-                                <div class="d-flex justify-content-center gap-1">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="{{ route('wakasek.barang.show', $b->id) }}" 
+                                       class="btn btn-sm btn-info" title="Detail">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
                                     @if($b->user_id == Auth::id())
-                                        <!-- Barang milik wakasek sendiri -->
-                                        <a href="{{ route('wakasek.barang.edit', $b->id) }}" 
-                                           class="btn btn-warning btn-action text-white" title="Edit">
-                                            <i class="bi bi-pencil"></i>
+                                        <a href="{{ route('wakasek.barang.edit', $b->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <button type="button" 
-                                                class="btn btn-danger btn-action btn-delete" 
-                                                data-id="{{ $b->id }}" 
-                                                title="Hapus">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        <form action="{{ route('wakasek.barang.destroy', $b->id) }}" method="POST" class="d-inline form-delete">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
                                     @else
-                                        <!-- Barang dari kabeng -->
                                         <span class="text-muted fst-italic">Hanya bisa dilihat</span>
                                     @endif
                                 </div>
@@ -158,9 +144,9 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center text-muted py-4">
-                                <i class="bi bi-inboxes"></i><br>
-                                Belum ada data barang 😔
+                            <td colspan="6" class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <div>Belum ada data barang</div>
                             </td>
                         </tr>
                     @endforelse
@@ -170,46 +156,42 @@
     </div>
 </div>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.btn-delete').forEach(function(button) {
-            button.addEventListener('click', function() {
-                let barangId = this.dataset.id;
-                Swal.fire({
-                    title: 'Yakin mau hapus data ini?',
-                    text: "Data yang dihapus tidak bisa dikembalikan.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#dc2626',
-                    cancelButtonColor: '#6b7280',
-                    confirmButtonText: 'Ya, hapus',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let form = document.createElement('form');
-                        form.action = `/wakasek/barang/${barangId}`;
-                        form.method = 'POST';
-                        form.innerHTML = `@csrf @method('DELETE')`;
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
-                });
-            });
-        });
-
-        @if(session('success'))
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '{{ session('success') }}',
-                showConfirmButton: false,
-                timer: 2500,
-                timerProgressBar: true
-            });
-        @endif
+// Live Search
+document.getElementById("searchInput").addEventListener("keyup", function() {
+    const value = this.value.toLowerCase();
+    document.querySelectorAll("#barangTable tbody tr").forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(value) ? "" : "none";
     });
+});
+
+// SweetAlert Delete Confirmation
+document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const form = this.closest('.form-delete');
+        Swal.fire({
+            title: 'Yakin mau hapus?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => { if (result.isConfirmed) form.submit(); });
+    });
+});
+
+// SweetAlert Success Alerts
+@if(session('success'))
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil!',
+    text: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 1800
+});
+@endif
 </script>
 @endsection

@@ -192,6 +192,10 @@ Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function (
         'show'    => 'wakasek.barang.show',
     ]);
 
+    // Detail Barang Wakasek (opsional URL /detail)
+Route::get('/barang/{barang}/detail', [WakasekBarangController::class, 'show'])->name('wakasek.barang.detail');
+
+
         Route::get('/wakasek/profile', [WakasekProfileController::class, 'index'])->name('wakasek.profile');
         Route::put('/wakasek/profile/update', [WakasekProfileController::class, 'update'])->name('wakasek.profile.update');
 });

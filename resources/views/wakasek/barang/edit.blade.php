@@ -1,154 +1,184 @@
 @extends('layouts.wakasek')
 
-@section('title', 'Edit Barang (Wakasek)')
+@section('title', 'Edit Barang')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
-    body {
-        background: #eef2ff;
-        font-family: 'Poppins', sans-serif;
-    }
+body {
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    font-family: 'Poppins', sans-serif;
+}
 
-    .card {
-        border-radius: 25px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
+.form-container {
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-    }
+.card {
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    background: #fff;
+    border: none;
+    transition: 0.3s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
 
-    .card-header {
-        border-top-left-radius: 25px;
-        border-top-right-radius: 25px;
-        background: linear-gradient(135deg, #3b82f6, #1e40af);
-        color: white;
-        font-weight: 600;
-        font-size: 1.2rem;
-        text-align: center;
-        padding: 1rem 1.5rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
+.page-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+}
 
-    .form-label {
-        font-weight: 600;
-        color: #1e293b;
-    }
+.form-label { font-weight: 600; color: #334155; }
+.form-control, .form-select, textarea {
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    padding: 10px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus, .form-select:focus, textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
 
-    .form-control, .form-select, textarea {
-        border-radius: 12px;
-        border: 1px solid #cbd5e1;
-        transition: all 0.25s ease-in-out;
-        padding: 0.6rem 1rem;
-        font-size: 0.95rem;
-    }
+.btn-success {
+    background: linear-gradient(90deg, #16a34a, #22c55e);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-weight: 600;
+}
+.btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(16,185,129,0.4); }
 
-    .form-control:focus, .form-select:focus, textarea:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 0.25rem rgba(59,130,246,0.25);
-        outline: none;
-    }
+.btn-secondary {
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-weight: 600;
+}
 
-    .btn {
-        border-radius: 12px;
-        font-weight: 600;
-        padding: 0.55rem 1.25rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #3b82f6, #1e40af);
-        border: none;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(59,130,246,0.35);
-    }
-
-    .btn-secondary {
-        background: #6b7280;
-        color: white;
-        border: none;
-    }
-
-    .btn-secondary:hover {
-        background: #4b5563;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(75,85,99,0.3);
-    }
-
-    @media (max-width: 576px) {
-        .btn {
-            width: 100%;
-        }
-    }
+.alert { border-radius: 10px; font-size: 0.9rem; }
+.img-preview { max-width: 150px; margin-top: 0.5rem; border-radius: 10px; }
 </style>
 
-<div class="container py-5">
-    <div class="card mx-auto shadow-sm" style="max-width: 720px;">
-        <div class="card-header">
-            <h5 class="mb-0">Edit Data Barang</h5>
-        </div>
-        <div class="card-body p-4">
-            <form action="{{ route('wakasek.barang.update', $barang->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+<div class="container py-5 form-container">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="page-title"><i class="bi bi-pencil-square me-2"></i>Edit Barang</h2>
+    </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Kode Barang</label>
-                        <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang', $barang->kode_barang) }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nama Barang</label>
-                        <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang', $barang->nama_barang) }}" required>
-                    </div>
+    <div class="card p-4">
+        @if($errors->any())
+            <div class="alert alert-danger mb-4">
+                <strong>Terjadi Kesalahan:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('wakasek.barang.update', $barang->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Kode Barang</label>
+                    <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang', $barang->kode_barang) }}" required>
                 </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Kategori</label>
-                        <input type="text" name="kategori" class="form-control" value="{{ old('kategori', $barang->kategori) }}" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Jumlah</label>
-                        <input type="number" name="jumlah" class="form-control" value="{{ old('jumlah', $barang->jumlah) }}" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Kondisi</label>
-                        <select name="kondisi" class="form-select" required>
-                            <option value="Layak" {{ $barang->kondisi == 'Layak' ? 'selected' : '' }}>Layak</option>
-                            <option value="Rusak" {{ $barang->kondisi == 'Rusak' ? 'selected' : '' }}>Rusak</option>
-                        </select>
-                    </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nama Barang</label>
+                    <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang', $barang->nama_barang) }}" required>
                 </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Lokasi</label>
-                        <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi', $barang->lokasi) }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Tanggal Pembelian</label>
-                        <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian', $barang->tanggal_pembelian) }}" required>
-                    </div>
+                <div class="col-md-6">
+                    <label class="form-label">Kategori</label>
+                    <input type="text" name="kategori" class="form-control" value="{{ old('kategori', $barang->kategori) }}" required>
                 </div>
 
-                <div class="mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Jumlah</label>
+                    <input type="number" name="jumlah" class="form-control" min="0" value="{{ old('jumlah', $barang->jumlah) }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Kondisi</label>
+                    <select name="kondisi" class="form-select" required>
+                        @php $kondisi = old('kondisi', $barang->kondisi); @endphp
+                        <option value="Baik" {{ $kondisi=='Baik'?'selected':'' }}>Baik</option>
+                        <option value="Rusak" {{ $kondisi=='Rusak'?'selected':'' }}>Rusak</option>
+                        <option value="Hilang" {{ $kondisi=='Hilang'?'selected':'' }}>Hilang</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Lokasi</label>
+                    <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi', $barang->lokasi) }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Tanggal Pembelian</label>
+                    <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian', \Carbon\Carbon::parse($barang->tanggal_pembelian)->format('Y-m-d')) }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Tanggal Penghapusan</label>
+                    <input type="date" name="tanggal_penghapusan" class="form-control" value="{{ old('tanggal_penghapusan', $barang->tanggal_penghapusan) }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Sumber Dana</label>
+                    <input type="text" name="sumber_dana" class="form-control" value="{{ old('sumber_dana', $barang->sumber_dana) }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Foto Barang</label>
+                    <input type="file" name="foto" class="form-control" accept="image/*">
+                    @if($barang->foto)
+                        <img src="{{ asset('storage/'.$barang->foto) }}" class="img-preview" alt="Foto Barang">
+                    @endif
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Spesifikasi</label>
+                    <textarea name="spesifikasi" class="form-control" rows="3">{{ old('spesifikasi', $barang->spesifikasi) }}</textarea>
+                </div>
+
+                <div class="col-12">
                     <label class="form-label">Keterangan</label>
                     <textarea name="keterangan" class="form-control" rows="3">{{ old('keterangan', $barang->keterangan) }}</textarea>
                 </div>
+            </div>
 
-                <div class="d-flex flex-wrap gap-3 justify-content-end">
-                    <a href="{{ route('wakasek.barang.index') }}" class="btn btn-secondary">Batal</a>
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
+            <div class="mt-4 d-flex justify-content-end gap-2">
+                <a href="{{ route('wakasek.barang.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Batal
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save2"></i> Simpan Perubahan
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: "{{ session('success') }}",
+        showConfirmButton: false,
+        timer: 1800
+    });
+</script>
+@endif
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class WakasekBarangController extends Controller
 {
@@ -12,11 +13,11 @@ class WakasekBarangController extends Controller
     {
         $user = Auth::user();
 
+        // Admin & Wakasek bisa lihat semua barang
         if (in_array($user->role, ['admin', 'wakasek'])) {
-            // Admin & Wakasek bisa lihat semua barang
             $barang = Barang::latest()->get();
         } else {
-            // Kabeng cuma lihat barang yang dia input sendiri
+            // Kabeng cuma lihat barang miliknya
             $barang = Barang::where('user_id', $user->id)->latest()->get();
         }
 
@@ -34,14 +35,32 @@ class WakasekBarangController extends Controller
             'kode_barang' => 'required|unique:barang',
             'nama_barang' => 'required',
             'kategori' => 'required',
-            'jumlah' => 'required|integer',
+            'jumlah' => 'required|integer|min:0',
             'kondisi' => 'required',
             'lokasi' => 'required',
             'tanggal_pembelian' => 'required|date',
-            'keterangan' => 'nullable',
+            'keterangan' => 'nullable|string',
+            'spesifikasi' => 'nullable|string',
+            'sumber_dana' => 'nullable|string',
+            'tanggal_penghapusan' => 'nullable|date',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
-        $validated['user_id'] = Auth::id();
+        $user = Auth::user();
+        $validated['user_id'] = $user->id;
+
+        // Kabeng otomatis pakai jurusan
+        if ($user->role === 'kabeng') {
+            $validated['jurusan'] = $user->programkeahlian?->nama_program;
+        }
+
+        // Upload foto jika ada
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('foto_barang', $filename, 'public');
+            $validated['foto'] = $filename;
+        }
 
         Barang::create($validated);
 
@@ -54,13 +73,8 @@ class WakasekBarangController extends Controller
         $user = Auth::user();
 
         // Kabeng cuma bisa edit barang miliknya sendiri
-        if ($user->role === 'kabeng' && $barang->user_id !== $user->id) {
+        if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
             abort(403, 'Anda tidak diperbolehkan mengedit barang milik orang lain.');
-        }
-
-        // Wakasek & Admin boleh lihat tapi tidak boleh ubah barang kabeng lain
-        if (in_array($user->role, ['wakasek', 'admin']) && $barang->user_id !== $user->id && $user->role !== 'admin') {
-            abort(403, 'Wakasek tidak diperbolehkan mengedit barang milik kabeng.');
         }
 
         return view('wakasek.barang.edit', compact('barang'));
@@ -70,45 +84,69 @@ class WakasekBarangController extends Controller
     {
         $user = Auth::user();
 
-        // Kabeng cuma bisa update barang miliknya sendiri
-        if ($user->role === 'kabeng' && $barang->user_id !== $user->id) {
-            abort(403, 'Anda tidak diperbolehkan mengupdate barang milik orang lain.');
+        if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
+            abort(403, 'Anda tidak diperbolehkan memperbarui barang milik orang lain.');
         }
 
         $validated = $request->validate([
             'kode_barang' => 'required|unique:barang,kode_barang,' . $barang->id,
             'nama_barang' => 'required',
             'kategori' => 'required',
-            'jumlah' => 'required|integer',
+            'jumlah' => 'required|integer|min:0',
             'kondisi' => 'required',
             'lokasi' => 'required',
             'tanggal_pembelian' => 'required|date',
-            'keterangan' => 'nullable',
+            'keterangan' => 'nullable|string',
+            'spesifikasi' => 'nullable|string',
+            'sumber_dana' => 'nullable|string',
+            'tanggal_penghapusan' => 'nullable|date',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        // Upload foto baru jika ada
+        if ($request->hasFile('foto')) {
+            if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
+                Storage::delete('public/foto_barang/' . $barang->foto);
+            }
+
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('foto_barang', $filename, 'public');
+            $validated['foto'] = $filename;
+        }
 
         $barang->update($validated);
 
         return redirect()->route('wakasek.barang.index')
-            ->with('success', 'Barang berhasil diupdate.');
+            ->with('success', 'Barang berhasil diperbarui.');
     }
 
     public function destroy(Barang $barang)
     {
         $user = Auth::user();
 
-        // Kabeng cuma bisa hapus barang miliknya sendiri
-        if ($user->role === 'kabeng' && $barang->user_id !== $user->id) {
+        // Kabeng cuma bisa hapus barang miliknya
+        if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
             abort(403, 'Anda tidak diperbolehkan menghapus barang milik orang lain.');
         }
 
-        // Wakasek gak boleh hapus barang kabeng
-        if ($user->role === 'wakasek' && $barang->user_id !== $user->id) {
+        // Wakasek tidak boleh hapus barang kabeng lain
+        if ($user->role === 'wakasek' && $barang->user_id != $user->id) {
             abort(403, 'Wakasek tidak diperbolehkan menghapus barang milik kabeng.');
+        }
+
+        if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
+            Storage::delete('public/foto_barang/' . $barang->foto);
         }
 
         $barang->delete();
 
         return redirect()->route('wakasek.barang.index')
             ->with('success', 'Barang berhasil dihapus.');
+    }
+
+    public function show(Barang $barang)
+    {
+        return view('wakasek.barang.detail', compact('barang'));
     }
 }
