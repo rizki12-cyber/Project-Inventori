@@ -15,7 +15,7 @@ use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\ProgramKeahlianController;
 use App\Http\Controllers\KonsentrasiKeahlianController;
 use App\Http\Controllers\WakasekProfileController;
-
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +48,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     // 🧭 Dashboard
-    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('admin.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
 
     // 📦 Barang CRUD
     Route::resource('barang', BarangController::class)->names([

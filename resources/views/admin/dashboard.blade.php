@@ -5,168 +5,228 @@
 @section('content')
 <div class="container-fluid">
 
-    <!-- Dashboard Header -->
-    <div class="dashboard-header text-center mb-4 p-4 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #2563eb, #1e3a8a); color: white;">
-        <h2 class="fw-bold">Selamat Datang di Dashboard Admin 🎯</h2>
-        <p>Lihat ringkasan kondisi barang di sistem inventaris SMKN 1 TALAGA</p>
-    </div>
+    <!-- Card Selamat Datang Tanpa Background Putih -->
+<div class="text-center mb-5 p-4 rounded-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <h2 class="fw-bold mb-2">Selamat Datang, Admin! 👋</h2>
+    <p class="fs-6 mb-0 opacity-90">Sistem Inventaris SMKN 1 TALAGA - Kelola barang dengan mudah dan efisien</p>
+</div>
 
-    <!-- Stat Cards -->
+
+    <!-- Stat Cards Horizontal -->
     <div class="row mb-4 g-3">
         @php
-            $stats = [
-                ['id'=>'totalBarang','title'=>'Total Barang','icon'=>'bi-box-seam','bg'=>'primary','count'=>0],
-                ['id'=>'barangBaik','title'=>'Barang Baik','icon'=>'bi-check2-circle','bg'=>'success','count'=>0],
-                ['id'=>'barangRusak','title'=>'Barang Rusak','icon'=>'bi-exclamation-triangle-fill','bg'=>'warning','count'=>0],
-                ['id'=>'barangHilang','title'=>'Barang Hilang','icon'=>'bi-x-circle-fill','bg'=>'danger','count'=>0],
+            $features = [
+                ['id'=>'totalBarang', 'title'=>'Total Barang', 'icon'=>'bi-box-seam', 'color'=>'#3b82f6', 'count'=>0],
+                ['id'=>'totalBarangMasuk', 'title'=>'Barang Masuk', 'icon'=>'bi-box-arrow-in-down', 'color'=>'#10b981', 'count'=>0],
+                ['id'=>'totalBarangKeluar', 'title'=>'Barang Keluar', 'icon'=>'bi-box-arrow-up', 'color'=>'#f59e0b', 'count'=>0],
+                ['id'=>'totalSupplier', 'title'=>'Supplier', 'icon'=>'bi-people-fill', 'color'=>'#06b6d4', 'count'=>0],
+                ['id'=>'totalPeminjaman', 'title'=>'Peminjaman', 'icon'=>'bi-clipboard-check', 'color'=>'#ef4444', 'count'=>0],
             ];
         @endphp
 
-        @foreach($stats as $s)
-            <div class="col-md-3 col-sm-6">
-                <div class="stat-card bg-{{ $s['bg'] }}">
-                    <i class="{{ $s['icon'] }} icon-bg"></i>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $s['title'] }}</h5>
-                        <p class="card-text" id="{{ $s['id'] }}">{{ $s['count'] }}</p>
+        @foreach($features as $f)
+            <div class="col-12 col-sm-6 col-lg">
+                <div class="stat-card-horizontal position-relative overflow-hidden rounded-4 shadow-sm" 
+                     style="background: linear-gradient(135deg, {{ $f['color'] }}15, {{ $f['color'] }}08); border-left: 4px solid {{ $f['color'] }}; min-height: 120px;">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between h-100">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title text-muted mb-2 fw-semibold small">{{ $f['title'] }}</h6>
+                            <p class="card-text mb-0 fw-bold fs-3" id="{{ $f['id'] }}" style="color: {{ $f['color'] }};">{{ $f['count'] }}</p>
+                        </div>
+                        <div class="icon-container-horizontal rounded-4 p-3 ms-3" style="background: {{ $f['color'] }}20;">
+                            <i class="{{ $f['icon'] }} fs-2" style="color: {{ $f['color'] }};"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         @endforeach
     </div>
 
-    <!-- Chart Section -->
-    <div class="card shadow-sm rounded-4 p-4">
-        <h4 class="text-center mb-4">📊 Statistik Kondisi Barang</h4>
-        <div style="height: 400px; width:100%;">
-            <canvas id="barangChart"></canvas>
+    <!-- Grafik Ringkasan -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header bg-transparent border-0 py-4">
+                    <h4 class="mb-0 fw-semibold text-primary">📊 Grafik Ringkasan Inventaris</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 350px;">
+                        <canvas id="dashboardChart" height="350"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
-    const statsData = {!! json_encode([
+    const featureData = {!! json_encode([
         'totalBarang' => $totalBarang ?? 0,
-        'barangBaik'  => $barangBaik ?? 0,
-        'barangRusak' => $barangRusak ?? 0,
-        'barangHilang'=> $barangHilang ?? 0
+        'totalBarangMasuk' => $totalBarangMasuk ?? 0,
+        'totalBarangKeluar'=> $totalBarangKeluar ?? 0,
+        'totalSupplier'    => $totalSupplier ?? 0,
+        'totalPeminjaman'  => $totalPeminjaman ?? 0,
     ]) !!};
 
-    Object.keys(statsData).forEach(id => {
+    // Update stat cards dengan animasi
+    Object.keys(featureData).forEach(id => {
         const el = document.getElementById(id);
-        if(el) el.textContent = statsData[id];
+        if(el) {
+            let count = 0;
+            const target = featureData[id];
+            const duration = 1500;
+            const increment = target / (duration / 16);
+            
+            const timer = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    count = target;
+                    clearInterval(timer);
+                }
+                el.textContent = Math.floor(count).toLocaleString();
+            }, 16);
+        }
     });
 
-    // Tunggu sedikit supaya canvas sudah ready
-    setTimeout(() => {
-        const ctx = document.getElementById('barangChart').getContext('2d');
-
-        // Gradient colors
-        const gradientBaik = ctx.createLinearGradient(0,0,0,400);
-        gradientBaik.addColorStop(0, 'rgba(34,197,94,1)');
-        gradientBaik.addColorStop(1, 'rgba(134,239,172,0.6)');
-
-        const gradientRusak = ctx.createLinearGradient(0,0,0,400);
-        gradientRusak.addColorStop(0, 'rgba(234,179,8,1)');
-        gradientRusak.addColorStop(1, 'rgba(254,240,138,0.6)');
-
-        const gradientHilang = ctx.createLinearGradient(0,0,0,400);
-        gradientHilang.addColorStop(0, 'rgba(239,68,68,1)');
-        gradientHilang.addColorStop(1, 'rgba(251,191,182,0.6)');
-
-        // Register plugin
-        Chart.register(ChartDataLabels);
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Barang Baik','Barang Rusak','Barang Hilang'],
-                datasets: [{
-                    label: 'Jumlah Barang',
-                    data: [statsData.barangBaik, statsData.barangRusak, statsData.barangHilang],
-                    backgroundColor: [gradientBaik, gradientRusak, gradientHilang],
-                    borderRadius: 12,
-                    borderSkipped: false
-                }]
+    // Chart.js
+    const ctx = document.getElementById('dashboardChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Barang', 'Barang Masuk', 'Barang Keluar', 'Supplier', 'Peminjaman'],
+            datasets: [{
+                label: 'Jumlah Data',
+                data: [
+                    featureData.totalBarang,
+                    featureData.totalBarangMasuk,
+                    featureData.totalBarangKeluar,
+                    featureData.totalSupplier,
+                    featureData.totalPeminjaman
+                ],
+                backgroundColor: [
+                    '#3b82f6', '#10b981', '#f59e0b', '#06b6d4', '#ef4444'
+                ],
+                borderColor: [
+                    '#2563eb', '#059669', '#d97706', '#0891b2', '#dc2626'
+                ],
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: { duration: 1500, easing: 'easeOutBounce' },
-                scales: {
-                    x: { 
-                        grid: { display:false },
-                        ticks:{ color:'#374151', font:{size:13, weight:'600'} } 
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
                     },
-                    y: { 
-                        beginAtZero:true,
-                        grid:{ color:'rgba(209,213,219,0.3)' },
-                        ticks:{ color:'#374151', font:{size:12} } 
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
                     }
                 },
-                plugins: {
-                    legend:{ display:false },
-                    tooltip:{
-                        backgroundColor:'#1e3a8a',
-                        titleColor:'#fff',
-                        bodyColor:'#fff',
-                        cornerRadius:10,
-                        padding:12,
-                        displayColors:false
+                x: {
+                    grid: {
+                        display: false
                     },
-                    datalabels: {
-                        color:'#374151',
-                        anchor:'end',
-                        align:'end',
-                        font:{ weight:'700', size:14 },
-                        formatter: value => value
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
                     }
                 }
             }
-        });
-    }, 50); // 50ms delay supaya canvas ready
-
+        }
+    });
 });
 </script>
 @endpush
 
-
 <style>
-.dashboard-header { box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+.stat-card-horizontal {
+    transition: all 0.3s ease;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+}
 
-.stat-card {
-    border-radius: 18px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    text-align:center;
-    padding: 25px 15px;
-    position: relative;
-    color: white;
+.stat-card-horizontal:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15) !important;
+}
+
+.icon-container-horizontal {
     transition: all 0.3s ease;
 }
-.stat-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-}
-.stat-card .icon-bg {
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    font-size: 5rem;
-    opacity: 0.15;
-    transform: rotate(20deg);
-}
-.stat-card .card-title { font-weight:600; margin-bottom:8px; }
-.stat-card .card-text { font-size:2rem; font-weight:700; }
 
-/* Responsive */
-@media (max-width:768px){
-    .stat-card .icon-bg{ font-size:4rem; top:-15px; right:-15px; }
-    .stat-card .card-text{ font-size:1.6rem; }
+.stat-card-horizontal:hover .icon-container-horizontal {
+    transform: scale(1.1);
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.fs-3 {
+    font-size: 1.8rem !important;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .stat-card-horizontal {
+        min-height: 100px !important;
+    }
+    
+    .fs-3 {
+        font-size: 1.5rem !important;
+    }
+    
+    .card-body.p-5 {
+        padding: 2rem !important;
+    }
+    
+    .icon-container-horizontal {
+        padding: 0.75rem !important;
+    }
+    
+    .icon-container-horizontal i {
+        font-size: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .stat-card-horizontal {
+        min-height: 90px !important;
+    }
+    
+    .fs-3 {
+        font-size: 1.3rem !important;
+    }
+    
+    .card-body {
+        padding: 1.5rem !important;
+    }
 }
 </style>
 @endsection
