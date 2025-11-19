@@ -16,6 +16,7 @@ use App\Http\Controllers\ProgramKeahlianController;
 use App\Http\Controllers\KonsentrasiKeahlianController;
 use App\Http\Controllers\WakasekProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileKabengController;
 
 /*
 |--------------------------------------------------------------------------
@@ -224,6 +225,11 @@ Route::middleware(['auth', 'role:kabeng'])->prefix('kabeng')->group(function () 
     Route::delete('/barang/{barang}', [BarangController::class, 'destroy'])->name('kabeng.barang.destroy');
 
     Route::get('/barang/{barang}/detail', [BarangController::class, 'show'])->name('kabeng.barang.show');
+
+    // PROFIL KABENG
+Route::get('/profile', [ProfileKabengController::class, 'index'])->name('kabeng.profile.index');
+Route::post('/profile/update', [ProfileKabengController::class, 'update'])->name('kabeng.profile.update');
+
 });
 
 

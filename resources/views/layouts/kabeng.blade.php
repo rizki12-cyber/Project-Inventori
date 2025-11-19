@@ -221,12 +221,14 @@ footer {
                     </div>
 
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">
-                            <i class="bi bi-person"></i> Profil
-                        </a></li>
-
+                        <li>
+                            <a class="dropdown-item" href="{{ route('kabeng.profile.index') }}">
+                                <i class="bi bi-person"></i> Profil
+                            </a>
+                        </li>
+                    
                         <li><hr class="dropdown-divider"></li>
-
+                    
                         <li>
                             <a class="dropdown-item logout" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -234,6 +236,7 @@ footer {
                             </a>
                         </li>
                     </ul>
+                    
                 </div>
 
             </div>
