@@ -29,7 +29,7 @@
                     <tr><th>Kondisi</th><td>{{ $barang->kondisi }}</td></tr>
                     <tr><th>Tanggal Pembelian</th><td>{{ $barang->tanggal_pembelian }}</td></tr>
                     <tr><th>Tanggal Penghapusan</th><td>{{ $barang->tanggal_penghapusan ?? '-' }}</td></tr>
-                    <tr><th>Sumber Dana</th><td>{{ $barang->sumber_dana ?? '-' }}</td></tr>
+                    <tr><th>Sumber Anggaran</th><td>{{ $barang->sumber_dana ?? '-' }}</td></tr>
                     <tr><th>Spesifikasi</th><td>{{ $barang->spesifikasi ?? '-' }}</td></tr>
                     <tr><th>Keterangan</th><td>{{ $barang->keterangan ?? '-' }}</td></tr>
                     <tr>

@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Sumber Dana</label>
+                    <label class="form-label">Sumber Anggaran</label>
                     <input type="text" name="sumber_dana" class="form-control" placeholder="Contoh: BOS, Komite, Hibah">
                 </div>
 

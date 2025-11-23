@@ -118,7 +118,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label>Sumber Dana</label>
+                    <label>Sumber Anggaran</label>
                     <input type="text" name="sumber_dana" class="form-control"
                            value="{{ old('sumber_dana', $barang->sumber_dana) }}">
                 </div>
