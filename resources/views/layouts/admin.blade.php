@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>@yield('title', 'Dashboard Admin')</title>
 
-<link rel="icon" href="{{ asset('assets/images/logo1.png') }}" type="image/png" sizes="32x32">
+    <link rel="icon" href="{{ asset($pengaturan->favicon ?? 'assets/images/logo1.png') }}" type="image/png" sizes="32x32">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -344,6 +344,13 @@ footer {
                 <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
             </a>
     
+            <!-- ===================== PENGATURAN WEBSITE ===================== -->
+        <a href="{{ route('admin.pengaturan') }}" 
+    class="list-group-item list-group-item-action {{ request()->routeIs('admin.pengaturan') ? 'active' : '' }}">
+    <i class="bi bi-gear-fill"></i> <span>Pengaturan Website</span>
+</a>
+
+
         </div>
     </div>
     

@@ -17,6 +17,7 @@ use App\Http\Controllers\KonsentrasiKeahlianController;
 use App\Http\Controllers\WakasekProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileKabengController;
+use App\Http\Controllers\PengaturanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     // 🧭 Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('admin.pengaturan');
+Route::post('/pengaturan/update', [PengaturanController::class, 'update'])->name('admin.pengaturan.update');
+
 
 
     // 📦 Barang CRUD

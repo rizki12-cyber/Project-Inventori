@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="icon" href="{{ asset('assets/images/logo1.png') }}" type="image/png" sizes="32x32">
+    <link rel="icon" href="{{ asset($pengaturan->favicon ?? 'assets/images/logo1.png') }}" type="image/png" sizes="32x32">
     
     <style>
         :root {
@@ -276,8 +276,8 @@
     <div class="kotak-login">
         <!-- Bagian kiri -->
         <div class="bagian-kiri">
-            <img src="{{ asset('assets/images/logo1.png') }}" alt="Logo SMKN 1 Talaga">
-            <h2>Sistem Inventaris<br>SMKN 1 Talaga</h2>
+            <img src="{{ asset($pengaturan->logo_sekolah ?? 'assets/images/logo1.png') }}" alt="Logo Sekolah">
+            <h2>{{ $pengaturan->nama_sekolah ?? 'Nama Sekolah' }}</h2>
         </div>
 
         <!-- Bagian kanan -->

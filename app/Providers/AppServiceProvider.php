@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Pengaturan;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Kirim data pengaturan ke semua view
+        view()->composer('*', function ($view) {
+            $view->with('pengaturan', Pengaturan::first());
+        });
     }
 }
