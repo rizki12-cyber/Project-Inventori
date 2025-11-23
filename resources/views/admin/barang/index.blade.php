@@ -8,30 +8,18 @@
 <style>
 /* Basic body & animation */
 body { font-family: 'Poppins', sans-serif; color: #1e293b; }
-.data-container { animation: fadeUp 0.8s ease forwards; opacity: 0; transform: translateY(20px); }
-@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+.data-container { animation: fadeSlideIn 0.7s ease forwards; opacity: 0; transform: translateY(20px); }
+@keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
 
-/* Header */
-.header-bar {
-    background: linear-gradient(120deg, #2563eb, #1e40af);
-    border-radius: 20px;
-    padding: 1.5rem 2rem;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
+/* Page Title */
+.page-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
 }
-.header-bar::after {
-    content: '';
-    position: absolute;
-    top: -30px; right: -30px;
-    width: 100px; height: 100px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 50%;
-}
-.header-bar h2 { font-weight: 600; z-index: 1; }
 
 /* Add button */
 .btn-add {
@@ -75,38 +63,26 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
 
 <div class="container py-5 data-container">
     <!-- Header -->
-    <div class="header-bar mb-4">
-        <h2><i class="bi bi-box-seam me-2"></i>Data Barang</h2>
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <h2 class="page-title"><i class="bi bi-box-seam me-2"></i>Data Barang</h2>
         <a href="{{ route('admin.barang.create') }}" class="btn btn-add"><i class="bi bi-plus-circle"></i> Tambah Barang</a>
     </div>
 
-   <!-- FILTER LOKASI -->
+    <!-- FILTER LOKASI -->
     <div class="d-flex justify-content-start mb-3">
-
         <form action="{{ route('admin.barang.index') }}" method="GET" class="d-flex gap-2">
-
-            <!-- PILIH LOKASI -->
             <select name="lokasi" class="form-control" style="width: 220px;">
                 <option value="">-- Pilih Lokasi --</option>
-
                 @foreach($listLokasi as $lok)
                     <option value="{{ $lok }}" {{ request('lokasi') == $lok ? 'selected' : '' }}>
                         {{ $lok }}
                     </option>
                 @endforeach
-
             </select>
-
-            <!-- TOMBOL CARI -->
             <button type="submit" class="btn" style="background:#0d6efd;color:white;">
                 <i class="bi bi-search"></i> Cari
             </button>
-
-            <!-- RESET -->
-            <a href="{{ route('admin.barang.index') }}" class="btn btn-secondary">
-                Reset
-            </a>
-
+            <a href="{{ route('admin.barang.index') }}" class="btn btn-secondary">Reset</a>
         </form>
     </div>
 
@@ -115,73 +91,58 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
         <div class="table-responsive">
             <table class="table align-middle" id="barangTable">
                 <thead>
-    <tr>
-        <th>No</th>
-        <th>Foto</th>
-        <th>Nama</th>
-        <th>Lokasi</th>
-        <th>Tgl Pembelian</th>
-        <th>Tgl Penghapusan</th>
-        <th>Aksi</th>
-    </tr>
-</thead>
-
+                    <tr>
+                        <th>No</th>
+                        <th>Foto</th>
+                        <th>Nama</th>
+                        <th>Lokasi</th>
+                        <th>Tgl Pembelian</th>
+                        <th>Tgl Penghapusan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
                 @forelse($barang as $index => $b)
-<tr>
-    <td>{{ $index + 1 }}</td>
-
-    <td>
-        @if($b->foto)
-            <img src="{{ asset('storage/foto_barang/' . $b->foto) }}" class="foto-thumb" alt="Foto">
-        @else
-            <span class="text-muted">-</span>
-        @endif
-    </td>
-
-    <td>{{ $b->nama_barang }}</td>
-
-    <td>{{ $b->lokasi ?? '-' }}</td>
-
-    <td>{{ $b->tanggal_pembelian ? \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') : '-' }}</td>
-
-    <td>{{ $b->tanggal_penghapusan ? \Carbon\Carbon::parse($b->tanggal_penghapusan)->format('d M Y') : '-' }}</td>
-
-    <td>
-        <div class="d-flex justify-content-center gap-2">
-
-            <!-- DETAIL -->
-            <a href="{{ route('admin.barang.show', $b->id) }}" 
-               class="btn btn-sm btn-info" title="Detail"
-               style="background:#0ea5e9;border:none;color:white;">
-                <i class="bi bi-eye"></i>
-            </a>
-
-            <!-- EDIT -->
-            <a href="{{ route('admin.barang.edit', $b->id) }}" class="btn btn-sm btn-warning" title="Edit">
-                <i class="bi bi-pencil-square"></i>
-            </a>
-
-            <!-- DELETE -->
-            <form action="{{ route('admin.barang.destroy', $b->id) }}" method="POST" class="d-inline form-delete">
-                @csrf
-                @method('DELETE')
-                <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </form>
-
-        </div>
-    </td>
-</tr>
-@empty
-
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>
+                            @if($b->foto)
+                                <img src="{{ asset('storage/foto_barang/' . $b->foto) }}" class="foto-thumb" alt="Foto">
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                        <td>{{ $b->nama_barang }}</td>
+                        <td>{{ $b->lokasi ?? '-' }}</td>
+                        <td>{{ $b->tanggal_pembelian ? \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') : '-' }}</td>
+                        <td>{{ $b->tanggal_penghapusan ? \Carbon\Carbon::parse($b->tanggal_penghapusan)->format('d M Y') : '-' }}</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ route('admin.barang.show', $b->id) }}" class="btn btn-sm btn-info" title="Detail"
+                                   style="background:#0ea5e9;border:none;color:white;">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.barang.edit', $b->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <form action="{{ route('admin.barang.destroy', $b->id) }}" method="POST" class="d-inline form-delete">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
                     <tr>
                         <td colspan="12" class="empty-state">
                             <i class="bi bi-inbox"></i>
                             <div>Belum ada data barang</div>
                         </td>
                     </tr>
-                    @endforelse
+                @endforelse
                 </tbody>
             </table>
         </div>

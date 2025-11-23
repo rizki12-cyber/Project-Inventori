@@ -10,53 +10,33 @@
     body {
         background: linear-gradient(135deg, #eef2ff, #f8fafc);
         font-family: 'Poppins', sans-serif;
+        color: #1e293b;
     }
 
     .form-container {
-        animation: fadeInUp 0.8s ease forwards;
+        animation: fadeSlideIn 0.7s ease forwards;
         opacity: 0;
-        transform: translateY(25px);
+        transform: translateY(20px);
     }
 
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes fadeSlideIn {
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    .page-header {
-        background: linear-gradient(120deg, #2563eb, #1e40af);
-        color: white;
-        border-radius: 18px;
-        padding: 1.5rem 2rem;
-        box-shadow: 0 8px 20px rgba(37,99,235,0.25);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 2rem;
-        overflow: hidden;
-        position: relative;
+    /* Page Title */
+    .page-title {
+        font-weight: 700;
+        font-size: 1.8rem;
+        background: linear-gradient(90deg, #2563eb, #1e40af);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
     }
-
-    .page-header::after {
-        content: '';
-        position: absolute;
-        top: -40px;
-        right: -40px;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.15);
-    }
-
-    .page-header h2 { font-weight: 600; z-index: 1; }
 
     .card {
         border-radius: 20px;
-        background: rgba(255,255,255,0.9);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        background: #fff;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
         border: none;
         transition: 0.3s;
     }
@@ -79,7 +59,6 @@
         transition: 0.3s;
         box-shadow: 0 4px 12px rgba(22,163,74,0.25);
     }
-
     .btn-success:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(22,163,74,0.35);
@@ -93,7 +72,6 @@
         font-weight: 500;
         transition: 0.3s;
     }
-
     .btn-secondary:hover {
         background: #cbd5e1;
         transform: translateY(-2px);
@@ -113,11 +91,8 @@
 <div class="container py-5 form-container">
 
     <!-- Header -->
-    <div class="page-header">
-        <h2><i class="bi bi-pencil-square me-2"></i>Edit Barang</h2>
-        <a href="{{ route('admin.barang.index') }}" class="btn btn-light rounded-pill shadow-sm">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 class="page-title"><i class="bi bi-pencil-square me-2"></i>Edit Barang</h2>
     </div>
 
     <!-- Card Form -->
@@ -133,7 +108,6 @@
             </div>
         @endif
 
-        <!-- enctype untuk upload -->
         <form action="{{ route('admin.barang.update', $barang->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -176,7 +150,7 @@
 
                 <div class="col-md-6">
                     <label class="form-label">Tanggal Pembelian</label>
-                    <input type="date" name="tanggal_pembelian" class="form-control"value="{{ old('tanggal_pembelian', \Carbon\Carbon::parse($barang->tanggal_pembelian)->format('Y-m-d')) }}" required>
+                    <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian', \Carbon\Carbon::parse($barang->tanggal_pembelian)->format('Y-m-d')) }}" required>
                 </div>
 
                 <div class="col-md-6">
@@ -203,10 +177,9 @@
                 </div>
 
                 <div class="col-12">
-    <label class="form-label">Spesifikasi</label>
-    <textarea name="spesifikasi" class="form-control" rows="3">{{ old('spesifikasi', $barang->spesifikasi) }}</textarea>
-</div>
-
+                    <label class="form-label">Spesifikasi</label>
+                    <textarea name="spesifikasi" class="form-control" rows="3">{{ old('spesifikasi', $barang->spesifikasi) }}</textarea>
+                </div>
             </div>
 
             <div class="mt-4 d-flex justify-content-end gap-2">
