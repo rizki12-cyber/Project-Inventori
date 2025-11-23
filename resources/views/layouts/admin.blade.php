@@ -270,58 +270,83 @@ footer {
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">INVENTARIS</div>
         <div class="list-group list-group-flush">
-
-            <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action 
-                {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" style="animation-delay: 0.1s;">
+    
+            <!-- Dashboard -->
+            <a href="{{ route('admin.dashboard') }}" 
+               class="list-group-item list-group-item-action 
+               {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
             </a>
-
-            <a href="{{ route('admin.barang.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.barang.*') ? 'active' : '' }}" style="animation-delay: 0.2s;">
-                <i class="bi bi-box-seam"></i> <span>Data Barang</span>
+    
+            <!-- ===================== DATA BARANG ===================== -->
+            <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuBarang">
+                <i class="bi bi-box"></i> <span>Data Barang</span> <i class="bi bi-chevron-down ms-auto"></i>
             </a>
-
-            <a href="{{ route('admin.supplier.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.supplier.*') ? 'active' : '' }}" style="animation-delay: 0.3s;">
-                <i class="bi bi-truck"></i> <span>Data Supplier</span>
+            <div class="collapse ps-4 {{ request()->routeIs('admin.barang.*') || request()->routeIs('admin.supplier.*') || request()->routeIs('admin.barangmasuk.*') || request()->routeIs('admin.barangkeluar.*') ? 'show' : '' }}" id="menuBarang">
+    
+                <a href="{{ route('admin.barang.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.barang.*') ? 'active' : '' }}">
+                    <i class="bi bi-box-seam"></i> <span>Data Barang</span>
+                </a>
+    
+                <a href="{{ route('admin.supplier.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.supplier.*') ? 'active' : '' }}">
+                    <i class="bi bi-truck"></i> <span>Data Supplier</span>
+                </a>
+    
+                <a href="{{ route('admin.barangmasuk.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.barangmasuk.*') ? 'active' : '' }}">
+                    <i class="bi bi-arrow-down-circle"></i> <span>Barang Masuk</span>
+                </a>
+    
+                <a href="{{ route('admin.barangkeluar.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.barangkeluar.*') ? 'active' : '' }}">
+                    <i class="bi bi-arrow-up-circle"></i> <span>Barang Keluar</span>
+                </a>
+            </div>
+    
+            <!-- ===================== DATA PEMINJAMAN ===================== -->
+            <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuPeminjaman">
+                <i class="bi bi-journal-text"></i> <span>Data Peminjaman</span> <i class="bi bi-chevron-down ms-auto"></i>
             </a>
-
-            <a href="{{ route('admin.barangmasuk.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.barangmasuk.*') ? 'active' : '' }}" style="animation-delay: 0.4s;">
-                <i class="bi bi-arrow-down-circle"></i> <span>Barang Masuk</span>
+            <div class="collapse ps-4 {{ request()->routeIs('admin.peminjaman.*') ? 'show' : '' }}" id="menuPeminjaman">
+                <a href="{{ route('admin.peminjaman.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}">
+                    <i class="bi bi-journal-text"></i> <span>Peminjaman Barang</span>
+                </a>
+            </div>
+    
+            <!-- ===================== DATA PENGGUNA ===================== -->
+            <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuPengguna">
+                <i class="bi bi-people"></i> <span>Data Pengguna</span> <i class="bi bi-chevron-down ms-auto"></i>
             </a>
-
-            <a href="{{ route('admin.barangkeluar.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.barangkeluar.*') ? 'active' : '' }}" style="animation-delay: 0.5s;">
-                <i class="bi bi-arrow-up-circle"></i> <span>Barang Keluar</span>
-            </a>
-
-            <a href="{{ route('admin.peminjaman.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}" style="animation-delay: 0.6s;">
-                <i class="bi bi-journal-text"></i> <span>Peminjaman</span>
-            </a>
-
-            <a href="{{ route('admin.laporan.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}" style="animation-delay: 0.7s;">
+            <div class="collapse ps-4 {{ request()->routeIs('admin.datauser.*') || request()->routeIs('admin.programkeahlian.*') || request()->routeIs('admin.konsentrasi.*') ? 'show' : '' }}" id="menuPengguna">
+    
+                <a href="{{ route('admin.datauser.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-badge"></i> <span>Data Pengguna</span>
+                </a>
+    
+                <a href="{{ route('admin.programkeahlian.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.programkeahlian.*') ? 'active' : '' }}">
+                    <i class="bi bi-book"></i> <span>Program Keahlian</span>
+                </a>
+    
+                <a href="{{ route('admin.konsentrasi.index') }}" 
+                   class="list-group-item list-group-item-action {{ request()->routeIs('admin.konsentrasi.*') ? 'active' : '' }}">
+                    <i class="bi bi-diagram-3"></i> <span>Konsentrasi Keahlian</span>
+                </a>
+            </div>
+    
+            <!-- ===================== LAPORAN ===================== -->
+            <a href="{{ route('admin.laporan.index') }}" 
+               class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
             </a>
-
-            <a href="{{ route('admin.datauser.index') }}" class="list-group-item list-group-item-action
-                {{ request()->routeIs('admin.datauser.*') ? 'active' : '' }}" style="animation-delay: 0.8s;">
-                <i class="bi bi-people"></i> <span>Data Pengguna</span>
-            </a>
-
-            <a href="{{ route('admin.programkeahlian.index') }}" class="list-group-item list-group-item-action
-            {{ request()->routeIs('admin.programkeahlian.*') ? 'active' : '' }}" style="animation-delay: 0.9s;">
-                <i class="bi bi-book"></i> <span>Data Program Keahlian</span>
-            </a>
-
-            <a href="{{ route('admin.konsentrasi.index') }}" class="list-group-item list-group-item-action
-            {{ request()->routeIs('admin.konsentrasi.*') ? 'active' : '' }}" style="animation-delay: 1.0s;">
-                <i class="bi bi-diagram-3"></i> <span>Data Konsentrasi Keahlian</span>
-            </a>
+    
         </div>
     </div>
+    
 
     <div id="page-content-wrapper">
         <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
