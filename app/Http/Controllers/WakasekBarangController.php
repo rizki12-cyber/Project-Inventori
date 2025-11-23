@@ -12,17 +12,37 @@ class WakasekBarangController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-        // Admin & Wakasek bisa lihat semua barang
-        if (in_array($user->role, ['admin', 'wakasek'])) {
-    $barang = Barang::latest()->get();
-} else {
-    $barang = Barang::where('user_id', $user->id)->latest()->get();
-}
-
-
-        return view('wakasek.barang.index', compact('barang'));
+    
+        // --- Ambil lokasi hanya dari barang yang boleh dilihat wakasek ---
+        $listLokasi = Barang::select('lokasi')
+            ->whereNotNull('lokasi')
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id) // barang milik wakasek
+                  ->orWhereHas('user', function($qq) {
+                      $qq->where('role', 'kabeng'); // barang milik kabeng
+                  });
+            })
+            ->groupBy('lokasi')
+            ->pluck('lokasi');
+    
+        // --- Query dasar barang yang boleh dilihat wakasek ---
+        $barangQuery = Barang::where(function($q) use ($user) {
+            $q->where('user_id', $user->id)  // wakasek melihat barang sendiri
+              ->orWhereHas('user', function($qq) {
+                  $qq->where('role', 'kabeng'); // wakasek melihat barang kabeng
+              });
+        });
+    
+        // --- Filter lokasi ---
+        if (request()->filled('lokasi')) {
+            $barangQuery->where('lokasi', request('lokasi'));
+        }
+    
+        $barang = $barangQuery->latest()->get();
+    
+        return view('wakasek.barang.index', compact('barang', 'listLokasi'));
     }
+    
 
     public function create()
     {

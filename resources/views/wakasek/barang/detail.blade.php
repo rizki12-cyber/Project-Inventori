@@ -27,7 +27,6 @@
                     <tr><th>Kategori</th><td>{{ $barang->kategori }}</td></tr>
                     <tr><th>Jumlah</th><td>{{ $barang->jumlah }}</td></tr>
                     <tr><th>Kondisi</th><td>{{ $barang->kondisi }}</td></tr>
-                    <tr><th>Lokasi</th><td>{{ $barang->lokasi }}</td></tr>
                     <tr><th>Tanggal Pembelian</th><td>{{ $barang->tanggal_pembelian }}</td></tr>
                     <tr><th>Tanggal Penghapusan</th><td>{{ $barang->tanggal_penghapusan ?? '-' }}</td></tr>
                     <tr><th>Sumber Dana</th><td>{{ $barang->sumber_dana ?? '-' }}</td></tr>

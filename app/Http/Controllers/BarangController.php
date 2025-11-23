@@ -13,37 +13,48 @@ class BarangController extends Controller
      * Tampilkan semua data barang berdasarkan role user.
      */
     public function index()
-{
-    $user = Auth::user();
-
-    // Admin lihat semua + bisa edit hapus
-    if ($user->role === 'admin') {
-        $barang = Barang::latest()->get();
-        return view('admin.barang.index', compact('barang'));
-    }
-
-    // Wakasek hanya lihat semua barang
-    if ($user->role === 'wakasek') {
-        $barang = Barang::latest()->get();
-        return view('wakasek.barang.index', compact('barang'));
-    }
-
-    // Kabeng lihat barang sesuai jurusan/konsentrasi
-    if ($user->role === 'kabeng') {
-        $barang = Barang::where(function($query) use ($user) {
-            $query->where('user_id', $user->id) // Barang kabeng sendiri
-                  ->orWhereHas('user', function($q) {
-                      $q->where('role', 'wakasek'); // Barang input wakasek
-                  });
-        })->latest()->get();
+    {
+        $user = Auth::user();
     
-        return view('kabeng.barang.index', compact('barang'));
+        // QUERY DASAR
+        $barangQuery = Barang::query();
+    
+        // ===== ROLE KABENG =====
+        if ($user->role === 'kabeng') {
+    
+            // Hanya melihat: barang milik sendiri + barang milik wakasek
+            $barangQuery->where(function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhereHas('user', function($q) {
+                          $q->where('role', 'wakasek');
+                      });
+            });
+        }
+    
+        // ===== FILTER LOKASI SESUDAH FILTER ROLE =====
+        if (request()->filled('lokasi')) {
+            $barangQuery->where('lokasi', request('lokasi'));
+        }
+    
+        // ===== AMBIL DATA BARANG =====
+        $barang = $barangQuery->latest()->get();
+    
+        // ===== AMBIL LOKASI BERDASARKAN BARANG YANG BOLEH DIA LIHAT =====
+        $listLokasi = $barangQuery->pluck('lokasi')->unique()->values();
+    
+        // ADMIN
+        if ($user->role === 'admin') {
+            return view('admin.barang.index', compact('barang', 'listLokasi'));
+        }
+    
+        // KABENG
+        if ($user->role === 'kabeng') {
+            return view('kabeng.barang.index', compact('barang', 'listLokasi'));
+        }
+    
+        abort(403, "Role tidak dikenali");
     }
-
-    abort(403, "Role tidak dikenali");
-}
-
-
+    
 
     /**
      * Form tambah barang.

@@ -82,12 +82,34 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
         <a href="{{ route('wakasek.barang.create') }}" class="btn btn-add"><i class="bi bi-plus-circle"></i> Tambah Barang</a>
     </div>
 
-    <!-- Search -->
-    <div class="d-flex justify-content-end mb-3">
-        <div class="search-box">
-            <input type="text" class="form-control" id="searchInput" placeholder="Cari barang...">
-            <i class="bi bi-search"></i>
-        </div>
+     <!-- FILTER LOKASI -->
+     <div class="d-flex justify-content-start mb-3">
+
+        <form action="{{ route('wakasek.barang.index') }}" method="GET" class="d-flex gap-2">
+
+            <!-- PILIH LOKASI -->
+            <select name="lokasi" class="form-control" style="width: 220px;">
+                <option value="">-- Pilih Lokasi --</option>
+
+                @foreach($listLokasi as $lok)
+                    <option value="{{ $lok }}" {{ request('lokasi') == $lok ? 'selected' : '' }}>
+                        {{ $lok }}
+                    </option>
+                @endforeach
+
+            </select>
+
+            <!-- TOMBOL CARI -->
+            <button type="submit" class="btn" style="background:#0d6efd;color:white;">
+                <i class="bi bi-search"></i> Cari
+            </button>
+
+            <!-- RESET -->
+            <a href="{{ route('wakasek.barang.index') }}" class="btn btn-secondary">
+                Reset
+            </a>
+
+        </form>
     </div>
 
     <!-- Table -->
@@ -99,6 +121,7 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                         <th>No</th>
                         <th>Foto</th>
                         <th>Nama</th>
+                        <th>Lokasi</th>
                         <th>Tgl Pembelian</th>
                         <th>Tgl Penghapusan</th>
                         <th>Aksi</th>
@@ -116,6 +139,7 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                                 @endif
                             </td>
                             <td>{{ $b->nama_barang }}</td>
+                            <td>{{ $b->lokasi ?? '-' }}</td>
                             <td>{{ $b->tanggal_pembelian ? \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d M Y') : '-' }}</td>
                             <td>{{ $b->tanggal_penghapusan ? \Carbon\Carbon::parse($b->tanggal_penghapusan)->format('d M Y') : '-' }}</td>
                             <td>
@@ -137,7 +161,7 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                                             </button>
                                         </form>
                                     @else
-                                        <span class="text-muted fst-italic">Hanya bisa dilihat</span>
+                                     
                                     @endif
                                 </div>
                             </td>
@@ -157,15 +181,6 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
 </div>
 
 <script>
-// Live Search
-document.getElementById("searchInput").addEventListener("keyup", function() {
-    const value = this.value.toLowerCase();
-    document.querySelectorAll("#barangTable tbody tr").forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(value) ? "" : "none";
-    });
-});
-
 // SweetAlert Delete Confirmation
 document.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', function() {
