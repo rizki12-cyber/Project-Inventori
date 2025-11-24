@@ -56,14 +56,16 @@ class LaporanController extends Controller
 
             default: // 📌 barang
                 $data = Barang::with('user')
+                    ->whereNull('tanggal_penghapusan') // hanya barang aktif
                     ->when($bulan, fn($q) => $q->whereMonth('tanggal_pembelian', $bulan))
                     ->when($tahun, fn($q) => $q->whereYear('tanggal_pembelian', $tahun))
                     ->when($jurusan, fn($q) => $q->whereHas('user', fn($u) => $u->where('jurusan', $jurusan)))
                     ->when($kondisi, fn($q) => $q->where('kondisi', $kondisi))
                     ->latest()->get();
 
-                // 📌 hanya barang yang butuh jurusanList
+                // 📌 Hanya barang yang butuh jurusanList
                 $jurusanList = Barang::with('user')
+                    ->whereNull('tanggal_penghapusan')
                     ->get()
                     ->pluck('user.jurusan')
                     ->filter()
@@ -83,7 +85,10 @@ class LaporanController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $barang = Barang::with('user')->get();
+        $barang = Barang::with('user')
+            ->whereNull('tanggal_penghapusan') // hanya barang aktif
+            ->get();
+
         $pdf = Pdf::loadView('admin.laporan.pdf', compact('barang'));
         return $pdf->download('laporan-barang.pdf');
     }

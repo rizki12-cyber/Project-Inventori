@@ -105,17 +105,20 @@
 
                         {{-- HEADER TABEL --}}
                         @if($jenis == 'barang')
-                            <tr>
-                                <th>No</th>
-                                <th>Kode</th>
-                                <th>Nama Barang</th>
-                                <th>Kategori</th>
-                                <th>Jumlah</th>
-                                <th>Kondisi</th>
-                                <th>Lokasi</th>
-                                <th>Tanggal</th>
-                                <th>Jurusan</th>
-                            </tr>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode</th>
+                            <th>Nama Barang</th>
+                            <th>Kategori</th>
+                            <th>Jumlah</th>
+                            <th>Kondisi</th>
+                            <th>Lokasi</th>
+                            <th>Jurusan</th>
+                            <th>Keterangan</th>
+                            <th>Spesifikasi</th>
+                            <th>Sumber Dana</th>
+                            <th>Tanggal Pembelian</th>
+                        </tr>
 
                         @elseif($jenis == 'supplier')
                             <tr>
@@ -164,19 +167,21 @@
                         @forelse($data as $d)
 
                             @if($jenis == 'barang')
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $d->kode_barang }}</td>
-                                    <td>{{ $d->nama_barang }}</td>
-                                    <td>{{ $d->kategori }}</td>
-                                    <td>{{ $d->jumlah }}</td>
-                                    <td>{{ $d->kondisi }}</td>
-                                    <td>{{ $d->lokasi }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($d->tanggal_pembelian)->format('d/m/Y') }}</td>
-
-                                    <td>{{ $d->user->konsentrasi->nama_konsentrasi ?? '-' }}</td>
-
-                                </tr>
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $d->kode_barang }}</td>
+                                <td>{{ $d->nama_barang }}</td>
+                                <td>{{ $d->kategori }}</td>
+                                <td>{{ $d->jumlah }}</td>
+                                <td>{{ $d->kondisi }}</td>
+                                <td>{{ $d->lokasi }}</td>
+                                <td>{{ $d->user->konsentrasi->nama_konsentrasi ?? '-' }}</td>
+                                <td>{{ $d->keterangan ?? '-' }}</td>
+                                <td>{{ $d->spesifikasi ?? '-' }}</td>
+                                <td>{{ $d->sumber_dana ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($d->tanggal_pembelian)->format('d/m/Y') }}</td>
+                            </tr>
+                            
 
                             @elseif($jenis == 'supplier')
                                 <tr>
@@ -219,7 +224,7 @@
 
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center py-4 text-muted">
+                                <td colspan="14" class="text-center py-4 text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2"></i><br>
                                     Tidak ada data.
                                 </td>

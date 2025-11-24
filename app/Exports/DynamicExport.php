@@ -30,13 +30,26 @@ class DynamicExport implements FromArray, WithHeadings
                 return ['ID', 'Nama Barang', 'Supplier', 'Jumlah', 'Tanggal Masuk'];
 
             case 'barang_keluar':
-                return ['ID', 'Nama Barang', 'Jumlah', 'Tanggal Keluar'];
+                return ['ID', 'Nama Barang', 'Jumlah', 'Keterangan', 'Tanggal Keluar'];
 
             case 'peminjaman':
-                return ['ID', 'Nama Barang', 'Peminjam', 'Tanggal Pinjam', 'Tanggal Kembali', 'Status'];
+                return ['ID', 'Nama Barang', 'Peminjam', 'Jumlah', 'Tanggal Pinjam', 'Tanggal Kembali', 'Status'];
 
-            default: // barang
-                return ['Kode Barang','Nama Barang','Kategori','Jumlah','Kondisi','Lokasi','Tanggal Pembelian'];
+                default: // barang
+                return [
+                    'Kode Barang',
+                    'Nama Barang',
+                    'Kategori',
+                    'Jumlah',
+                    'Kondisi',
+                    'Lokasi',
+                    'Jurusan',
+                    'Keterangan',
+                    'Spesifikasi',
+                    'Sumber Dana',
+                    'Tanggal Pembelian'
+                ];
+            
         }
     }
 
@@ -55,7 +68,6 @@ class DynamicExport implements FromArray, WithHeadings
                     ];
                 })->toArray();
 
-
             case 'barang_masuk':
                 return BarangMasuk::with('barang','supplier')->get()->map(function ($b) {
                     return [
@@ -67,17 +79,16 @@ class DynamicExport implements FromArray, WithHeadings
                     ];
                 })->toArray();
 
-
             case 'barang_keluar':
                 return BarangKeluar::with('barang')->get()->map(function ($b) {
                     return [
                         $b->id,
                         $b->barang->nama_barang ?? '-',
                         $b->jumlah,
+                        $b->keterangan ?? '-',
                         $b->tanggal_keluar,
                     ];
                 })->toArray();
-
 
             case 'peminjaman':
                 return Peminjaman::with('barang','user')->get()->map(function ($p) {
@@ -85,15 +96,15 @@ class DynamicExport implements FromArray, WithHeadings
                         $p->id,
                         $p->barang->nama_barang ?? '-',
                         $p->user->name ?? '-',
+                        $p->jumlah,
                         $p->tanggal_pinjam,
                         $p->tanggal_kembali,
                         $p->status,
                     ];
                 })->toArray();
 
-
-            default: // barang
-                return Barang::all()->map(function ($b) {
+                default: // barang
+                return Barang::whereNull('tanggal_penghapusan')->with('user')->get()->map(function ($b) {
                     return [
                         $b->kode_barang,
                         $b->nama_barang,
@@ -101,6 +112,10 @@ class DynamicExport implements FromArray, WithHeadings
                         $b->jumlah,
                         $b->kondisi,
                         $b->lokasi,
+                        $b->user->konsentrasi->nama_konsentrasi ?? '-', // jurusan
+                        $b->keterangan ?? '-',
+                        $b->spesifikasi ?? '-',
+                        $b->sumber_dana ?? '-',
                         $b->tanggal_pembelian,
                     ];
                 })->toArray();
