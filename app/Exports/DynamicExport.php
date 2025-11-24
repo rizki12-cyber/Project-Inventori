@@ -105,18 +105,19 @@ class DynamicExport implements FromArray, WithHeadings
                     ];
                 })->toArray();
 
-            case 'peminjaman':
-                return Peminjaman::with('barang','user')->get()->map(function ($p) {
-                    return [
-                        $p->id,
-                        $p->barang->nama_barang ?? '-',
-                        $p->user->name ?? '-',
-                        $p->jumlah,
-                        $p->tanggal_pinjam,
-                        $p->tanggal_kembali,
-                        $p->status,
-                    ];
-                })->toArray();
+                case 'peminjaman':
+                    return Peminjaman::with('barang','user')->get()->map(function ($p) {
+                        return [
+                            $p->id,
+                            $p->barang->nama_barang ?? '-',
+                            $p->nama_peminjam ?? ($p->user->name ?? '-'), // fallback
+                            $p->jumlah,
+                            $p->tanggal_pinjam,
+                            $p->tanggal_kembali,
+                            $p->status,
+                        ];
+                    })->toArray();
+                
 
             case 'barang_dihapus': // Tambahan baru
                 return Barang::whereNotNull('tanggal_penghapusan')->with('user')->get()->map(function ($b) {

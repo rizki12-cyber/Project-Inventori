@@ -12,10 +12,12 @@
             <p class="text-muted mb-0">Kelola dan ekspor seluruh laporan inventaris</p>
         </div>
         <div class="d-flex gap-2 flex-wrap mt-2 mt-md-0">
+            @if($jenis)
             <a href="{{ route('admin.laporan.export.excel', array_merge(['jenis' => $jenis], request()->query())) }}"
                 class="btn btn-success shadow-sm d-flex align-items-center gap-1">
                 <i class="fas fa-file-excel"></i> Export Excel
             </a>
+            @endif
         </div>
     </div>
 
@@ -31,12 +33,13 @@
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Jenis Laporan</label>
                     <select name="jenis" class="form-select shadow-sm">
-                        <option value="barang" {{ request('jenis')=='barang' ? 'selected':'' }}>Data Barang</option>
-                        <option value="supplier" {{ request('jenis')=='supplier' ? 'selected':'' }}>Supplier</option>
-                        <option value="barang_masuk" {{ request('jenis')=='barang_masuk' ? 'selected':'' }}>Barang Masuk</option>
-                        <option value="barang_keluar" {{ request('jenis')=='barang_keluar' ? 'selected':'' }}>Barang Keluar</option>
-                        <option value="peminjaman" {{ request('jenis')=='peminjaman' ? 'selected':'' }}>Peminjaman</option>
-                        <option value="barang_dihapus" {{ request('jenis')=='barang_dihapus' ? 'selected':'' }}>Barang Dihapus</option>
+                        <option value="" {{ !$jenis ? 'selected' : '' }}>-- Pilih Jenis Laporan --</option>
+                        <option value="barang" {{ $jenis=='barang' ? 'selected':'' }}>Data Barang</option>
+                        <option value="supplier" {{ $jenis=='supplier' ? 'selected':'' }}>Supplier</option>
+                        <option value="barang_masuk" {{ $jenis=='barang_masuk' ? 'selected':'' }}>Barang Masuk</option>
+                        <option value="barang_keluar" {{ $jenis=='barang_keluar' ? 'selected':'' }}>Barang Keluar</option>
+                        <option value="peminjaman" {{ $jenis=='peminjaman' ? 'selected':'' }}>Peminjaman</option>
+                        <option value="barang_dihapus" {{ $jenis=='barang_dihapus' ? 'selected':'' }}>Barang Dihapus</option>
                     </select>
                 </div>
 
@@ -78,11 +81,11 @@
     </div>
 
     <!-- Data Table Card -->
+    @if($jenis)
     <div class="card shadow-sm border-0 rounded-3">
         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
             <h5 class="mb-0 text-primary">
                 <i class="fas fa-table me-2"></i>
-                {{-- Judul Otomatis --}}
                 @switch($jenis)
                     @case('supplier') Supplier @break
                     @case('barang_masuk') Barang Masuk @break
@@ -100,29 +103,25 @@
 
         <div class="card-body p-0">
             <div class="table-responsive">
-
-                {{-- TABEL DINAMIS --}}
                 <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
-
                         {{-- HEADER TABEL --}}
                         @if($jenis == 'barang' || $jenis == 'barang_dihapus')
-                        <tr>
-                            <th>No</th>
-                            <th>Kode</th>
-                            <th>Nama Barang</th>
-                            <th>Kategori</th>
-                            <th>Jumlah</th>
-                            <th>Kondisi</th>
-                            <th>Lokasi</th>
-                            <th>Jurusan</th>
-                            <th>Keterangan</th>
-                            <th>Spesifikasi</th>
-                            <th>Sumber Dana</th>
-                            <th>Tanggal Pembelian</th>
-                            @if($jenis == 'barang_dihapus') <th>Tanggal Penghapusan</th> @endif
-                        </tr>
-
+                            <tr>
+                                <th>No</th>
+                                <th>Kode</th>
+                                <th>Nama Barang</th>
+                                <th>Kategori</th>
+                                <th>Jumlah</th>
+                                <th>Kondisi</th>
+                                <th>Lokasi</th>
+                                <th>Jurusan</th>
+                                <th>Keterangan</th>
+                                <th>Spesifikasi</th>
+                                <th>Sumber Dana</th>
+                                <th>Tanggal Pembelian</th>
+                                @if($jenis == 'barang_dihapus') <th>Tanggal Penghapusan</th> @endif
+                            </tr>
                         @elseif($jenis == 'supplier')
                             <tr>
                                 <th>No</th>
@@ -131,7 +130,6 @@
                                 <th>Alamat</th>
                                 <th>Tanggal Input</th>
                             </tr>
-
                         @elseif($jenis == 'barang_masuk')
                             <tr>
                                 <th>No</th>
@@ -140,7 +138,6 @@
                                 <th>Jumlah</th>
                                 <th>Tanggal Masuk</th>
                             </tr>
-
                         @elseif($jenis == 'barang_keluar')
                             <tr>
                                 <th>No</th>
@@ -149,7 +146,6 @@
                                 <th>Keterangan</th>
                                 <th>Tanggal Keluar</th>
                             </tr>
-
                         @elseif($jenis == 'peminjaman')
                             <tr>
                                 <th>No</th>
@@ -161,14 +157,10 @@
                                 <th>Status</th>
                             </tr>
                         @endif
-
                     </thead>
 
                     <tbody>
-
-                        {{-- BARIS DATA DINAMIS --}}
                         @forelse($data as $d)
-
                             @if($jenis == 'barang' || $jenis == 'barang_dihapus')
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -187,78 +179,65 @@
                                     <td>{{ \Carbon\Carbon::parse($d->tanggal_penghapusan)->format('d/m/Y') }}</td>
                                 @endif
                             </tr>
-
                             @elseif($jenis == 'supplier')
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $d->nama_supplier }}</td>
-                                    <td>{{ $d->telepon }}</td>
-                                    <td>{{ $d->alamat }}</td>
-                                    <td>{{ $d->created_at->format('d/m/Y') }}</td>
-                                </tr>
-
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $d->nama_supplier }}</td>
+                                <td>{{ $d->telepon }}</td>
+                                <td>{{ $d->alamat }}</td>
+                                <td>{{ $d->created_at->format('d/m/Y') }}</td>
+                            </tr>
                             @elseif($jenis == 'barang_masuk')
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $d->barang->nama_barang }}</td>
-                                    <td>{{ $d->supplier->nama_supplier }}</td>
-                                    <td>{{ $d->jumlah }}</td>
-                                    <td>{{ $d->tanggal_masuk }}</td>
-                                </tr>
-
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $d->barang->nama_barang }}</td>
+                                <td>{{ $d->supplier->nama_supplier }}</td>
+                                <td>{{ $d->jumlah }}</td>
+                                <td>{{ $d->tanggal_masuk }}</td>
+                            </tr>
                             @elseif($jenis == 'barang_keluar')
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $d->barang->nama_barang }}</td>
-                                    <td>{{ $d->jumlah }}</td>
-                                    <td>{{ $d->keterangan }}</td>
-                                    <td>{{ $d->tanggal_keluar }}</td>
-                                </tr>
-
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $d->barang->nama_barang }}</td>
+                                <td>{{ $d->jumlah }}</td>
+                                <td>{{ $d->keterangan }}</td>
+                                <td>{{ $d->tanggal_keluar }}</td>
+                            </tr>
                             @elseif($jenis == 'peminjaman')
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $d->nama_peminjam }}</td>
-                                    <td>{{ $d->barang->nama_barang }}</td>
-                                    <td>{{ $d->jumlah }}</td>
-                                    <td>{{ $d->tanggal_pinjam }}</td>
-                                    <td>{{ $d->tanggal_kembali }}</td>
-                                    <td>{{ $d->status }}</td>
-                                </tr>
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $d->nama_peminjam }}</td>
+                                <td>{{ $d->barang->nama_barang }}</td>
+                                <td>{{ $d->jumlah }}</td>
+                                <td>{{ $d->tanggal_pinjam }}</td>
+                                <td>{{ $d->tanggal_kembali }}</td>
+                                <td>{{ $d->status }}</td>
+                            </tr>
                             @endif
-
                         @empty
                             <tr>
                                 <td colspan="14" class="text-center py-4 text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2"></i><br>
-                                    Tidak ada data.
+                                    Silahkan pilih jenis laporan dan klik "Terapkan" untuk menampilkan data.
                                 </td>
                             </tr>
                         @endforelse
-
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+    @endif
+
 </div>
 
 <style>
     body { font-family: 'Poppins', sans-serif; }
-
     .card { transition: all 0.3s ease-in-out; }
     .card:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.08); }
-
-    .table th {
-        font-weight: 600;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        color: #6c757d;
-        border-top: none;
-    }
+    .table th { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; color: #6c757d; border-top: none; }
     .table td { vertical-align: middle; font-size: 0.875rem; }
     .table-hover tbody tr:hover { background-color: #f1f5ff; transition: all 0.2s ease-in-out; }
-
     .form-select, .form-control { border-radius: 10px; transition: 0.2s; }
     .form-select:focus, .form-control:focus {
         box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
