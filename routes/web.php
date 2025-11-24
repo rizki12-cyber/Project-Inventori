@@ -18,6 +18,7 @@ use App\Http\Controllers\WakasekProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileKabengController;
 use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\KabengLaporanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -231,8 +232,12 @@ Route::middleware(['auth', 'role:kabeng'])->prefix('kabeng')->group(function () 
     Route::get('/barang/{barang}/detail', [BarangController::class, 'show'])->name('kabeng.barang.show');
 
     // PROFIL KABENG
-Route::get('/profile', [ProfileKabengController::class, 'index'])->name('kabeng.profile.index');
-Route::post('/profile/update', [ProfileKabengController::class, 'update'])->name('kabeng.profile.update');
+    Route::get('/profile', [ProfileKabengController::class, 'index'])->name('kabeng.profile.index');
+    Route::post('/profile/update', [ProfileKabengController::class, 'update'])->name('kabeng.profile.update');
+
+    Route::get('/laporan', [KabengLaporanController::class, 'index'])->name('kabeng.laporan');
+    Route::get('/kabeng/laporan/export/excel', [KabengLaporanController::class, 'export'])
+    ->name('kabeng.laporan.export');
 
 });
 

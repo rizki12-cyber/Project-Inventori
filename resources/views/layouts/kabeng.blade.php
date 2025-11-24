@@ -191,7 +191,7 @@ footer {
                 <i class="bi bi-box-seam"></i> Data Barang Jurusan
             </a>
 
-            <a href="#" class="list-group-item">
+            <a href="{{ route('kabeng.laporan') }}" class="list-group-item">
                 <i class="bi bi-file-earmark-text"></i> Laporan Barang
             </a>
 
