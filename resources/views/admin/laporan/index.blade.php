@@ -36,6 +36,7 @@
                         <option value="barang_masuk" {{ request('jenis')=='barang_masuk' ? 'selected':'' }}>Barang Masuk</option>
                         <option value="barang_keluar" {{ request('jenis')=='barang_keluar' ? 'selected':'' }}>Barang Keluar</option>
                         <option value="peminjaman" {{ request('jenis')=='peminjaman' ? 'selected':'' }}>Peminjaman</option>
+                        <option value="barang_dihapus" {{ request('jenis')=='barang_dihapus' ? 'selected':'' }}>Barang Dihapus</option>
                     </select>
                 </div>
 
@@ -87,6 +88,7 @@
                     @case('barang_masuk') Barang Masuk @break
                     @case('barang_keluar') Barang Keluar @break
                     @case('peminjaman') Peminjaman @break
+                    @case('barang_dihapus') Barang Dihapus @break
                     @default Data Barang
                 @endswitch
             </h5>
@@ -104,7 +106,7 @@
                     <thead class="table-light">
 
                         {{-- HEADER TABEL --}}
-                        @if($jenis == 'barang')
+                        @if($jenis == 'barang' || $jenis == 'barang_dihapus')
                         <tr>
                             <th>No</th>
                             <th>Kode</th>
@@ -118,6 +120,7 @@
                             <th>Spesifikasi</th>
                             <th>Sumber Dana</th>
                             <th>Tanggal Pembelian</th>
+                            @if($jenis == 'barang_dihapus') <th>Tanggal Penghapusan</th> @endif
                         </tr>
 
                         @elseif($jenis == 'supplier')
@@ -166,7 +169,7 @@
                         {{-- BARIS DATA DINAMIS --}}
                         @forelse($data as $d)
 
-                            @if($jenis == 'barang')
+                            @if($jenis == 'barang' || $jenis == 'barang_dihapus')
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $d->kode_barang }}</td>
@@ -180,8 +183,10 @@
                                 <td>{{ $d->spesifikasi ?? '-' }}</td>
                                 <td>{{ $d->sumber_dana ?? '-' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($d->tanggal_pembelian)->format('d/m/Y') }}</td>
+                                @if($jenis == 'barang_dihapus')
+                                    <td>{{ \Carbon\Carbon::parse($d->tanggal_penghapusan)->format('d/m/Y') }}</td>
+                                @endif
                             </tr>
-                            
 
                             @elseif($jenis == 'supplier')
                                 <tr>

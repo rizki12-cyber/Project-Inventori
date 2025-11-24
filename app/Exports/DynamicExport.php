@@ -35,7 +35,23 @@ class DynamicExport implements FromArray, WithHeadings
             case 'peminjaman':
                 return ['ID', 'Nama Barang', 'Peminjam', 'Jumlah', 'Tanggal Pinjam', 'Tanggal Kembali', 'Status'];
 
-                default: // barang
+            case 'barang_dihapus': // Tambahan baru
+                return [
+                    'Kode Barang',
+                    'Nama Barang',
+                    'Kategori',
+                    'Jumlah',
+                    'Kondisi',
+                    'Lokasi',
+                    'Jurusan',
+                    'Keterangan',
+                    'Spesifikasi',
+                    'Sumber Dana',
+                    'Tanggal Pembelian',
+                    'Tanggal Penghapusan'
+                ];
+
+            default: // barang aktif
                 return [
                     'Kode Barang',
                     'Nama Barang',
@@ -49,7 +65,6 @@ class DynamicExport implements FromArray, WithHeadings
                     'Sumber Dana',
                     'Tanggal Pembelian'
                 ];
-            
         }
     }
 
@@ -103,7 +118,25 @@ class DynamicExport implements FromArray, WithHeadings
                     ];
                 })->toArray();
 
-                default: // barang
+            case 'barang_dihapus': // Tambahan baru
+                return Barang::whereNotNull('tanggal_penghapusan')->with('user')->get()->map(function ($b) {
+                    return [
+                        $b->kode_barang,
+                        $b->nama_barang,
+                        $b->kategori,
+                        $b->jumlah,
+                        $b->kondisi,
+                        $b->lokasi,
+                        $b->user->konsentrasi->nama_konsentrasi ?? '-', // jurusan
+                        $b->keterangan ?? '-',
+                        $b->spesifikasi ?? '-',
+                        $b->sumber_dana ?? '-',
+                        $b->tanggal_pembelian,
+                        $b->tanggal_penghapusan,
+                    ];
+                })->toArray();
+
+            default: // barang aktif
                 return Barang::whereNull('tanggal_penghapusan')->with('user')->get()->map(function ($b) {
                     return [
                         $b->kode_barang,
