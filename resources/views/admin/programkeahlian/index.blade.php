@@ -3,190 +3,157 @@
 @section('title', 'Data Program Keahlian')
 
 @section('content')
-<div class="container-fluid py-4">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card header-biru-tua shadow-lg border-0">
-                <div class="card-body p-4">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h2 class="text-white mb-0">
-                                <i class="fas fa-graduation-cap me-3"></i>
-                                Data Program Keahlian
-                            </h2>
-                            <p class="text-white mb-0 mt-2 opacity-75">
-                                Kelola program keahlian yang tersedia di sistem
-                            </p>
-                        </div>
-                        <div class="col-auto">
-                            <a href="{{ route('admin.programkeahlian.create') }}" 
-                                class="btn btn-primary btn-lg rounded-pill shadow-sm"
-                                style="background:#3b82f6; border:none; color:white;">
-                                     <i class="fas fa-plus me-2"></i>
-                                Tambah Program
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+/* Animation */
+body { font-family: 'Poppins', sans-serif; color: #1e293b; }
+.data-container { animation: fadeSlideIn 0.7s ease forwards; opacity: 0; transform: translateY(20px); }
+@keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Page Title */
+.page-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Add Button */
+.btn-add {
+    background: #ffffff;
+    color: #1e40af;
+    border-radius: 50px;
+    padding: 0.55rem 1.2rem;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: 0.3s;
+}
+.btn-add:hover { background: #e0e7ff; transform: translateY(-2px); }
+
+/* Card & Table */
+.card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.table { border-collapse: separate; border-spacing: 0 0.5rem; text-align: center; }
+.table thead { background: #f1f5f9; color: #334155; font-weight: 600; }
+.table tbody tr { background: #fff; border-radius: 10px; transition: 0.25s; }
+.table tbody tr:hover { transform: scale(1.01); background-color: #f8fafc; box-shadow: 0 3px 10px rgba(37,99,235,0.1); }
+
+/* Buttons */
+.btn-sm { border-radius: 10px; width: 36px; height: 36px; display:flex; justify-content:center; align-items:center; transition:0.25s; }
+.btn-warning { background:#facc15; border:none; }
+.btn-warning:hover { background:#eab308; transform:translateY(-2px); }
+
+.btn-danger { background:#ef4444; border:none; }
+.btn-danger:hover { background:#dc2626; transform:translateY(-2px); }
+
+/* Empty state */
+.empty-state { text-align:center; padding:3rem 1rem; color:#94a3b8; }
+.empty-state i { font-size:3rem; margin-bottom:0.5rem; color:#cbd5e1; }
+</style>
+
+<div class="container py-5 data-container">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <h2 class="page-title">
+            <i class="fas fa-graduation-cap me-2"></i>
+            Data Program Keahlian
+        </h2>
+
+        <a href="{{ route('admin.programkeahlian.create') }}" class="btn btn-add">
+            <i class="fas fa-plus-circle"></i> +Tambah Program
+        </a>
     </div>
 
-    <!-- Alert Notification -->
-    @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        </script>
-    @endif
+    <!-- Card Table -->
+    <div class="card p-4">
+        @if($programs->count() > 0)
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Program Keahlian</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
 
-    <!-- Main Content Card -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-lg border-0 rounded-3">
-                <div class="card-header bg-white py-4 border-bottom">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h5 class="mb-0 text-primary">
-                                <i class="fas fa-list me-2"></i>
-                                Daftar Program Keahlian
-                            </h5>
-                        </div>
-                        <div class="col-auto">
-                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
-                                Total: {{ count($programs) }} Program
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light bg-opacity-50">
-                                <tr>
-                                    <th class="ps-4 py-3 text-uppercase text-secondary font-weight-bold" style="width: 80px;">No</th>
-                                    <th class="py-3 text-uppercase text-secondary font-weight-bold">Nama Program Keahlian</th>
-                                    <th class="text-center py-3 text-uppercase text-secondary font-weight-bold" style="width: 200px;">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($programs as $i => $program)
-                                    <tr class="border-bottom">
-                                        <td class="ps-4 py-3">
-                                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-circle p-2">{{ $i + 1 }}</span>
-                                        </td>
+                <tbody>
+                    @foreach($programs as $index => $program)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $program->nama_program }}</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
 
-                                        <!-- IKON DIHAPUS SESUAI PERMINTAAN -->
-                                        <td class="py-3">
-                                            <div class="d-flex align-items-center">
-                                                <div>
-                                                    <h6 class="mb-0 text-dark">{{ $program->nama_program }}</h6>
-                                                    <small class="text-muted">Program Keahlian</small>
-                                                </div>
-                                            </div>
-                                        </td>
+                                <!-- Edit -->
+                                <a href="{{ route('admin.programkeahlian.edit', $program->id) }}"
+                                   class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
 
-                                        <td class="text-center py-3">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <a href="{{ route('admin.programkeahlian.edit', $program->id) }}" 
-                                                   class="btn btn-outline-warning btn-sm rounded-pill px-3 py-2 d-flex align-items-center">
-                                                    <i class="fas fa-edit me-2"></i> Edit
-                                                </a>
+                                <!-- Delete -->
+                                <form action="{{ route('admin.programkeahlian.destroy', $program->id) }}"
+                                      method="POST"
+                                      class="d-inline form-delete">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-danger btn-delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
 
-                                                <!-- SWEETALERT DELETE -->
-                                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2 d-flex align-items-center" onclick="hapusProgram('{{ $program->id }}', '{{ $program->nama_program }}')">
-                                                    <i class="fas fa-trash me-2"></i> Hapus
-                                                </button>
+                            </div>
+                        </td>
 
-                                                <form id="delete-form-{{ $program->id }}" action="{{ route('admin.programkeahlian.destroy', $program->id) }}" method="POST" style="display:none;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="text-center py-5">
-                                            <div class="empty-state">
-                                                <div class="icon-shape bg-light bg-opacity-25 text-primary rounded-circle p-4 mb-3 d-inline-block">
-                                                    <i class="fas fa-inbox fs-1"></i>
-                                                </div>
-                                                <h5 class="text-muted mb-3">Belum ada data program keahlian</h5>
-                                                <p class="text-muted mb-4">Mulai dengan menambahkan program keahlian pertama Anda</p>
-                                                <a href="{{ route('admin.programkeahlian.create') }}" class="btn btn-primary rounded-pill px-4 py-2">
-                                                    <i class="fas fa-plus me-2"></i>
-                                                    Tambah Program Pertama
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                @if(count($programs) > 0)
-                <div class="card-footer bg-white py-3 border-top">
-                    <p class="mb-0 text-muted">Menampilkan <strong>{{ count($programs) }}</strong> program keahlian</p>
-                </div>
-                @endif
-            </div>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
+
+        @else
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <div>Belum ada data program keahlian</div>
+            <a href="{{ route('admin.programkeahlian.create') }}" class="btn btn-add mt-3">
+                <i class="fas fa-plus-circle"></i> Tambah Program Pertama
+            </a>
+        </div>
+        @endif
     </div>
 </div>
 
-<!-- SWEETALERT CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-function hapusProgram(id, nama) {
-    Swal.fire({
-        title: 'Yakin ingin menghapus?',
-        text: 'Program ' + nama + ' akan dihapus!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#e74a3b',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Hapus',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('delete-form-' + id).submit();
-        }
+// Delete Confirmation
+document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const form = this.closest('.form-delete');
+
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) form.submit();
+        });
     });
-}
-</script>
+});
 
-<style>
-.header-biru-tua {
-    background: #1e3a8a !important;
-    border: none !important;
-}
-.header-biru-tua * { color: #ffffff !important; }
-.card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-.card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
-.icon-shape { width:40px; height:40px; display:flex; align-items:center; justify-content:center; }
-.table-hover tbody tr:hover { background:rgba(52,152,219,0.05); }
-</style>
-
-<script>
-// SweetAlert Berhasil Input
+// Success Notification
 @if(session('success'))
 Swal.fire({
     icon: 'success',
     title: 'Berhasil!',
-    text: '{{ session('success') }}',
-    timer: 1800,
-    showConfirmButton: false
+    text: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 1800
 });
 @endif
 </script>
