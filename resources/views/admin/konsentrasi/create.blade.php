@@ -3,119 +3,161 @@
 @section('title', 'Tambah Konsentrasi Keahlian')
 
 @section('content')
-<div class="container-fluid py-4">
 
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card header-biru-tua shadow-lg border-0">
-                <div class="card-body p-4">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h2 class="text-white mb-0">
-                                <i class="fas fa-plus-circle me-3"></i>
-                                Tambah Konsentrasi Keahlian
-                            </h2>
-                            <p class="text-white mb-0 mt-2 opacity-75">
-                                Tambahkan konsentrasi keahlian baru ke dalam sistem
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Card Form -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-lg border-0 rounded-3">
-                
-                <div class="card-header bg-white py-4 border-bottom">
-                    <h5 class="mb-0 text-primary">
-                        <i class="fas fa-edit me-2"></i>
-                        Form Tambah Konsentrasi Keahlian
-                    </h5>
-                </div>
-
-                <div class="card-body px-4 py-4">
-
-                    <!-- ERROR Validation -->
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <form action="{{ route('admin.konsentrasi.store') }}" method="POST">
-                        @csrf
-
-                        <!-- PROGRAM KEAHLIAN Dropdown -->
-                        <div class="mb-4">
-                            <label for="program_keahlian_id" class="form-label fw-semibold">
-                                Program Keahlian
-                            </label>
-                            <select name="program_keahlian_id" 
-                                    id="program_keahlian_id" 
-                                    class="form-select form-select-lg rounded-3"
-                                    required
-                                    style="height: 55px;">
-                                <option value="">-- Pilih Program Keahlian --</option>
-                                @foreach($programs as $program)
-                                    <option value="{{ $program->id }}" 
-                                        {{ old('program_keahlian_id') == $program->id ? 'selected' : '' }}>
-                                        {{ $program->nama_program }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- NAMA KONSENTRASI -->
-                        <div class="mb-4">
-                            <label for="nama_konsentrasi" class="form-label fw-semibold">
-                                Nama Konsentrasi Keahlian
-                            </label>
-                            <input type="text"
-                                   id="nama_konsentrasi"
-                                   name="nama_konsentrasi"
-                                   class="form-control form-control-lg rounded-3"
-                                   placeholder="Masukkan nama konsentrasi keahlian..."
-                                   value="{{ old('nama_konsentrasi') }}"
-                                   required
-                                   style="height: 55px;">
-                        </div>
-
-                        <!-- BUTTON -->
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4">
-                            <i class="fas fa-save me-2"></i> Simpan
-                        </button>
-
-                        <a href="{{ route('admin.konsentrasi.index') }}" 
-                           class="btn btn-secondary btn-lg rounded-pill px-4">
-                            <i class="fas fa-arrow-left me-2"></i> Kembali
-                        </a>
-
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- HEADER STYLE -->
 <style>
-.header-biru-tua {
-    background: #1e3a8a !important;
+/* Fade animation */
+.data-container { 
+    animation: fadeSlideIn 0.7s ease forwards; 
+    opacity: 0; 
+    transform: translateY(20px); 
 }
-.header-biru-tua * {
-    color: white !important;
+@keyframes fadeSlideIn { 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* Page Title */
+.page-title {
+    font-weight: 700;
+    font-size: 1.7rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Card */
+.card-modern {
+    border: none; 
+    border-radius: 20px; 
+    background: #fff; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    padding: 2rem;
+}
+
+/* Inputs */
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+}
+
+/* Buttons */
+.btn-back {
+    background: #6b7280;
+    border: none;
+    color: white;
+    border-radius: 12px;
+    padding: 0.6rem 1.3rem;
+    transition: 0.3s;
+}
+.btn-back:hover {
+    background: #4b5563;
+    transform: translateY(-2px);
+}
+
+.btn-save {
+    background: #2563eb;
+    border: none;
+    color: white;
+    border-radius: 12px;
+    padding: 0.6rem 1.3rem;
+    transition: 0.3s;
+}
+.btn-save:hover {
+    background: #1e40af;
+    transform: translateY(-2px);
 }
 </style>
+
+<div class="container py-4 data-container">
+
+    <!-- HEADER -->
+    <h2 class="page-title mb-4">
+        <i class="fas fa-plus-circle me-2"></i> Tambah Konsentrasi Keahlian
+    </h2>
+
+    <!-- CARD FORM -->
+    <div class="card-modern">
+
+        <!-- ERROR Validation -->
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show mb-3">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.konsentrasi.store') }}" method="POST">
+            @csrf
+
+            <!-- PROGRAM KEAHLIAN Dropdown -->
+            <div class="mb-3">
+                <label for="program_keahlian_id" class="form-label fw-semibold">
+                    Program Keahlian
+                </label>
+                <select name="program_keahlian_id" 
+                        id="program_keahlian_id" 
+                        class="form-select @error('program_keahlian_id') is-invalid @enderror" 
+                        required>
+                    <option value="">-- Pilih Program Keahlian --</option>
+                    @foreach($programs as $program)
+                        <option value="{{ $program->id }}" 
+                            {{ old('program_keahlian_id') == $program->id ? 'selected' : '' }}>
+                            {{ $program->nama_program }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('program_keahlian_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- NAMA KONSENTRASI -->
+            <div class="mb-3">
+                <label for="nama_konsentrasi" class="form-label fw-semibold">
+                    Nama Konsentrasi Keahlian
+                </label>
+                <input type="text"
+                       id="nama_konsentrasi"
+                       name="nama_konsentrasi"
+                       class="form-control @error('nama_konsentrasi') is-invalid @enderror"
+                       placeholder="Masukkan nama konsentrasi keahlian..."
+                       value="{{ old('nama_konsentrasi') }}"
+                       required>
+                @error('nama_konsentrasi')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ route('admin.konsentrasi.index') }}" class="btn-back">
+                    <i class="bi bi-arrow-left-circle"></i> Kembali
+                </a>
+
+                <button type="submit" class="btn-save">
+                    <i class="bi bi-save"></i> Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- SWEETALERT SUCCESS -->
+@if(session('success'))
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil!',
+    text: "{{ session('success') }}",
+    timer: 1800,
+    showConfirmButton: false
+});
+</script>
+@endif
 
 @endsection
