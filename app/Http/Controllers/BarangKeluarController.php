@@ -22,7 +22,7 @@ class BarangKeluarController extends Controller
         return view('admin.BarangKeluar.create', compact('barang'));
     }
 
-    /** 🔹 Simpan data barang keluar baru ke database */
+    /** 🔹 Simpan data barang keluar */
     public function store(Request $request)
     {
         $request->validate([
@@ -36,6 +36,7 @@ class BarangKeluarController extends Controller
 
         $barang = Barang::findOrFail($request->barang_id);
 
+        // Validasi stok
         if ($barang->jumlah < $request->jumlah) {
             return back()->with('error', 'Jumlah barang keluar melebihi stok yang tersedia!');
         }
@@ -74,37 +75,40 @@ class BarangKeluarController extends Controller
             ->with('success', 'Data barang keluar berhasil dihapus!');
     }
 
+    /** 🔹 Tampilkan form edit */
     public function edit($id)
-{
-    $barangKeluar = BarangKeluar::findOrFail($id);
-    $barang = Barang::all(); // untuk dropdown
+    {
+        $barangKeluar = BarangKeluar::findOrFail($id);
+        $barang = Barang::all(); // untuk dropdown
 
-    return view('admin.barangkeluar.edit', compact('barangKeluar', 'barang'));
-}
+        return view('admin.BarangKeluar.edit', compact('barangKeluar', 'barang'));
+    }
 
-public function update(Request $request, $id)
-{
-    $request->validate([
-        'id_barang' => 'required',
-        'tanggal_keluar' => 'required|date',
-        'jumlah' => 'required|integer|min:1',
-        'lokasi' => 'nullable|string',
-        'penerima' => 'nullable|string',
-        'keterangan' => 'nullable|string',
-    ]);
+    /** 🔹 Update data barang keluar */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'barang_id' => 'required|exists:barang,id',
+            'tanggal_keluar' => 'required|date',
+            'jumlah' => 'required|integer|min:1',
+            'lokasi' => 'nullable|string',
+            'penerima' => 'nullable|string',
+            'keterangan' => 'nullable|string',
+        ]);
 
-    $bk = BarangKeluar::findOrFail($id);
+        $bk = BarangKeluar::findOrFail($id);
 
-    $bk->update([
-        'id_barang' => $request->id_barang,
-        'tanggal_keluar' => $request->tanggal_keluar,
-        'jumlah' => $request->jumlah,
-        'lokasi' => $request->lokasi,
-        'penerima' => $request->penerima,
-        'keterangan' => $request->keterangan,
-    ]);
+        // Update data barang keluar
+        $bk->update([
+            'barang_id' => $request->barang_id,
+            'tanggal_keluar' => $request->tanggal_keluar,
+            'jumlah' => $request->jumlah,
+            'lokasi' => $request->lokasi,
+            'penerima' => $request->penerima,
+            'keterangan' => $request->keterangan,
+        ]);
 
-    return redirect()->route('admin.barangkeluar.index')->with('success', 'Data berhasil diperbarui!');
-}
-
+        return redirect()->route('admin.barangkeluar.index')
+            ->with('success', 'Data berhasil diperbarui!');
+    }
 }
