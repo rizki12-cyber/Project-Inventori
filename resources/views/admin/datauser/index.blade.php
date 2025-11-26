@@ -2,243 +2,159 @@
 @section('title', 'Data User')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
-    body {
-        background: linear-gradient(135deg, #eef2ff, #f8fafc);
-        font-family: 'Poppins', sans-serif;
-        color: #1e293b;
-    }
+/* Animation */
+body { font-family: 'Poppins', sans-serif; color: #1e293b; }
+.data-container { animation: fadeSlideIn 0.7s ease forwards; opacity: 0; transform: translateY(20px); }
+@keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
 
-    /* Container animation */
-    .data-container {
-        animation: fadeUp 0.6s ease forwards;
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    @keyframes fadeUp {
-        to { opacity: 1; transform: translateY(0); }
-    }
+/* Page Title */
+.page-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-    /* Card style */
-    .card {
-        border: none;
-        border-radius: 18px;
-        backdrop-filter: blur(12px);
-        background: rgba(255, 255, 255, 0.88);
-        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-    }
+/* Add Button */
+.btn-add {
+    background: #ffffff;
+    color: #1e40af;
+    border-radius: 50px;
+    padding: 0.55rem 1.2rem;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: 0.3s;
+}
+.btn-add:hover { background: #e0e7ff; transform: translateY(-2px); }
 
-    .card-header {
-        background: linear-gradient(135deg, #4f46e5, #3b82f6);
-        color: white;
-        font-weight: 600;
-        padding: 0.85rem 1.25rem; /* dikurang biar lebih rapat */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 3px solid #1e3a8a;
-    }
+/* Card & Table */
+.card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.table { border-collapse: separate; border-spacing: 0 0.5rem; text-align: center; }
+.table thead { background: #f1f5f9; color: #334155; font-weight: 600; }
+.table tbody tr { background: #fff; border-radius: 10px; transition: 0.25s; }
+.table tbody tr:hover { transform: scale(1.01); background-color: #f8fafc; box-shadow: 0 3px 10px rgba(37,99,235,0.1); }
 
-    .card-header h4 {
-        margin: 0;
-        letter-spacing: 0.3px;
-    }
+/* Buttons */
+.btn-sm { border-radius: 10px; width: 36px; height: 36px; display:flex; justify-content:center; align-items:center; transition:0.25s; }
+.btn-warning { background:#facc15; border:none; }
+.btn-warning:hover { background:#eab308; transform:translateY(-2px); }
 
-    .btn-primary {
-        background: linear-gradient(135deg, #4f46e5, #3b82f6);
-        border: none;
-        border-radius: 10px;
-        padding: 8px 14px; /* lebih kecil */
-        color: #fff;
-        transition: 0.3s;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
+.btn-danger { background:#ef4444; border:none; }
+.btn-danger:hover { background:#dc2626; transform:translateY(-2px); }
 
-    .btn-primary:hover {
-        box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5);
-        transform: translateY(-2px);
-    }
-
-    .alert-success {
-        border: none;
-        border-radius: 10px;
-        background: #d1fae5;
-        color: #065f46;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 14px;
-    }
-
-    table {
-        margin-top: 8px;
-        border-collapse: separate;
-        border-spacing: 0 8px;
-        width: 100%;
-    }
-
-    thead th {
-        background: #f1f5f9;
-        color: #1e293b;
-        font-weight: 600;
-        border: none;
-        padding: 10px;
-        text-transform: uppercase;
-        font-size: 0.82rem;
-    }
-
-    tbody tr {
-        background: #ffffff;
-        border-radius: 12px;
-        transition: 0.25s;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-    }
-
-    tbody tr:hover {
-        transform: scale(1.01);
-        background: #f9fafb;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-    }
-
-    td {
-        padding: 12px;
-        vertical-align: middle;
-        font-size: 0.92rem;
-    }
-
-    .badge {
-        font-size: 0.78rem;
-        border-radius: 10px;
-        padding: 5px 10px;
-        font-weight: 500;
-    }
-
-    .badge-role {
-        background: linear-gradient(135deg, #bfdbfe, #93c5fd);
-        color: #1e3a8a;
-    }
-
-    .btn-action {
-        border-radius: 8px;
-        padding: 6px 9px;
-        transition: all 0.3s;
-        border: none;
-    }
-
-    .btn-warning {
-        background: #facc15;
-        color: #1e293b;
-    }
-
-    .btn-warning:hover {
-        background: #fbbf24;
-        transform: translateY(-2px);
-    }
-
-    .btn-danger {
-        background: #ef4444;
-        color: #fff;
-    }
-
-    .btn-danger:hover {
-        background: #dc2626;
-        transform: translateY(-2px);
-    }
-
-    /* Empty state */
-    .empty-state {
-        text-align: center;
-        color: #94a3b8;
-        padding: 30px 0;
-    }
-
-    .empty-state i {
-        font-size: 1.8rem;
-        color: #94a3b8;
-    }
+/* Empty state */
+.empty-state { text-align:center; padding:3rem 1rem; color:#94a3b8; }
+.empty-state i { font-size:3rem; margin-bottom:0.5rem; color:#cbd5e1; }
 </style>
 
-<div class="container mt-4 data-container"><!-- jarak dikurang jadi mt-4 -->
-    <div class="card">
-        <div class="card-header">
-            <h4>👥 Data User</h4>
-            <a href="{{ route('admin.datauser.create') }}" class="btn btn-primary shadow-sm">
-                <i class="bi bi-person-plus-fill"></i> Tambah
-            </a>
+<div class="container py-5 data-container">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <h2 class="page-title">
+            <i class="bi bi-people-fill me-2"></i>
+            Data User
+        </h2>
+
+        <a href="{{ route('admin.datauser.create') }}" class="btn btn-add">
+            <i class="bi bi-person-plus-fill"></i> Tambah User
+        </a>
+    </div>
+
+    <!-- Card Table -->
+    <div class="card p-4">
+        @if($users->count() > 0)
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Jurusan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach($users as $index => $user)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td class="text-start ps-4">{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>{{ ucfirst($user->role) }}</td>
+                        <td>{{ $user->konsentrasi->nama_konsentrasi ?? '-' }}</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <!-- Edit -->
+                                <a href="{{ route('admin.datauser.edit', $user->id) }}"
+                                   class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <!-- Delete -->
+                                <form action="{{ route('admin.datauser.destroy', $user->id) }}"
+                                      method="POST"
+                                      class="d-inline form-delete">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-danger btn-delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
-        <div class="card-body">
-            @if(session('success'))
-                <div class="alert alert-success mt-2">
-                    <i class="bi bi-check-circle-fill"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <div class="table-responsive mt-2">
-                <table class="table align-middle text-center">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Jurusan</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($users as $index => $user)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td class="fw-semibold text-start ps-4">{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>
-                                    <span class="badge badge-role">
-                                        {{ ucfirst($user->role) }}
-                                    </span>
-                                </td>
-<td>{{ $user->konsentrasi->nama_konsentrasi ?? '-' }}</td>
-                                <td>
-                                    <div class="d-flex justify-content-center">
-                                        <a href="{{ route('admin.datauser.edit', $user->id) }}" 
-                                           class="btn btn-sm btn-warning btn-action me-2" 
-                                           title="Edit">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <form action="{{ route('admin.datauser.destroy', $user->id) }}" 
-                                              method="POST" 
-                                              class="d-inline" 
-                                              onsubmit="return confirm('Yakin ingin hapus user ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger btn-action" title="Hapus">
-                                                <i class="bi bi-trash3-fill"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6">
-                                    <div class="empty-state">
-                                        <i class="bi bi-emoji-frown"></i>
-                                        <p class="mt-2">Belum ada user yang terdaftar</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+        @else
+        <div class="empty-state">
+            <i class="bi bi-people"></i>
+            <div>Belum ada user terdaftar</div>
         </div>
+        @endif
     </div>
 </div>
+
+<script>
+// Delete Confirmation
+document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const form = this.closest('.form-delete');
+
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) form.submit();
+        });
+    });
+});
+
+// Success Notification
+@if(session('success'))
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil!',
+    text: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 1800
+});
+@endif
+</script>
+
 @endsection
