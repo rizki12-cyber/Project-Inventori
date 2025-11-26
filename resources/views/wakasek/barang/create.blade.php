@@ -94,31 +94,36 @@
 
             <div class="row g-3">
 
+                {{-- 1 --}}
                 <div class="col-md-6">
                     <label class="form-label">Kode Barang</label>
                     <input type="text" 
                         name="kode_barang" 
-                        class="form-control" 
+                        class="form-control"
                         placeholder="Contoh : K002"
-                        value="{{ old('kode_barang') }}" 
+                        value="{{ old('kode_barang') }}"
                         required>
                 </div>
 
+                {{-- 2 --}}
                 <div class="col-md-6">
                     <label class="form-label">Nama Barang</label>
                     <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}" required>
                 </div>
 
+                {{-- 3 --}}
                 <div class="col-md-6">
                     <label class="form-label">Kategori</label>
                     <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}" required>
                 </div>
 
+                {{-- 4 --}}
                 <div class="col-md-6">
                     <label class="form-label">Jumlah</label>
                     <input type="number" name="jumlah" class="form-control" min="0" value="{{ old('jumlah') }}" required>
                 </div>
 
+                {{-- 5 --}}
                 <div class="col-md-6">
                     <label class="form-label">Kondisi</label>
                     <select name="kondisi" class="form-select" required>
@@ -129,36 +134,43 @@
                     </select>
                 </div>
 
+                {{-- 6 --}}
                 <div class="col-md-6">
                     <label class="form-label">Lokasi</label>
                     <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi') }}" required>
                 </div>
 
+                {{-- 7 --}}
                 <div class="col-md-6">
                     <label class="form-label">Tanggal Pembelian</label>
                     <input type="date" name="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian') }}" required>
                 </div>
 
+                {{-- 8 --}}
                 <div class="col-md-6">
                     <label class="form-label">Tanggal Penghapusan</label>
                     <input type="date" name="tanggal_penghapusan" class="form-control" value="{{ old('tanggal_penghapusan') }}">
                 </div>
 
+                {{-- 9 --}}
                 <div class="col-md-6">
                     <label class="form-label">Sumber Anggaran</label>
                     <input type="text" name="sumber_dana" class="form-control" value="{{ old('sumber_dana') }}">
                 </div>
 
+                {{-- 10 --}}
                 <div class="col-md-6">
                     <label class="form-label">Foto Barang</label>
                     <input type="file" name="foto" class="form-control" accept="image/*">
                 </div>
 
+                {{-- 11 --}}
                 <div class="col-12">
                     <label class="form-label">Spesifikasi</label>
                     <textarea name="spesifikasi" rows="3" class="form-control" placeholder="Masukkan spesifikasi barang...">{{ old('spesifikasi') }}</textarea>
                 </div>
 
+                {{-- 12 --}}
                 <div class="col-12">
                     <label class="form-label">Keterangan</label>
                     <textarea name="keterangan" rows="3" class="form-control" placeholder="Keterangan tambahan...">{{ old('keterangan') }}</textarea>
