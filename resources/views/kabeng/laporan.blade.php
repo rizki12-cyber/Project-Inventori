@@ -8,25 +8,42 @@
     <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
-            <h3 class="fw-bold mb-1 text-primary"><i class="fas fa-chart-bar me-2"></i>Laporan Data Barang</h3>
+            <h3 class="fw-bold mb-1 text-primary">
+                <i class="bi bi-box-seam-fill me-2"></i>
+                Laporan Barang Kabeng
+            </h3>
             <p class="text-muted mb-0">Kelola dan ekspor data barang inventaris</p>
         </div>
+
         <div class="d-flex gap-2 flex-wrap mt-2 mt-md-0">
-            <a href="{{ route('kabeng.laporan.export', request()->query()) }}"
-                class="btn btn-success shadow-sm d-flex align-items-center gap-1">
-                 <i class="fas fa-file-excel"></i> Export Excel
-             </a>  
+            @if($jenis)
+            <a href="{{ route('kabeng.laporan.export', array_merge(['jenis' => $jenis], request()->query())) }}"
+               class="btn btn-success shadow-sm d-flex align-items-center gap-1">
+               <i class="bi bi-file-earmark-excel-fill"></i> Export Excel
+            </a>
+            @endif
         </div>
     </div>
 
     <!-- Filter Card -->
     <div class="card shadow-sm mb-4 border-0 rounded-3">
         <div class="card-header bg-white py-3">
-            <h5 class="mb-0 text-primary"><i class="fas fa-filter me-2"></i>Filter Data</h5>
+            <h5 class="mb-0 text-primary"><i class="bi bi-funnel-fill me-2"></i>Filter Data</h5>
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('kabeng.laporan') }}" class="row g-3 align-items-end">
 
+                <!-- Jenis Laporan -->
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Jenis Laporan</label>
+                    <select name="jenis" class="form-select shadow-sm">
+                        <option value="" {{ !$jenis ? 'selected' : '' }}>-- Pilih Jenis Laporan --</option>
+                        <option value="barang" {{ $jenis=='barang' ? 'selected':'' }}>Data Barang Aktif</option>
+                        <option value="barang_dihapus" {{ $jenis=='barang_dihapus' ? 'selected':'' }}>Data Barang Dihapus</option>
+                    </select>
+                </div>
+
+                <!-- Bulan -->
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Bulan</label>
                     <select name="bulan" class="form-select shadow-sm">
@@ -39,6 +56,7 @@
                     </select>
                 </div>
 
+                <!-- Tahun -->
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Tahun</label>
                     <select name="tahun" class="form-select shadow-sm">
@@ -49,23 +67,13 @@
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold">Kondisi</label>
-                    <select name="kondisi" class="form-select shadow-sm">
-                        <option value="">Semua Kondisi</option>
-                        <option value="Baik" {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
-                        <option value="Rusak" {{ request('kondisi') == 'Rusak' ? 'selected' : '' }}>Rusak</option>
-                        <option value="Hilang" {{ request('kondisi') == 'Hilang' ? 'selected' : '' }}>Hilang</option>
-                    </select>
-                </div>
-
+                <!-- Tombol -->
                 <div class="col-md-3 d-flex gap-2 flex-wrap">
                     <button type="submit" class="btn btn-primary shadow-sm d-flex align-items-center gap-1">
-                        <i class="fas fa-search"></i> Terapkan
+                        <i class="bi bi-search"></i> Terapkan
                     </button>
-                    <a href="{{ route('kabeng.laporan') }}"
-                       class="btn btn-outline-secondary shadow-sm d-flex align-items-center gap-1">
-                        <i class="fas fa-refresh"></i> Reset
+                    <a href="{{ route('kabeng.laporan') }}" class="btn btn-outline-secondary shadow-sm d-flex align-items-center gap-1">
+                        <i class="bi bi-arrow-repeat"></i> Reset
                     </a>
                 </div>
 
@@ -73,41 +81,20 @@
         </div>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="row mb-4 g-3">
-        @php
-            $summary = [
-                ['title'=>'Total Barang','count'=>$barang->count(),'icon'=>'fa-box','bg'=>'primary'],
-                ['title'=>'Kondisi Baik','count'=>$barang->where('kondisi','Baik')->count(),'icon'=>'fa-check-circle','bg'=>'success'],
-                ['title'=>'Kondisi Rusak','count'=>$barang->where('kondisi','Rusak')->count(),'icon'=>'fa-exclamation-triangle','bg'=>'warning'],
-                ['title'=>'Kondisi Hilang','count'=>$barang->where('kondisi','Hilang')->count(),'icon'=>'fa-times-circle','bg'=>'danger']
-            ];
-        @endphp
-
-        @foreach($summary as $s)
-            <div class="col-md-3">
-                <div class="card shadow-sm h-100 rounded-3 border-0 text-white"
-                     style="background: linear-gradient(135deg, rgba(78,115,223,0.85), rgba(28,200,138,0.85));">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4 class="mb-1 fw-bold">{{ $s['count'] }}</h4>
-                            <p class="mb-0">{{ $s['title'] }}</p>
-                        </div>
-                        <div class="fs-2 opacity-75">
-                            <i class="fas {{ $s['icon'] }}"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-
-    <!-- Data Table -->
+    <!-- Data Table Card -->
+    @if($jenis)
     <div class="card shadow-sm border-0 rounded-3">
         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-            <h5 class="mb-0 text-primary"><i class="fas fa-table me-2"></i>Data Barang</h5>
+            <h5 class="mb-0 text-primary">
+                <i class="bi bi-table me-2"></i>
+                @if($jenis == 'barang')
+                    Data Barang Aktif
+                @else
+                    Data Barang Dihapus
+                @endif
+            </h5>
             <div class="text-muted small">
-                Menampilkan {{ $barang->count() }} data barang
+                Menampilkan {{ $data->count() }} data
             </div>
         </div>
 
@@ -116,58 +103,60 @@
                 <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3">No</th>
+                            <th>No</th>
                             <th>Kode</th>
                             <th>Nama Barang</th>
                             <th>Kategori</th>
                             <th>Jumlah</th>
                             <th>Kondisi</th>
                             <th>Lokasi</th>
+                            <th>Keterangan</th>
                             <th>Tanggal Pembelian</th>
+                            @if($jenis == 'barang_dihapus')
+                                <th>Tanggal Penghapusan</th>
+                            @endif
                         </tr>
                     </thead>
+
                     <tbody>
-                        @forelse($barang as $b)
-                            <tr>
-                                <td class="ps-3">{{ $loop->iteration }}</td>
-                                <td><span class="badge bg-secondary">{{ $b->kode_barang }}</span></td>
-                                <td>{{ $b->nama_barang }}</td>
-                                <td><span class="badge bg-light text-dark">{{ $b->kategori }}</span></td>
-                                <td><span class="badge bg-primary rounded-pill">{{ $b->jumlah }}</span></td>
-                                <td>
-                                    @php
-                                        $kondisiColors = ['Baik'=>'success','Rusak'=>'warning text-dark','Hilang'=>'danger'];
-                                    @endphp
-                                    <span class="badge bg-{{ $kondisiColors[$b->kondisi] ?? 'secondary' }}">{{ $b->kondisi }}</span>
-                                </td>
-                                <td>{{ $b->lokasi }}</td>
-                                <td>{{ \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d/m/Y') }}</td>
-                            </tr>
+                        @forelse($data as $b)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $b->kode_barang }}</td>
+                            <td>{{ $b->nama_barang }}</td>
+                            <td>{{ $b->kategori }}</td>
+                            <td>{{ $b->jumlah }}</td>
+                            <td>{{ $b->kondisi }}</td>
+                            <td>{{ $b->lokasi }}</td>
+                            <td>{{ $b->keterangan ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($b->tanggal_pembelian)->format('d/m/Y') }}</td>
+                            @if($jenis == 'barang_dihapus')
+                                <td>{{ \Carbon\Carbon::parse($b->tanggal_penghapusan)->format('d/m/Y') }}</td>
+                            @endif
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="9" class="text-center py-5 text-muted">
-                                    <i class="fas fa-inbox fa-3x mb-3"></i><br>
-                                    Tidak ada data barang yang sesuai dengan filter.
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="12" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox-fill fa-2x mb-2"></i><br>
+                                Silahkan pilih jenis laporan dan klik "Terapkan" untuk melihat data.
+                            </td>
+                        </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
         </div>
     </div>
+    @endif
 
 </div>
 
 <style>
     body { font-family: 'Poppins', sans-serif; }
-    .card { transition: all 0.3s; }
-    .card:hover { transform: translateY(-3px); }
-    .table-hover tbody tr:hover {
-        background-color: #f1f5ff;
-        transition: 0.2s;
-    }
-    .btn { border-radius: 8px; transition: 0.2s; }
-    .btn:hover:not([disabled]) { transform: translateY(-1px); }
+    .card { transition: all 0.3s ease-in-out; border-radius: 12px; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.08); }
+    .table-hover tbody tr:hover { background-color: #f1f5ff; transition: all 0.2s ease; }
+    .form-select { border-radius: 10px; }
 </style>
 @endsection

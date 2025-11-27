@@ -11,36 +11,66 @@ use App\Exports\KabengBarangExport;
 class KabengLaporanController extends Controller
 {
     public function index(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    // Ambil barang berdasarkan kabeng login (user_id)
-    $barangQuery = Barang::where('user_id', $user->id);
+        // Ambil filter dari request
+        $jenis = $request->get('jenis', null); // default null → halaman kosong
+        $bulan = $request->get('bulan', null);
+        $tahun = $request->get('tahun', null);
+        $kondisi = $request->get('kondisi', null);
 
-    // Tambahan filter (opsional)
-    if ($request->filled('kategori')) {
-        $barangQuery->where('kategori', $request->kategori);
+        $data = collect(); // default data kosong
+
+        if ($jenis) {
+            // ---------------------------------------------------------
+            // QUERY BARANG AKTIF
+            // ---------------------------------------------------------
+            $barangAktif = Barang::where('user_id', $user->id)
+                ->whereNull('tanggal_penghapusan');
+
+            // ---------------------------------------------------------
+            // QUERY BARANG DIHAPUS
+            // ---------------------------------------------------------
+            $barangDihapus = Barang::where('user_id', $user->id)
+                ->whereNotNull('tanggal_penghapusan');
+
+            // ---------------------------------------------------------
+            // FILTER (BERLAKU UNTUK KEDUA QUERY)
+            // ---------------------------------------------------------
+            if ($bulan) {
+                $barangAktif->whereMonth('tanggal_pembelian', $bulan);
+                $barangDihapus->whereMonth('tanggal_pembelian', $bulan);
+            }
+
+            if ($tahun) {
+                $barangAktif->whereYear('tanggal_pembelian', $tahun);
+                $barangDihapus->whereYear('tanggal_pembelian', $tahun);
+            }
+
+            if ($kondisi) {
+                $barangAktif->where('kondisi', $kondisi);
+                // Barang dihapus bisa tidak difilter kondisi
+            }
+
+            // Pilih data sesuai jenis laporan
+            $data = $jenis === 'barang_dihapus' ? $barangDihapus->get() : $barangAktif->get();
+        }
+
+        return view('kabeng.laporan', [
+            'jenis' => $jenis,
+            'data' => $data,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'kondisi' => $kondisi,
+        ]);
     }
-
-    if ($request->filled('kondisi')) {
-        $barangQuery->where('kondisi', $request->kondisi);
-    }
-
-    // Ambil hasil
-    $barang = $barangQuery->get();
-
-    return view('kabeng.laporan', [
-        'barang'   => $barang,
-        'kategori' => $request->kategori,
-    ]);
-}
-
 
     public function export(Request $request)
     {
-        $user = Auth::user();
+        // Kirim **objek $request** ke export agar bisa pakai semua filter dan jenis laporan
         return Excel::download(
-            new KabengBarangExport($user->id, $request->kategori, $request->kondisi),
+            new KabengBarangExport($request),
             'laporan_barang_kabeng.xlsx'
         );
     }

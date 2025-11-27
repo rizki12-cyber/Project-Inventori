@@ -14,120 +14,127 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class KabengBarangExport implements 
-    FromCollection, 
-    WithHeadings, 
-    WithStyles, 
-    WithCustomStartCell, 
-    WithEvents
+class KabengBarangExport implements FromCollection, WithHeadings, WithStyles, WithCustomStartCell, WithEvents
 {
     use RegistersEventListeners;
 
-    protected $user_id;
-    protected $bulan;
-    protected $tahun;
-    protected $kondisi;
+    protected $request;
+    protected $user;
 
-    public function __construct($user_id, $bulan = null, $tahun = null, $kondisi = null)
+    public function __construct($request)
     {
-        $this->user_id = $user_id;
-        $this->bulan = $bulan;
-        $this->tahun = $tahun;
-        $this->kondisi = $kondisi;
+        $this->request = $request;
+        $this->user = Auth::user();
     }
 
     public function startCell(): string
     {
-        return 'A4';
+        return 'A5';
     }
 
     public function collection()
     {
-        return Barang::query()
-            ->where('user_id', $this->user_id)
-            ->when($this->bulan, fn ($q) => $q->whereMonth('tanggal_pembelian', $this->bulan))
-            ->when($this->tahun, fn ($q) => $q->whereYear('tanggal_pembelian', $this->tahun))
-            ->when($this->kondisi, fn ($q) => $q->where('kondisi', $this->kondisi))
-            ->get()
-            ->map(function ($b, $i) {
-                return [
-                    'No' => $i + 1,
-                    'Kode Barang' => $b->kode_barang,
-                    'Nama Barang' => $b->nama_barang,
-                    'Kategori' => $b->kategori,
-                    'Jumlah' => $b->jumlah,
-                    'Kondisi' => $b->kondisi,
-                    'Lokasi' => $b->lokasi,
-                    'Tanggal Pembelian' => $b->tanggal_pembelian,
-                ];
-            });
+        $jenis = $this->request->jenis;
+
+        if ($jenis == 'barang') {
+            $query = Barang::where('user_id', $this->user->id)
+                ->whereNull('tanggal_penghapusan');
+        } elseif ($jenis == 'barang_dihapus') {
+            $query = Barang::where('user_id', $this->user->id)
+                ->whereNotNull('tanggal_penghapusan');
+        } else {
+            return collect(); // default kosong
+        }
+
+        $data = $query
+            ->when($this->request->bulan, fn($q) => $q->whereMonth(
+                $jenis == 'barang' ? 'tanggal_pembelian' : 'tanggal_penghapusan',
+                $this->request->bulan
+            ))
+            ->when($this->request->tahun, fn($q) => $q->whereYear(
+                $jenis == 'barang' ? 'tanggal_pembelian' : 'tanggal_penghapusan',
+                $this->request->tahun
+            ))
+            ->when($this->request->kondisi, fn($q) => $q->where('kondisi', $this->request->kondisi))
+            ->get();
+
+        return $data->map(function ($b) use ($jenis) {
+            return [
+                $b->kode_barang,
+                $b->nama_barang,
+                $b->kategori,
+                $b->jumlah,
+                $b->kondisi ?? '-',
+                $b->lokasi,
+                $jenis == 'barang' ? $b->tanggal_pembelian : $b->tanggal_penghapusan,
+            ];
+        });
     }
 
     public function headings(): array
     {
+        if ($this->request->jenis == 'barang') {
+            return [
+                'Kode Barang', 'Nama Barang', 'Kategori', 'Jumlah',
+                'Kondisi', 'Lokasi', 'Tanggal Pembelian'
+            ];
+        }
+
         return [
-            'No',
-            'Kode Barang',
-            'Nama Barang',
-            'Kategori',
-            'Jumlah',
-            'Kondisi',
-            'Lokasi',
-            'Tanggal Pembelian',
+            'Kode Barang', 'Nama Barang', 'Kategori', 'Jumlah',
+            'Kondisi', 'Lokasi', 'Tanggal Penghapusan'
         ];
     }
 
-    // ======================= STYLING ===========================
     public function styles(Worksheet $sheet)
     {
-        $kabeng = Auth::user()->name;
+        $judul = $this->request->jenis == 'barang'
+            ? 'LAPORAN BARANG AKTIF KABENG'
+            : 'LAPORAN BARANG DIHAPUS KABENG';
 
-        // ==== TITLE: Nama Kabeng Dinamis ====
-        $sheet->mergeCells('A1:H1');
-        $sheet->setCellValue('A1', 'LAPORAN DATA BARANG - ' . strtoupper($kabeng));
+        // ==== TITLE ====
+        $sheet->mergeCells('A1:G1');
+        $sheet->setCellValue('A1', $judul);
         $sheet->getStyle('A1')->getFont()->setSize(16)->setBold(true);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
 
         // ==== SEKOLAH ====
-        $sheet->mergeCells('A2:H2');
+        $sheet->mergeCells('A2:G2');
         $sheet->setCellValue('A2', 'SMK NEGERI 1 TALAGA');
-        $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(12);
+        $sheet->getStyle('A2')->getFont()->setSize(12)->setBold(true);
         $sheet->getStyle('A2')->getAlignment()->setHorizontal('center');
 
-        // ==== TANGGAL ====
-        $sheet->mergeCells('A3:H3');
+        // ==== TANGGAL EXPORT ====
+        $sheet->mergeCells('A3:G3');
         $sheet->setCellValue('A3', 'Tanggal Cetak: ' . date('d-m-Y H:i'));
         $sheet->getStyle('A3')->getAlignment()->setHorizontal('center');
 
-        // ==== HEADER TABLE ====
-        $sheet->getStyle('A4:H4')->getFont()->setBold(true);
-        $sheet->getStyle('A4:H4')->getAlignment()->setHorizontal('center');
-        $sheet->getStyle('A4:H4')->getFill()
-            ->setFillType(Fill::FILL_SOLID)
-            ->getStartColor()->setRGB('D9D9D9');
+        // ==== HEADER ====
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:G5')->getFill()->setFillType(Fill::FILL_SOLID)
+              ->getStartColor()->setRGB('D9D9D9');
+        $sheet->getStyle('A5:G5')->getAlignment()->setHorizontal('center');
 
-        // Auto width
-        foreach (range('A', 'H') as $col) {
+        // ==== AUTO WIDTH ====
+        foreach (range('A', 'G') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
+
+        return [];
     }
 
-    // ===================== AFTER SHEET ==========================
     public static function afterSheet(\Maatwebsite\Excel\Events\AfterSheet $event)
     {
         $sheet = $event->sheet->getDelegate();
         $lastRow = $sheet->getHighestRow();
+        $range = "A5:G{$lastRow}";
 
-        // Border lengkap
-        $sheet->getStyle("A4:H{$lastRow}")
-            ->getBorders()
-            ->getAllBorders()
-            ->setBorderStyle(Border::BORDER_THIN);
+        // ==== BORDER ====
+        $sheet->getStyle($range)->getBorders()
+            ->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
-        // Rata tengah isi tabel
-        $sheet->getStyle("A5:H{$lastRow}")
-            ->getAlignment()
-            ->setHorizontal('center')
-            ->setVertical('center');
+        // ==== CENTER ALL DATA ====
+        $sheet->getStyle($range)->getAlignment()->setHorizontal('center');
+        $sheet->getStyle($range)->getAlignment()->setVertical('center');
     }
 }
