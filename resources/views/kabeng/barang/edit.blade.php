@@ -3,63 +3,119 @@
 @section('title', 'Edit Data Barang')
 
 @section('content')
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-    .edit-container {
-        animation: fadeSlideIn 0.8s forwards;
+    body {
+        background: linear-gradient(135deg, #eef2ff, #f8fafc);
+        font-family: 'Poppins', sans-serif;
+        color: #1e293b;
+    }
+
+    .form-container {
+        animation: fadeSlideIn 0.7s ease forwards;
         opacity: 0;
         transform: translateY(20px);
     }
 
     @keyframes fadeSlideIn {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-title {
+        font-weight: 700;
+        font-size: 1.8rem;
+        background: linear-gradient(90deg, #2563eb, #1e40af);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
     }
 
     .card {
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    }
-
-    .btn-save {
-        background: #2563eb;
-        color: #fff;
-        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        border: none;
         transition: 0.3s;
-        padding: 10px 25px;
-        font-weight: 600;
     }
 
-    .btn-save:hover {
-        background: #1e3a8a;
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.12);
     }
 
-    .btn-cancel {
-        background: #f3f4f6;
-        color: #111827;
+    .form-label { font-weight: 500; color: #1e293b; }
+    .form-control, .form-select {
         border-radius: 10px;
+        padding: 0.6rem 1rem;
+        border: 1.5px solid #cbd5e1;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    .btn-success {
+        background: linear-gradient(120deg, #16a34a, #15803d);
+        border: none;
+        border-radius: 50px;
+        padding: 0.6rem 1.4rem;
+        font-weight: 500;
         transition: 0.3s;
-        padding: 10px 25px;
+        box-shadow: 0 4px 12px rgba(22,163,74,0.25);
+    }
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(22,163,74,0.35);
     }
 
-    .btn-cancel:hover {
-        background: #e5e7eb;
+    .btn-secondary {
+        background: #e2e8f0;
+        color: #1e293b;
+        border-radius: 50px;
+        padding: 0.6rem 1.4rem;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+    .btn-secondary:hover {
+        background: #cbd5e1;
+        transform: translateY(-2px);
     }
 
-    label {
-        font-weight: 600;
-        color: #1f2937;
+    .alert-danger {
+        border-radius: 12px;
+        border: none;
+        background: #fee2e2;
+        color: #b91c1c;
+        box-shadow: 0 4px 12px rgba(239,68,68,0.15);
+    }
+
+    .img-preview {
+        max-width: 150px;
+        margin-top: 0.5rem;
+        border-radius: 10px;
     }
 </style>
 
-<div class="container py-4 edit-container">
+<div class="container py-5 form-container">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 class="page-title"><i class="bi bi-pencil-square me-2"></i>Edit Barang</h2>
+    </div>
 
     <div class="card p-4">
-        <h3 class="fw-bold mb-4 text-primary">
-            <i class="bi bi-pencil-square me-2"></i>Edit Barang
-        </h3>
+        @if($errors->any())
+            <div class="alert alert-danger mb-4">
+                <strong>Terjadi Kesalahan:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <form action="{{ route('kabeng.barang.update', $barang->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -68,99 +124,106 @@
             <div class="row g-3">
 
                 <div class="col-md-6">
-                    <label>Kode Barang</label>
+                    <label class="form-label">Kode Barang</label>
                     <input type="text" name="kode_barang" class="form-control"
                            value="{{ old('kode_barang', $barang->kode_barang) }}" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label>Nama Barang</label>
+                    <label class="form-label">Nama Barang</label>
                     <input type="text" name="nama_barang" class="form-control"
                            value="{{ old('nama_barang', $barang->nama_barang) }}" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label>Kategori</label>
+                    <label class="form-label">Kategori</label>
                     <input type="text" name="kategori" class="form-control"
                            value="{{ old('kategori', $barang->kategori) }}" required>
                 </div>
 
-                <div class="col-md-12">
-                    <label>Spesifikasi</label>
-                    <textarea name="spesifikasi" class="form-control" rows="3">{{ old('spesifikasi', $barang->spesifikasi) }}</textarea>
-                </div>
-
                 <div class="col-md-6">
-                    <label>Jumlah</label>
+                    <label class="form-label">Jumlah</label>
                     <input type="number" name="jumlah" class="form-control"
-                           value="{{ old('jumlah', $barang->jumlah) }}" required min="1">
+                           value="{{ old('jumlah', $barang->jumlah) }}" min="1" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label>Kondisi</label>
+                    <label class="form-label">Kondisi</label>
+                    @php $kondisi = old('kondisi', $barang->kondisi); @endphp
                     <select name="kondisi" class="form-select" required>
-                        <option value="Baik" {{ $barang->kondisi == 'Baik' ? 'selected' : '' }}>Baik</option>
-                        <option value="Rusak Ringan" {{ $barang->kondisi == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
-                        <option value="Rusak Berat" {{ $barang->kondisi == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
+                        <option value="Baik" {{ $kondisi=='Baik'?'selected':'' }}>Baik</option>
+                        <option value="Rusak Ringan" {{ $kondisi=='Rusak Ringan'?'selected':'' }}>Rusak Ringan</option>
+                        <option value="Rusak Berat" {{ $kondisi=='Rusak Berat'?'selected':'' }}>Rusak Berat</option>
                     </select>
                 </div>
 
                 <div class="col-md-6">
-                    <label>Lokasi</label>
+                    <label class="form-label">Lokasi</label>
                     <input type="text" name="lokasi" class="form-control"
                            value="{{ old('lokasi', $barang->lokasi) }}" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label>Tanggal Pembelian</label>
+                    <label class="form-label">Tanggal Pembelian</label>
                     <input type="date" name="tanggal_pembelian" class="form-control"
-                           value="{{ old('tanggal_pembelian', $barang->tanggal_pembelian) }}" required>
+                           value="{{ old('tanggal_pembelian', \Carbon\Carbon::parse($barang->tanggal_pembelian)->format('Y-m-d')) }}" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label>Sumber Anggaran</label>
+                    <label class="form-label">Tanggal Penghapusan (Opsional)</label>
+                    <input type="date" name="tanggal_penghapusan" class="form-control"
+                           value="{{ old('tanggal_penghapusan', $barang->tanggal_penghapusan) }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Sumber Anggaran</label>
                     <input type="text" name="sumber_dana" class="form-control"
                            value="{{ old('sumber_dana', $barang->sumber_dana) }}">
                 </div>
 
                 <div class="col-md-6">
-                    <label>Tanggal Penghapusan (opsional)</label>
-                    <input type="date" name="tanggal_penghapusan" class="form-control"
-                           value="{{ old('tanggal_penghapusan', $barang->tanggal_penghapusan) }}">
-                </div>
-
-                <div class="col-md-12">
-                    <label>Foto Barang (opsional)</label>
+                    <label class="form-label">Foto Barang (Opsional)</label>
                     <input type="file" name="foto" class="form-control" accept="image/*">
-
                     @if ($barang->foto)
-                        <small class="text-muted d-block mt-1">
-                            Foto sekarang: <strong>{{ $barang->foto }}</strong>
-                        </small>
-                        <img src="{{ asset('storage/foto_barang/' . $barang->foto) }}"
-                             alt="Foto Barang" class="mt-2 rounded" style="width: 120px;">
+                        <img src="{{ asset('storage/foto_barang/' . $barang->foto) }}" class="img-preview" alt="Foto Barang">
                     @endif
                 </div>
 
-                <div class="col-md-12">
-                    <label>Keterangan</label>
-                    <input type="text" name="keterangan" class="form-control"
-                           value="{{ old('keterangan', $barang->keterangan) }}">
+                <div class="col-12">
+                    <label class="form-label">Keterangan</label>
+                    <textarea name="keterangan" class="form-control" rows="3">{{ old('keterangan', $barang->keterangan) }}</textarea>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Spesifikasi</label>
+                    <textarea name="spesifikasi" class="form-control" rows="3">{{ old('spesifikasi', $barang->spesifikasi) }}</textarea>
                 </div>
 
             </div>
 
-            <div class="d-flex justify-content-end mt-4">
-                <a href="{{ route('kabeng.barang.index') }}" class="btn btn-cancel me-2">
-                    <i class="bi bi-arrow-left me-1"></i> Batal
+            <div class="mt-4 d-flex justify-content-end gap-2">
+                <a href="{{ route('kabeng.barang.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Batal
                 </a>
-                <button type="submit" class="btn btn-save">
-                    <i class="bi bi-save me-1"></i> Simpan Perubahan
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save2"></i> Simpan Perubahan
                 </button>
             </div>
 
         </form>
     </div>
 </div>
+
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: "{{ session('success') }}",
+        showConfirmButton: false,
+        timer: 1800
+    });
+</script>
+@endif
 
 @endsection
