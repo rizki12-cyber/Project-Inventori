@@ -88,9 +88,10 @@ class KabengBarangExport implements FromCollection, WithHeadings, WithStyles, Wi
 
     public function styles(Worksheet $sheet)
     {
+        $namaKabeng = $this->user->name ?? 'Kabeng'; // nama kabeng
         $judul = $this->request->jenis == 'barang'
-            ? 'LAPORAN BARANG AKTIF KABENG'
-            : 'LAPORAN BARANG DIHAPUS KABENG';
+            ? "LAPORAN BARANG AKTIF - $namaKabeng"
+            : "LAPORAN BARANG DIHAPUS - $namaKabeng";
 
         // ==== TITLE ====
         $sheet->mergeCells('A1:G1');
