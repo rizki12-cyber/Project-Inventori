@@ -18,52 +18,82 @@ class BarangExport implements FromCollection, WithHeadings, WithStyles, WithCust
     use RegistersEventListeners;
 
     protected $request;
+    protected $user;
 
     public function __construct($request)
     {
-        $this->request = $request;
+        $this->request   = $request;
+        $this->user      = auth()->user(); // hanya barang wakasek login
     }
 
     public function startCell(): string
     {
-        return 'A4';
+        return 'A5';
     }
 
     public function collection()
     {
-        return Barang::with('user')
-            ->whereHas('user', fn($u) => $u->where('role', 'wakasek')) // ⬅ hanya barang milik wakasek
-            ->when($this->request->bulan, fn($q) => $q->whereMonth('tanggal_pembelian', $this->request->bulan))
-            ->when($this->request->tahun, fn($q) => $q->whereYear('tanggal_pembelian', $this->request->tahun))
+        $jenis = $this->request->jenis;
+
+        if ($jenis == 'barang') {
+            $query = Barang::where('user_id', $this->user->id)
+                ->whereNull('tanggal_penghapusan');
+        } elseif ($jenis == 'barang_dihapus') {
+            $query = Barang::where('user_id', $this->user->id)
+                ->whereNotNull('tanggal_penghapusan');
+        } else {
+            return collect();
+        }
+
+        $data = $query
+            ->when($this->request->bulan, fn($q) => $q->whereMonth(
+                $jenis == 'barang' ? 'tanggal_pembelian' : 'tanggal_penghapusan',
+                $this->request->bulan
+            ))
+            ->when($this->request->tahun, fn($q) => $q->whereYear(
+                $jenis == 'barang' ? 'tanggal_pembelian' : 'tanggal_penghapusan',
+                $this->request->tahun
+            ))
             ->when($this->request->kondisi, fn($q) => $q->where('kondisi', $this->request->kondisi))
-            ->get()
-            ->map(function ($b) {
-                return [
-                    $b->kode_barang,
-                    $b->nama_barang,
-                    $b->kategori,
-                    $b->jumlah,
-                    $b->kondisi,
-                    $b->lokasi,
-                    $b->tanggal_pembelian,
-                ];
-            });
+            ->get();
+
+        return $data->map(function ($b) use ($jenis) {
+            return [
+                $b->kode_barang,
+                $b->nama_barang,
+                $b->kategori,
+                $b->jumlah,
+                $b->kondisi,
+                $b->lokasi,
+                $jenis == 'barang' ? $b->tanggal_pembelian : $b->tanggal_penghapusan,
+            ];
+        });
     }
 
     public function headings(): array
     {
+        if ($this->request->jenis == 'barang') {
+            return [
+                'Kode Barang', 'Nama Barang', 'Kategori', 'Jumlah',
+                'Kondisi', 'Lokasi', 'Tanggal Pembelian'
+            ];
+        }
+
         return [
             'Kode Barang', 'Nama Barang', 'Kategori', 'Jumlah',
-            'Kondisi', 'Lokasi', 'Tanggal Pembelian'
+            'Kondisi', 'Lokasi', 'Tanggal Penghapusan'
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
+        $judul = $this->request->jenis == 'barang'
+            ? 'LAPORAN BARANG AKTIF WAKASEK'
+            : 'LAPORAN BARANG DIHAPUS WAKASEK';
+
         // ==== TITLE ====
         $sheet->mergeCells('A1:G1');
-        $sheet->setCellValue('A1', 'LAPORAN DATA BARANG WAKASEK');
-
+        $sheet->setCellValue('A1', $judul);
         $sheet->getStyle('A1')->getFont()->setSize(16)->setBold(true);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
 
@@ -79,25 +109,32 @@ class BarangExport implements FromCollection, WithHeadings, WithStyles, WithCust
         $sheet->getStyle('A3')->getAlignment()->setHorizontal('center');
 
         // ==== HEADER ====
-        $sheet->getStyle('A4:G4')->getFont()->setBold(true);
-        $sheet->getStyle('A4:G4')->getFill()->setFillType(Fill::FILL_SOLID)
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:G5')->getFill()->setFillType(Fill::FILL_SOLID)
               ->getStartColor()->setRGB('D9D9D9');
+        $sheet->getStyle('A5:G5')->getAlignment()->setHorizontal('center'); // center header
 
-        // AUTO SIZE
+        // ==== AUTO WIDTH ====
         foreach (range('A', 'G') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
+
+        return [];
     }
 
     public static function afterSheet(\Maatwebsite\Excel\Events\AfterSheet $event)
     {
-        $sheet = $event->sheet->getDelegate();
+        $sheet     = $event->sheet->getDelegate();
+        $lastRow   = $sheet->getHighestRow();
 
-        $lastRow = $sheet->getHighestRow();
+        $range = "A5:G{$lastRow}";
 
-        // Border hanya sampai kolom G
-        $range = "A4:G{$lastRow}";
+        // ==== BORDER ====
+        $sheet->getStyle($range)->getBorders()
+            ->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
-        $sheet->getStyle($range)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+        // ==== CENTER ALL DATA ====
+        $sheet->getStyle($range)->getAlignment()->setHorizontal('center');
+        $sheet->getStyle($range)->getAlignment()->setVertical('center');
     }
 }
