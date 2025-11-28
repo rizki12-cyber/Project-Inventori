@@ -86,6 +86,48 @@
     }
 
     .img-preview { max-width: 150px; margin-top: 0.5rem; border-radius: 10px; }
+
+    /* RESPONSIVE MOBILE */
+@media (max-width: 576px) {
+
+.page-title {
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.card {
+    padding: 20px !important;
+}
+
+.form-control,
+.form-select,
+textarea {
+    font-size: 0.9rem;
+    padding: 9px 12px;
+}
+
+.col-md-6 {
+    width: 100% !important;
+}
+
+.btn-success,
+.btn-secondary {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+}
+
+.d-flex.justify-content-end {
+    flex-direction: column;
+    gap: 10px !important;
+}
+
+.container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+}
+
 </style>
 
 <div class="container py-5 form-container">
