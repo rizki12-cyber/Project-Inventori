@@ -38,6 +38,28 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
     padding: 0.5rem 1.2rem; font-weight: 500; transition: all 0.3s ease;
 }
 .btn-back:hover { background: #4b5563; transform: translateY(-2px); }
+
+/* ========================================= */
+/* RESPONSIVE BUTTONS FOR MOBILE */
+/* ========================================= */
+.button-wrapper {
+    display: flex;
+    justify-content:space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Mobile layout: tombol full width dan bertumpuk */
+@media (max-width: 576px) {
+    .button-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .button-wrapper .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
 </style>
 
 <div class="container py-5 data-container">
@@ -81,7 +103,8 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                 @enderror
             </div>
 
-            <div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
+            <!-- Responsive Buttons -->
+            <div class="button-wrapper mt-4">
                 <a href="{{ route('admin.supplier.index') }}" class="btn btn-back">
                     <i class="bi bi-arrow-left-circle me-1"></i> Kembali
                 </a>
@@ -89,12 +112,12 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                     <i class="bi bi-save me-1"></i> Simpan
                 </button>
             </div>
+
         </form>
     </div>
 </div>
 
 <script>
-// SweetAlert Success Alerts
 @if(session('success'))
 Swal.fire({
     icon: 'success',

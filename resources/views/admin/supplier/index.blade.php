@@ -40,60 +40,96 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
 .table tbody tr { background: #fff; border-radius: 10px; transition: 0.25s; }
 .table tbody tr:hover { transform: scale(1.01); background-color: #f8fafc; box-shadow: 0 3px 10px rgba(37,99,235,0.1); }
 
-/* Buttons */
-.btn-sm { border-radius: 10px; display: inline-flex; justify-content: center; align-items: center; width: 36px; height: 36px; transition: 0.25s; }
+/* Buttons aksi */
+.btn-sm { border-radius: 10px; width: 36px; height: 36px; display:flex; justify-content:center; align-items:center; }
 .btn-warning { background: #facc15; border: none; color: #1e293b; }
 .btn-warning:hover { background: #eab308; transform: translateY(-2px); }
-.btn-danger { background: #ef4444; border: none; color: #fff; }
+.btn-danger { background: #ef4444; border: none; color: white; }
 .btn-danger:hover { background: #dc2626; transform: translateY(-2px); }
 
 /* Empty state */
 .empty-state { text-align: center; padding: 3rem 1rem; color: #94a3b8; }
 .empty-state i { font-size: 3rem; margin-bottom: 0.5rem; color: #cbd5e1; }
 
-/* Search box */
-.search-container { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.search-container input {
+/* ===================== */
+/* SEARCH BAR FIXED SIZE */
+/* ===================== */
+.search-container form {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.search-container input,
+.search-container button,
+.search-container .btn-reset {
+    height: 42px;                     /* Samakan tinggi */
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
     border-radius: 8px;
+}
+
+/* Input */
+.search-container input {
     border: 1px solid #cbd5e1;
-    padding: 0.5rem 1rem;
+    padding: 0 1rem;
     width: 220px;
 }
+
+/* Button Cari */
 .search-container button {
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
+    padding: 0 1.1rem;
     border: none;
     background: #2563eb;
     color: white;
     cursor: pointer;
-    transition: 0.3s;
 }
 .search-container button:hover { background: #1e40af; transform: translateY(-2px); }
+
+/* Button Reset */
 .search-container .btn-reset {
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    border: none;
+    padding: 0 1.1rem;
     background: #6b7280;
     color: white;
-    cursor: pointer;
-    transition: 0.3s;
+    border: none;
 }
 .search-container .btn-reset:hover { background: #4b5563; transform: translateY(-2px); }
 
+/* Mobile: rapikan */
+@media (max-width: 576px) {
+    .search-container form {
+        flex-wrap: nowrap !important;
+        width: 100%;
+        gap: 0.4rem;
+    }
+    .search-container input {
+        flex: 1;
+        min-width: 0;
+    }
+    .search-container button,
+    .search-container .btn-reset {
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+}
 </style>
 
 <div class="container py-5 data-container">
     <!-- Header -->
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
         <h2 class="page-title"><i class="bi bi-person-badge-fill me-2"></i>Data Supplier</h2>
-        <a href="{{ route('admin.supplier.create') }}" class="btn btn-add"><i class="bi bi-plus-circle"></i> Tambah Supplier</a>
+        <a href="{{ route('admin.supplier.create') }}" class="btn btn-add">
+            <i class="bi bi-plus-circle"></i> Tambah Supplier
+        </a>
     </div>
 
-    <!-- Search & Reset -->
+    <!-- Search -->
     <div class="search-container mb-3">
-        <form action="{{ route('admin.supplier.index') }}" method="GET" class="d-flex gap-2 flex-wrap">
+        <form action="{{ route('admin.supplier.index') }}" method="GET">
             <input type="text" name="search" placeholder="Cari nama supplier..." value="{{ request('search') }}">
             <button type="submit"><i class="bi bi-search"></i> Cari</button>
+
             @if(request('search'))
                 <a href="{{ route('admin.supplier.index') }}" class="btn-reset">Reset</a>
             @endif
@@ -115,7 +151,7 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($suppliers as $index => $supplier)
+                    @foreach($suppliers as $supplier)
                     <tr>
                         <td>{{ ($suppliers->currentPage()-1)*$suppliers->perPage() + $loop->iteration }}</td>
                         <td>{{ $supplier->nama_supplier }}</td>
@@ -123,13 +159,14 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                         <td>{{ $supplier->telepon }}</td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ route('admin.supplier.edit', $supplier->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                                <a href="{{ route('admin.supplier.edit', $supplier->id) }}" class="btn btn-sm btn-warning">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <form action="{{ route('admin.supplier.destroy', $supplier->id) }}" method="POST" class="d-inline form-delete">
+
+                                <form action="{{ route('admin.supplier.destroy', $supplier->id) }}" method="POST" class="form-delete d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-danger btn-delete" title="Hapus">
+                                    <button type="button" class="btn btn-sm btn-danger btn-delete">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
@@ -140,11 +177,15 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                 </tbody>
             </table>
         </div>
-        <div class="mt-4 d-flex justify-content-center">{{ $suppliers->links() }}</div>
+
+        <div class="d-flex justify-content-center mt-4">
+            {{ $suppliers->links() }}
+        </div>
+
         @else
         <div class="empty-state">
             <i class="bi bi-inbox"></i>
-            <div>Belum ada data supplier</div>
+            <p>Belum ada data supplier</p>
         </div>
         @endif
     </div>
@@ -164,11 +205,11 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
             cancelButtonColor: '#ef4444',
             confirmButtonText: 'Ya, hapus!',
             cancelButtonText: 'Batal'
-        }).then((result) => { if(result.isConfirmed) form.submit(); });
+        }).then(result => { if(result.isConfirmed) form.submit(); });
     });
 });
 
-// SweetAlert Success Alerts
+// Success Alert
 @if(session('success'))
 Swal.fire({
     icon: 'success',
@@ -179,4 +220,5 @@ Swal.fire({
 });
 @endif
 </script>
+
 @endsection

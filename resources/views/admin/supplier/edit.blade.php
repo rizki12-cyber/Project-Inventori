@@ -38,6 +38,21 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
     padding: 0.5rem 1.2rem; font-weight: 500; transition: all 0.3s ease;
 }
 .btn-back:hover { background: #4b5563; transform: translateY(-2px); }
+
+/* Responsive Buttons for Mobile */
+@media (max-width: 576px) {
+    .form-actions {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .form-actions a,
+    .form-actions button {
+        width: 100% !important;
+        text-align: center;
+    }
+}
+
 </style>
 
 <div class="container py-5 data-container">
@@ -82,7 +97,7 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                 @enderror
             </div>
 
-            <div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
+            <div class="d-flex justify-content-between mt-4 flex-wrap gap-2 form-actions">
                 <a href="{{ route('admin.supplier.index') }}" class="btn btn-back">
                     <i class="bi bi-arrow-left-circle me-1"></i> Kembali
                 </a>
