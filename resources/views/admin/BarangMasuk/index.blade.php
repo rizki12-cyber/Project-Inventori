@@ -40,27 +40,101 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
 .table tbody tr:hover { transform: scale(1.01); background-color: #f8fafc; box-shadow: 0 3px 10px rgba(37,99,235,0.1); }
 
 /* Buttons */
-.btn-sm { border-radius: 10px; width: 36px; height: 36px; display:flex; justify-content:center; align-items:center; transition:0.25s; }
-.btn-primary { background:#2563eb; border:none; }
-.btn-primary:hover { background:#1e40af; transform:translateY(-2px); }
-
-.btn-danger { background:#ef4444; border:none; }
+.btn-sm { border-radius: 10px; width: 36px; height: 36px; display:flex; justify-content:center; align-items:center; }
+.btn-warning { background:#facc15; border:none; color:#1e293b; }
+.btn-warning:hover { background:#eab308; transform:translateY(-2px); }
+.btn-danger { background:#ef4444; border:none; color:white; }
 .btn-danger:hover { background:#dc2626; transform:translateY(-2px); }
 
 /* Empty state */
 .empty-state { text-align:center; padding:3rem 1rem; color:#94a3b8; }
 .empty-state i { font-size:3rem; margin-bottom:0.5rem; color:#cbd5e1; }
+
+/* SEARCH BAR – sama persis seperti Data Supplier */
+.search-container form {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.search-container input,
+.search-container button,
+.search-container .btn-reset {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    border-radius: 8px;
+}
+.search-container input {
+    border: 1px solid #cbd5e1;
+    padding: 0 1rem;
+    width: 220px;
+}
+.search-container button {
+    padding: 0 1.1rem;
+    border: none;
+    background: #2563eb;
+    color: white;
+}
+.search-container button:hover { background: #1e40af; transform: translateY(-2px); }
+.search-container .btn-reset {
+    padding: 0 1.1rem;
+    background: #6b7280;
+    color: white;
+    border: none;
+}
+.search-container .btn-reset:hover { background: #4b5563; transform: translateY(-2px); }
+
+@media (max-width: 576px) {
+    .search-container form {
+        flex-wrap: nowrap !important;
+        width: 100%;
+        gap: 0.4rem;
+    }
+    .search-container input {
+        flex: 1;
+        min-width: 0;
+    }
+    .search-container button,
+    .search-container .btn-reset {
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+
+    /* Perkecil judul di tampilan mobile */
+@media (max-width: 576px) {
+    .page-title {
+        font-size: 1.3rem !important;   /* semula 1.8rem */
+    }
+}
+
+}
 </style>
 
 <div class="container py-5 data-container">
 
     <!-- Header -->
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-        <h2 class="page-title"><i class="bi bi-box-arrow-in-down me-2"></i>Data Barang Masuk</h2>
-
+        <h2 class="page-title">
+            <i class="bi bi-box-arrow-in-down me-2"></i>Data Barang Masuk
+        </h2>
         <a href="{{ route('admin.barangmasuk.create') }}" class="btn btn-add">
             <i class="bi bi-plus-circle"></i> Tambah Barang Masuk
         </a>
+    </div>
+
+    <!-- Search -->
+    <div class="search-container mb-3">
+        <form action="{{ route('admin.barangmasuk.index') }}" method="GET">
+            <input type="text" name="search"
+                   placeholder="Cari barang / supplier..."
+                   value="{{ request('search') }}">
+            <button type="submit"><i class="bi bi-search"></i> Cari</button>
+
+            @if(request('search'))
+                <a href="{{ route('admin.barangmasuk.index') }}" class="btn-reset">Reset</a>
+            @endif
+        </form>
     </div>
 
     <!-- Table -->
@@ -78,7 +152,6 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                         <th>Aksi</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @foreach($barangMasuk as $index => $bm)
                     <tr>
@@ -107,7 +180,6 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
                     </tr>
                     @endforeach
                 </tbody>
-
             </table>
         </div>
         @else

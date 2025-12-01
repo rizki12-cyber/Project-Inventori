@@ -44,8 +44,8 @@
     background: #6b7280;
     border: none;
     color: white;
-    border-radius: 12px;
-    padding: 0.6rem 1.3rem;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
     transition: 0.3s;
 }
 .btn-back:hover {
@@ -57,13 +57,39 @@
     background: #2563eb;
     border: none;
     color: white;
-    border-radius: 12px;
-    padding: 0.6rem 1.3rem;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
     transition: 0.3s;
 }
 .btn-save:hover {
     background: #1e40af;
     transform: translateY(-2px);
+}
+
+/* ========================================= */
+/* RESPONSIVE BUTTONS – Sama seperti Tambah Barang Masuk */
+/* ========================================= */
+.button-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Mobile: tombol full width bertumpuk */
+@media (max-width: 576px) {
+    .button-wrapper {
+        flex-direction: column;
+    }
+
+    .button-wrapper .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 1.2rem;
+    }
 }
 </style>
 
@@ -82,7 +108,6 @@
             @method('PUT')
 
             <div class="row">
-
                 <!-- Barang -->
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-semibold">Barang</label>
@@ -126,14 +151,14 @@
                 </div>
             </div>
 
-            <!-- Tombol -->
-            <div class="d-flex justify-content-between mt-3">
-                <a href="{{ route('admin.barangmasuk.index') }}" class="btn-back">
-                    <i class="bi bi-arrow-left-circle"></i> Kembali
+            <!-- Tombol dengan Wrapper Responsive -->
+            <div class="button-wrapper mt-3">
+                <a href="{{ route('admin.barangmasuk.index') }}" class="btn btn-back">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Kembali
                 </a>
 
-                <button type="submit" class="btn-save">
-                    <i class="bi bi-save"></i> Simpan Perubahan
+                <button type="submit" class="btn btn-save">
+                    <i class="bi bi-save me-1"></i> Simpan
                 </button>
             </div>
 

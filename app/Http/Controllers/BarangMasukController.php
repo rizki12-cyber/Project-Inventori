@@ -9,11 +9,27 @@ use Illuminate\Http\Request;
 
 class BarangMasukController extends Controller
     {
-        public function index()
-    {
-        $barangMasuk = BarangMasuk::with(['barang', 'supplier'])->latest()->get();
-        return view('admin.BarangMasuk.index', compact('barangMasuk'));
-    }
+        public function index(Request $request)
+{
+    $search = $request->search;
+
+    $barangMasuk = BarangMasuk::with(['barang', 'supplier'])
+        ->when($search, function ($query) use ($search) {
+            $query->whereHas('barang', function ($q) use ($search) {
+                $q->where('nama_barang', 'like', '%' . $search . '%');
+            })
+            ->orWhereHas('supplier', function ($q) use ($search) {
+                $q->where('nama_supplier', 'like', '%' . $search . '%');
+            })
+            ->orWhere('tanggal_masuk', 'like', '%' . $search . '%')
+            ->orWhere('jumlah', 'like', '%' . $search . '%');
+        })
+        ->latest()
+        ->get();
+
+    return view('admin.BarangMasuk.index', compact('barangMasuk', 'search'));
+}
+
 
     public function create()
     {
