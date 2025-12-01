@@ -12,37 +12,45 @@ class WakasekBarangController extends Controller
     public function index()
     {
         $user = Auth::user();
-    
-        // --- Ambil lokasi hanya dari barang yang boleh dilihat wakasek ---
+
+        // ==== LIST LOKASI (ADMIN + KABENG + WAKASEK) ====
         $listLokasi = Barang::select('lokasi')
             ->whereNotNull('lokasi')
             ->where(function($q) use ($user) {
-                $q->where('user_id', $user->id) // barang milik wakasek
+                $q->where('user_id', $user->id)  // barang wakasek
                   ->orWhereHas('user', function($qq) {
-                      $qq->where('role', 'kabeng'); // barang milik kabeng
+                      $qq->whereIn('role', ['admin', 'kabeng']);  // barang admin & kabeng
                   });
             })
             ->groupBy('lokasi')
             ->pluck('lokasi');
-    
-        // --- Query dasar barang yang boleh dilihat wakasek ---
+
+        // ==== QUERY UTAMA (ADMIN + KABENG + WAKASEK) ====
         $barangQuery = Barang::where(function($q) use ($user) {
-            $q->where('user_id', $user->id)  // wakasek melihat barang sendiri
+
+            // Barang milik wakasek sendiri
+            $q->where('user_id', $user->id)
+
+              // Barang admin
               ->orWhereHas('user', function($qq) {
-                  $qq->where('role', 'kabeng'); // wakasek melihat barang kabeng
+                  $qq->where('role', 'admin');
+              })
+
+              // Barang kabeng
+              ->orWhereHas('user', function($qq) {
+                  $qq->where('role', 'kabeng');
               });
         });
-    
-        // --- Filter lokasi ---
+
+        // ==== FILTER LOKASI ====
         if (request()->filled('lokasi')) {
             $barangQuery->where('lokasi', request('lokasi'));
         }
-    
+
         $barang = $barangQuery->latest()->get();
-    
+
         return view('wakasek.barang.index', compact('barang', 'listLokasi'));
     }
-    
 
     public function create()
     {
@@ -69,12 +77,10 @@ class WakasekBarangController extends Controller
         $user = Auth::user();
         $validated['user_id'] = $user->id;
 
-        // Kabeng otomatis pakai jurusan
         if ($user->role === 'kabeng') {
             $validated['jurusan'] = $user->programkeahlian?->nama_program;
         }
 
-        // Upload foto jika ada
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -92,7 +98,6 @@ class WakasekBarangController extends Controller
     {
         $user = Auth::user();
 
-        // Kabeng cuma bisa edit barang miliknya sendiri
         if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
             abort(403, 'Anda tidak diperbolehkan mengedit barang milik orang lain.');
         }
@@ -123,7 +128,6 @@ class WakasekBarangController extends Controller
             'foto' => 'nullable|image|max:2048',
         ]);
 
-        // Upload foto baru jika ada
         if ($request->hasFile('foto')) {
             if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
                 Storage::delete('public/foto_barang/' . $barang->foto);
@@ -145,14 +149,12 @@ class WakasekBarangController extends Controller
     {
         $user = Auth::user();
 
-        // Kabeng cuma bisa hapus barang miliknya
         if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
             abort(403, 'Anda tidak diperbolehkan menghapus barang milik orang lain.');
         }
 
-        // Wakasek tidak boleh hapus barang kabeng lain
         if ($user->role === 'wakasek' && $barang->user_id != $user->id) {
-            abort(403, 'Wakasek tidak diperbolehkan menghapus barang milik kabeng.');
+            abort(403, 'Wakasek tidak diperbolehkan menghapus barang milik kabeng atau admin.');
         }
 
         if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
@@ -170,3 +172,4 @@ class WakasekBarangController extends Controller
         return view('wakasek.barang.detail', compact('barang'));
     }
 }
+        

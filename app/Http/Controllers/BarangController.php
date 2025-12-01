@@ -15,46 +15,46 @@ class BarangController extends Controller
     public function index()
     {
         $user = Auth::user();
-    
-        // QUERY DASAR
+
         $barangQuery = Barang::query();
-    
+
+        // ===== ROLE ADMIN =====
+        // Admin lihat semua → default (tanpa filter)
+
         // ===== ROLE KABENG =====
         if ($user->role === 'kabeng') {
-    
-            // Hanya melihat: barang milik sendiri + barang milik wakasek
             $barangQuery->where(function($query) use ($user) {
-                $query->where('user_id', $user->id)
+                $query->where('user_id', $user->id) // barang miliknya
                       ->orWhereHas('user', function($q) {
-                          $q->where('role', 'wakasek');
+                          $q->whereIn('role', ['admin', 'wakasek']); // barang admin + wakasek
                       });
             });
         }
-    
-        // ===== FILTER LOKASI SESUDAH FILTER ROLE =====
+
+        // ===== ROLE WAKASEK =====
+        if ($user->role === 'wakasek') {
+            $barangQuery->whereHas('user', function($q) {
+                $q->whereIn('role', ['admin', 'kabeng']); // wakasek lihat barang admin + kabeng
+            });
+        }
+
+        // ===== FILTER LOKASI =====
         if (request()->filled('lokasi')) {
             $barangQuery->where('lokasi', request('lokasi'));
         }
-    
-        // ===== AMBIL DATA BARANG =====
+
         $barang = $barangQuery->latest()->get();
-    
-        // ===== AMBIL LOKASI BERDASARKAN BARANG YANG BOLEH DIA LIHAT =====
+
         $listLokasi = $barangQuery->pluck('lokasi')->unique()->values();
-    
-        // ADMIN
-        if ($user->role === 'admin') {
-            return view('admin.barang.index', compact('barang', 'listLokasi'));
-        }
-    
-        // KABENG
-        if ($user->role === 'kabeng') {
-            return view('kabeng.barang.index', compact('barang', 'listLokasi'));
-        }
-    
-        abort(403, "Role tidak dikenali");
+
+        // Return view sesuai role
+        return match($user->role) {
+            'admin'  => view('admin.barang.index', compact('barang', 'listLokasi')),
+            'kabeng' => view('kabeng.barang.index', compact('barang', 'listLokasi')),
+            'wakasek'=> view('wakasek.barang.index', compact('barang', 'listLokasi')),
+            default  => abort(403, "Role tidak dikenali"),
+        };
     }
-    
 
     /**
      * Form tambah barang.
@@ -67,66 +67,61 @@ class BarangController extends Controller
             abort(403, 'Anda tidak memiliki izin menambahkan barang.');
         }
 
-        $view = $user->role === 'kabeng' ? 'kabeng.barang.create' : 'admin.barang.create';
-        return view($view);
+        return view($user->role . '.barang.create');
     }
 
     /**
      * Simpan barang baru.
      */
     public function store(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (!in_array($user->role, ['admin', 'kabeng'])) {
-        abort(403, 'Anda tidak memiliki izin menambahkan barang.');
+        if (!in_array($user->role, ['admin', 'kabeng'])) {
+            abort(403, 'Anda tidak memiliki izin menambahkan barang.');
+        }
+
+        $validated = $request->validate([
+            'kode_barang' => 'required|unique:barang',
+            'nama_barang' => 'required',
+            'kategori' => 'required',
+            'jumlah' => 'required|integer|min:0',
+            'kondisi' => 'required',
+            'lokasi' => 'required',
+            'tanggal_pembelian' => 'required|date',
+            'keterangan' => 'nullable|string',
+            'spesifikasi' => 'nullable|string',
+            'sumber_dana' => 'nullable|string',
+            'tanggal_penghapusan' => 'nullable|date',
+            'foto' => 'nullable|image|max:2048',
+        ]);
+
+        // User ID
+        $validated['user_id'] = $user->id;
+
+        // Inject jurusan otomatis untuk kabeng
+        if ($user->role === 'kabeng') {
+            $validated['jurusan'] = $user->programkeahlian?->nama_program;
+        }
+
+        // Admin isi manual
+        if ($user->role === 'admin') {
+            $validated['jurusan'] = $request->jurusan;
+        }
+
+        // Upload foto
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('foto_barang', $filename, 'public');
+            $validated['foto'] = $filename;
+        }
+
+        Barang::create($validated);
+
+        return redirect()->route($user->role . '.barang.index')
+                         ->with('success', 'Barang berhasil ditambahkan.');
     }
-
-    $validated = $request->validate([
-        'kode_barang' => 'required|unique:barang',
-        'nama_barang' => 'required',
-        'kategori' => 'required',
-        'jumlah' => 'required|integer|min:0',
-        'kondisi' => 'required',
-        'lokasi' => 'required',
-        'tanggal_pembelian' => 'required|date',
-        'keterangan' => 'nullable|string',
-        'spesifikasi' => 'nullable|string',
-        'sumber_dana' => 'nullable|string',
-        'tanggal_penghapusan' => 'nullable|date',
-        'foto' => 'nullable|image|max:2048',
-    ]);
-
-    // User ID
-    $validated['user_id'] = $user->id;
-
-    // Inject jurusan otomatis untuk kabeng
-    if ($user->role === 'kabeng') {
-        $validated['jurusan'] = $user->programkeahlian?->nama_program;
-    }
-
-    // Admin boleh pilih jurusan manual
-    if ($user->role === 'admin') {
-        $validated['jurusan'] = $request->jurusan;
-    }
-
-    // Upload foto
-    if ($request->hasFile('foto')) {
-        $file = $request->file('foto');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->storeAs('foto_barang', $filename, 'public');
-        $validated['foto'] = $filename;
-    }
-
-    Barang::create($validated);
-
-    $route = $user->role === 'kabeng' 
-        ? 'kabeng.barang.index' 
-        : 'admin.barang.index';
-
-    return redirect()->route($route)->with('success', 'Barang berhasil ditambahkan.');
-}
-
 
     /**
      * Form edit barang.
@@ -135,13 +130,22 @@ class BarangController extends Controller
     {
         $user = Auth::user();
 
+        // WAKASEK BACA DOANG
+        if ($user->role === 'wakasek') {
+            abort(403, 'Wakasek tidak boleh mengedit barang.');
+        }
+
+        // ADMIN bisa edit semua
         if ($user->role === 'admin') {
             return view('admin.barang.edit', compact('barang'));
-        } elseif ($user->role === 'kabeng' && $barang->user_id == $user->id) {
+        }
+
+        // KABENG hanya bisa edit barangnya sendiri
+        if ($user->role === 'kabeng' && $barang->user_id == $user->id) {
             return view('kabeng.barang.edit', compact('barang'));
         }
 
-        abort(403, 'Anda tidak memiliki izin untuk mengedit barang ini.');
+        abort(403, 'Anda tidak memiliki izin mengedit barang ini.');
     }
 
     /**
@@ -151,10 +155,12 @@ class BarangController extends Controller
     {
         $user = Auth::user();
 
-        if (!in_array($user->role, ['admin', 'kabeng'])) {
-            abort(403, 'Anda tidak memiliki izin memperbarui barang ini.');
+        // WAKASEK baca doang
+        if ($user->role === 'wakasek') {
+            abort(403, 'Wakasek tidak boleh mengubah data barang.');
         }
 
+        // Kabeng hanya boleh update barang miliknya
         if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
             abort(403, 'Anda tidak dapat memperbarui barang milik orang lain.');
         }
@@ -184,8 +190,6 @@ class BarangController extends Controller
 
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-
-            // 🚀 FIX PATH
             $file->storeAs('foto_barang', $filename, 'public');
 
             $validated['foto'] = $filename;
@@ -193,8 +197,8 @@ class BarangController extends Controller
 
         $barang->update($validated);
 
-        $redirect = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
-        return redirect()->route($redirect)->with('success', 'Barang berhasil diperbarui.');
+        return redirect()->route($user->role . '.barang.index')
+                         ->with('success', 'Barang berhasil diperbarui.');
     }
 
     /**
@@ -204,31 +208,36 @@ class BarangController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'admin' || ($user->role === 'kabeng' && $barang->user_id == $user->id)) {
-
-            // Hapus foto dari storage
-            if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
-                Storage::delete('public/foto_barang/' . $barang->foto);
-            }
-
-            $barang->delete();
-
-            $redirect = $user->role === 'kabeng' ? 'kabeng.barang.index' : 'admin.barang.index';
-            return redirect()->route($redirect)->with('success', 'Barang berhasil dihapus.');
+        // WAKASEK baca doang
+        if ($user->role === 'wakasek') {
+            abort(403, 'Wakasek tidak boleh menghapus barang.');
         }
 
-        abort(403, 'Anda tidak memiliki izin menghapus barang ini.');
+        // KABENG hanya boleh hapus barang miliknya
+        if ($user->role === 'kabeng' && $barang->user_id != $user->id) {
+            abort(403, 'Anda tidak memiliki izin menghapus barang ini.');
+        }
+
+        // Hapus foto
+        if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
+            Storage::delete('public/foto_barang/' . $barang->foto);
+        }
+
+        $barang->delete();
+
+        return redirect()->route($user->role . '.barang.index')
+                         ->with('success', 'Barang berhasil dihapus.');
     }
 
-public function show(Barang $barang)
-{
-    $role = Auth::user()->role;
+    public function show(Barang $barang)
+    {
+        $role = Auth::user()->role;
 
-    return match($role) {
-        'admin'  => view('admin.barang.detail', compact('barang')),
-        'kabeng' => view('kabeng.barang.detail', compact('barang')),
-        default  => abort(403),
-    };
-}   
+        return match($role) {
+            'admin'  => view('admin.barang.detail', compact('barang')),
+            'kabeng' => view('kabeng.barang.detail', compact('barang')),
+            'wakasek'=> view('wakasek.barang.detail', compact('barang')),
+            default  => abort(403),
+        };
+    }
 }
-    
