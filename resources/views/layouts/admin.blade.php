@@ -344,19 +344,32 @@ body {
                 <button class="btn btn-outline-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
                 
                 <div class="header-info d-none d-sm-flex">
-            <img src="{{ asset($pengaturan->logo_sekolah ?? 'assets/images/logo1.png') }}" alt="Logo Sekolah">
+                <img src="{{ asset($pengaturan->logo_sekolah ?? 'assets/images/logo1.png') }}" alt="Logo Sekolah">
                     <h5>SMKN 1 TALAGA</h5>
                 </div>
 
-                <div class="ms-auto user-dropdown">
-                    <div class="user-profile" id="userDropdown" data-bs-toggle="dropdown">
-                        <div class="user-avatar">A</div>
-                        <div class="user-info d-none d-md-block">
-                            <div class="fw-semibold">Admin</div>
-                            <small class="text-muted">Administrator</small>
-                        </div>
-                        <i class="bi bi-chevron-down"></i>
-                    </div>
+                @php
+    $admin = Auth::user();
+    $avatar = strtoupper(substr($admin->name, 0, 1));
+@endphp
+
+<div class="ms-auto user-dropdown">
+    <div class="user-profile" id="userDropdown" data-bs-toggle="dropdown">
+
+        <div class="user-avatar">{{ $avatar }}</div>
+
+        <div class="user-info d-none d-md-block">
+            <div class="fw-semibold">{{ $admin->name }}</div>
+
+            <!-- Diganti email -->
+            <small class="text-muted">{{ $admin->email }}</small>
+        </div>
+
+        <i class="bi bi-chevron-down"></i>
+
+    </div>
+
+
 
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="{{ route('admin.profile') }}">

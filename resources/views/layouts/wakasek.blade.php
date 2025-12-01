@@ -272,7 +272,7 @@ footer {
                 <button class="btn btn-outline-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
 
                 <div class="header-info d-none d-sm-flex">
-                    <img src="{{ asset('assets/images/logo1.png') }}">
+                <img src="{{ asset($pengaturan->logo_sekolah ?? 'assets/images/logo1.png') }}" alt="Logo Sekolah">
                     <h5>SMKN 1 TALAGA</h5>
                 </div>
 
