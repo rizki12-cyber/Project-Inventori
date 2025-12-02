@@ -119,6 +119,8 @@ class BarangController extends Controller
 
         Barang::create($validated);
 
+        logAktivitas("Menambahkan barang: {$validated['nama_barang']} ({$validated['kode_barang']})");
+
         return redirect()->route($user->role . '.barang.index')
                          ->with('success', 'Barang berhasil ditambahkan.');
     }
@@ -197,6 +199,8 @@ class BarangController extends Controller
 
         $barang->update($validated);
 
+        logAktivitas("Mengubah data barang: {$barang->nama_barang} ({$barang->kode_barang})");
+
         return redirect()->route($user->role . '.barang.index')
                          ->with('success', 'Barang berhasil diperbarui.');
     }
@@ -222,6 +226,9 @@ class BarangController extends Controller
         if ($barang->foto && Storage::exists('public/foto_barang/' . $barang->foto)) {
             Storage::delete('public/foto_barang/' . $barang->foto);
         }
+
+        logAktivitas("Menghapus barang: {$barang->nama_barang} ({$barang->kode_barang})");
+
 
         $barang->delete();
 

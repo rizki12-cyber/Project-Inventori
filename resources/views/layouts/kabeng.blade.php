@@ -129,7 +129,7 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--primary-color);
+    background-color: #198754;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -13,36 +13,27 @@ class WakasekBarangController extends Controller
     {
         $user = Auth::user();
 
-        // ==== LIST LOKASI (ADMIN + KABENG + WAKASEK) ====
         $listLokasi = Barang::select('lokasi')
             ->whereNotNull('lokasi')
             ->where(function($q) use ($user) {
-                $q->where('user_id', $user->id)  // barang wakasek
+                $q->where('user_id', $user->id)
                   ->orWhereHas('user', function($qq) {
-                      $qq->whereIn('role', ['admin', 'kabeng']);  // barang admin & kabeng
+                      $qq->whereIn('role', ['admin', 'kabeng']);
                   });
             })
             ->groupBy('lokasi')
             ->pluck('lokasi');
 
-        // ==== QUERY UTAMA (ADMIN + KABENG + WAKASEK) ====
         $barangQuery = Barang::where(function($q) use ($user) {
-
-            // Barang milik wakasek sendiri
             $q->where('user_id', $user->id)
-
-              // Barang admin
               ->orWhereHas('user', function($qq) {
                   $qq->where('role', 'admin');
               })
-
-              // Barang kabeng
               ->orWhereHas('user', function($qq) {
                   $qq->where('role', 'kabeng');
               });
         });
 
-        // ==== FILTER LOKASI ====
         if (request()->filled('lokasi')) {
             $barangQuery->where('lokasi', request('lokasi'));
         }
@@ -88,7 +79,10 @@ class WakasekBarangController extends Controller
             $validated['foto'] = $filename;
         }
 
-        Barang::create($validated);
+        $barang = Barang::create($validated);
+
+        // 🔥 LOG AKTIVITAS
+        logAktivitas("Wakasek menambahkan barang: {$validated['nama_barang']} ({$validated['kode_barang']})");
 
         return redirect()->route('wakasek.barang.index')
             ->with('success', 'Barang berhasil ditambahkan.');
@@ -141,6 +135,9 @@ class WakasekBarangController extends Controller
 
         $barang->update($validated);
 
+        // 🔥 LOG AKTIVITAS
+        logAktivitas("Wakasek mengubah barang: {$barang->nama_barang} ({$barang->kode_barang})");
+
         return redirect()->route('wakasek.barang.index')
             ->with('success', 'Barang berhasil diperbarui.');
     }
@@ -161,6 +158,9 @@ class WakasekBarangController extends Controller
             Storage::delete('public/foto_barang/' . $barang->foto);
         }
 
+        // 🔥 LOG AKTIVITAS
+        logAktivitas("Wakasek menghapus barang: {$barang->nama_barang} ({$barang->kode_barang})");
+
         $barang->delete();
 
         return redirect()->route('wakasek.barang.index')
@@ -172,4 +172,3 @@ class WakasekBarangController extends Controller
         return view('wakasek.barang.detail', compact('barang'));
     }
 }
-        

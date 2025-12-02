@@ -19,6 +19,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileKabengController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\KabengLaporanController;
+use App\Http\Controllers\LogAktivitasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -172,6 +173,9 @@ Route::patch('admin/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::
         'destroy' => 'admin.konsentrasi.destroy',
         'show'    => 'admin.konsentrasi.show',
     ]);
+    // 📄 Log Aktivitas
+    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('admin.logAktivitas');
+
 });
 
 

@@ -178,7 +178,7 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--primary-color);
+    background-color: #e03131; /* 🔥 merah solid */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -330,6 +330,13 @@ body {
                 class="list-group-item list-group-item-action {{ request()->routeIs('admin.pengaturan') ? 'active' : '' }}">
                 <i class="bi bi-gear-fill"></i> <span>Pengaturan Website</span>
             </a>
+
+            <!-- LOG AKTIVITAS -->
+            <a href="{{ route('admin.logAktivitas') }}" 
+                class="list-group-item list-group-item-action {{ request()->routeIs('admin.logAktivitas') ? 'active' : '' }}">
+                <i class="bi bi-clipboard-data-fill"></i> <span>Log Aktivitas</span>
+            </a>
+
 
         </div>
     </div>

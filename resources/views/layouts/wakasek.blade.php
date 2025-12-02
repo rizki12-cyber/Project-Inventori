@@ -166,7 +166,7 @@ body {
 .user-avatar {
     width: 36px;
     height: 36px;
-    background: var(--primary-color);
+    background: #0d6efd;
     border-radius: 50%;
     color: white;
     display: flex;
