@@ -401,9 +401,14 @@ body {
             @yield('content')
         </div>
 
+                @php
+            $pengaturan = \App\Models\Pengaturan::first();
+        @endphp
+
         <footer class="text-center py-3 bg-white border-top">
-            &copy; {{ date('Y') }} SMKN 1 TALAGA - Sistem Inventori.  
+            {!! $pengaturan->footer_text ?? ('&copy; ' . date('Y') . ' SMKN 1 TALAGA - Sistem Inventori') !!}
         </footer>
+
 
     </div>
 </div>

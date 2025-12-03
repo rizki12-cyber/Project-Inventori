@@ -3,27 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
+use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SupplierExport;
 
 class SupplierController extends Controller
 {
-    public function index(Request $request)
-{
-    $query = Supplier::query();
-
-    // Filter search hanya berdasarkan nama_supplier
-    if ($request->has('search') && $request->search != '') {
-        $search = $request->search;
-        $query->where('nama_supplier', 'like', "%{$search}%");
+    // 📝 Fungsi log aktivitas
+    private function catatLog($aksi)
+    {
+        LogAktivitas::create([
+            'user_id' => auth()->id(),
+            'role'    => auth()->user()->role ?? '-',
+            'aksi'    => $aksi,
+        ]);
     }
 
-    // Ambil data terbaru, paginasi 10 per halaman
-    $suppliers = $query->latest()->paginate(10);
-    $suppliers->appends($request->all()); // agar query search tetap terbawa saat pindah halaman
+    public function index(Request $request)
+    {
+        $query = Supplier::query();
 
-    return view('admin.supplier.index', compact('suppliers'));
-}
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('nama_supplier', 'like', "%{$search}%");
+        }
 
+        $suppliers = $query->latest()->paginate(10);
+        $suppliers->appends($request->all());
+
+        return view('admin.supplier.index', compact('suppliers'));
+    }
 
     public function create()
     {
@@ -39,6 +49,10 @@ class SupplierController extends Controller
         ]);
 
         Supplier::create($request->all());
+
+        // ✨ Log
+        $this->catatLog("Menambah supplier baru: {$request->nama_supplier}");
+
         return redirect()->route('admin.supplier.index')->with('success', 'Supplier berhasil ditambahkan.');
     }
 
@@ -56,18 +70,31 @@ class SupplierController extends Controller
         ]);
 
         $supplier->update($request->all());
+
+        // ✨ Log
+        $this->catatLog("Memperbarui supplier: {$supplier->nama_supplier}");
+
         return redirect()->route('admin.supplier.index')->with('success', 'Supplier berhasil diperbarui.');
     }
 
     public function destroy(Supplier $supplier)
     {
+        $nama = $supplier->nama_supplier;
+
         $supplier->delete();
+
+        // ✨ Log
+        $this->catatLog("Menghapus supplier: {$nama}");
+
         return redirect()->route('admin.supplier.index')->with('success', 'Supplier berhasil dihapus.');
     }
 
-    // 🔹 Export ke Excel
+    // EXPORT EXCEL
     public function exportExcel()
     {
+        // ✨ Log
+        $this->catatLog("Meng-export data supplier ke Excel");
+
         return Excel::download(new SupplierExport, 'data_supplier.xlsx');
     }
 }

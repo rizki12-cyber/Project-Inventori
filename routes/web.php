@@ -174,7 +174,7 @@ Route::patch('admin/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::
         'show'    => 'admin.konsentrasi.show',
     ]);
     // 📄 Log Aktivitas
-    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('admin.logAktivitas');
+        Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('admin.logAktivitas');
 
 });
 

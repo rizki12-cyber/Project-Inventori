@@ -5,24 +5,41 @@
 @section('content')
 
 <style>
-    /* Hover row */
     .log-table tbody tr:hover {
-        background: #f1f5f9 !important;
+        background: #f8fafc !important;
         transition: .25s ease;
+        cursor: default;
     }
 
-    /* Badge role */
+    /* Tabel tanpa garis vertikal */
+    .table td,
+    .table th {
+        border: none !important;
+        vertical-align: middle;
+    }
+
+    .table tbody tr {
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+
+    .table thead tr {
+        border-bottom: 2px solid #cbd5e1 !important;
+    }
+
+    /* Role Badge */
     .badge-role {
         font-size: 11px;
-        padding: 5px 9px;
+        padding: 4px 8px;
         border-radius: 6px;
-        letter-spacing: .3px;
+        letter-spacing: .4px;
+        font-weight: 600;
+        text-transform: uppercase;
     }
 
-    /* Avatar dasar */
+    /* Avatar */
     .user-avatar-sm {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -31,168 +48,190 @@
         margin-right: 10px;
         text-transform: uppercase;
         color: white;
+        flex-shrink: 0;
+        font-size: 14px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
 
-    /* Avatar warna sesuai role */
-    .avatar-admin {
-        background: #dc2626 !important;   /* merah */
-        color: #fff !important;
-    }
-
-    .avatar-wakasek {
-        background: #2563eb !important;   /* biru */
-        color: #fff !important;
-    }
-
-    .avatar-kabeng {
-        background: #16a34a !important;   /* hijau */
-        color: #fff !important;
-    }
+    .avatar-admin { background: #dc2626; }
+    .avatar-wakasek { background: #2563eb; }
+    .avatar-kabeng { background: #16a34a; }
 
     /* Card */
     .log-card {
         border: 0;
         border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
 
-    /* Table header */
     .table thead th {
-        font-size: 13px;
+        font-size: 12.5px;
         text-transform: uppercase;
-        letter-spacing: .5px;
+        letter-spacing: .6px;
         font-weight: 600;
         color: #475569;
         white-space: nowrap;
+        padding: 14px 16px;
     }
 
-    /* =======================================
-        RESPONSIVE MOBILE FIX
-    ======================================== */
-    @media(max-width: 768px) {
+    .table tbody td {
+        padding: 14px 16px;
+    }
+
+    .log-card .card-body {
+        padding: 0;
+    }
+
+    /* Header Halaman */
+    .page-header {
+        gap: 10px;
+    }
+
+    .page-header h4 {
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .page-header .counter {
+        background: #f1f5f9;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         .table-responsive {
             border-radius: 10px;
             overflow-x: auto;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            -webkit-overflow-scrolling: touch;
         }
 
         .user-avatar-sm {
-            width: 32px;
-            height: 32px;
-            margin-right: 8px;
-            font-size: 14px;
-        }
-
-        td strong {
-            font-size: 14px;
-        }
-
-        td small {
+            width: 30px;
+            height: 30px;
             font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .table thead th,
+        .table tbody td {
+            padding: 12px 10px;
+        }
+
+        .time-cell {
+            min-width: 120px;
+            font-size: 12px;
+            white-space: nowrap;
         }
 
         .badge-role {
             font-size: 10px;
-            padding: 4px 8px;
+            padding: 3px 7px;
+        }
+
+        td span {
+            display: inline-block;
+            max-width: 200px;
+            word-wrap: break-word;
         }
     }
 </style>
 
-<div class="container py-3">
+<div class="container py-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <h4 class="fw-bold m-0 d-flex align-items-center gap-2 mb-2">
+    {{-- HEADER --}}
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap page-header">
+        <h4 class="d-flex align-items-center gap-2 m-0">
             <i class="bi bi-activity text-primary fs-4"></i>
             Log Aktivitas
         </h4>
-
-        <span class="text-muted small mb-2">
-            <i class="bi bi-list-check"></i> {{ $logs->total() }} aktivitas terekam
+        <span class="counter">
+            <i class="bi bi-list-check me-1"></i> {{ $logs->total() }} aktivitas
         </span>
     </div>
 
-    <div class="card shadow-sm log-card">
-
-        <div class="card-body p-0">
+    {{-- CARD CONTENT --}}
+    <div class="card log-card">
+        <div class="card-body">
             <div class="table-responsive">
-
-                <table class="table table-hover log-table align-middle mb-0">
+                <table class="table log-table mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 250px;">User</th>
-                            <th style="width: 130px;">Role</th>
-                            <th>Aksi</th>
-                            <th style="width: 160px;">Waktu</th>
+                            <th style="min-width: 170px;">User</th>
+                            <th style="min-width: 100px;">Role</th>
+                            <th style="min-width: 200px;">Aksi</th>
+                            <th style="min-width: 130px;">Waktu</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         @forelse ($logs as $log)
                             @php
-                                $avatarColor = [
-                                    'admin'   => 'avatar-admin',
+                                $avatarClass = match($log->role) {
+                                    'admin' => 'avatar-admin',
                                     'wakasek' => 'avatar-wakasek',
-                                    'kabeng'  => 'avatar-kabeng',
-                                ];
+                                    'kabeng' => 'avatar-kabeng',
+                                    default => 'bg-gray-500'
+                                };
+
+                                $badgeClass = match($log->role) {
+                                    'admin' => 'danger',
+                                    'wakasek' => 'primary',
+                                    'kabeng' => 'success',
+                                    default => 'secondary'
+                                };
                             @endphp
 
                             <tr>
                                 <td class="d-flex align-items-center">
-
-                                    {{-- Avatar sesuai role --}}
-                                    <div class="user-avatar-sm {{ $avatarColor[$log->role] ?? '' }}">
+                                    <div class="user-avatar-sm {{ $avatarClass }}">
                                         {{ strtoupper(substr($log->user->name ?? '?', 0, 1)) }}
                                     </div>
-
                                     <div>
                                         <strong class="d-block">{{ $log->user->name ?? '-' }}</strong>
                                         <small class="text-muted">{{ $log->user->email ?? '' }}</small>
                                     </div>
                                 </td>
-
                                 <td>
-                                    @php
-                                        $roleColor = [
-                                            'admin' => 'danger',
-                                            'wakasek' => 'primary',
-                                            'kabeng' => 'success',
-                                        ];
-                                    @endphp
-
-                                    <span class="badge bg-{{ $roleColor[$log->role] ?? 'secondary' }} badge-role">
-                                        {{ strtoupper($log->role) }}
+                                    <span class="badge bg-{{ $badgeClass }} badge-role">
+                                        {{ ucfirst($log->role) }}
                                     </span>
                                 </td>
-
                                 <td>
-                                    <i class="bi bi-chevron-right text-secondary me-1"></i>
+                                    <i class="bi bi-journal-text text-muted me-1"></i>
                                     <span>{{ $log->aksi }}</span>
                                 </td>
-
-                                <td class="text-muted">
-                                    <i class="bi bi-clock-history me-1"></i>
-                                    {{ $log->created_at->diffForHumans() }}
+                                <td class="text-muted time-cell">
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ $log->created_at->translatedFormat('d M Y, H:i') }}
+                                    <div class="d-md-none small mt-1">
+                                        ({{ $log->created_at->diffForHumans() }})
+                                    </div>
                                 </td>
                             </tr>
-
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-4 text-muted">
-                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                    Tidak ada aktivitas.
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
+                                    <span>Tidak ada aktivitas yang terekam.</span>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
-
                 </table>
-
             </div>
         </div>
     </div>
 
     {{-- PAGINATION --}}
-    <div class="mt-3 d-flex justify-content-center">
+    <div class="mt-4 d-flex justify-content-center">
         {{ $logs->links('pagination::bootstrap-5') }}
     </div>
 

@@ -97,6 +97,13 @@ input.form-control { border-radius: 10px; padding: 0.6rem 0.75rem; }
                 </div>
             </div>
 
+            {{-- Footer Text --}}
+            <div class="mb-4">
+                <label class="form-label">Teks Footer</label>
+                <textarea name="footer_text" rows="3" class="form-control" placeholder="Masukkan teks footer...">{{ $pengaturan->footer_text ?? '' }}</textarea>
+            </div>
+
+
             <button type="submit" class="btn btn-primary px-4 py-2 mt-3">
                 Simpan Pengaturan
             </button>
