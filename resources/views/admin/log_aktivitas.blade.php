@@ -11,7 +11,6 @@
         cursor: default;
     }
 
-    /* Tabel tanpa garis vertikal */
     .table td,
     .table th {
         border: none !important;
@@ -26,7 +25,6 @@
         border-bottom: 2px solid #cbd5e1 !important;
     }
 
-    /* Role Badge */
     .badge-role {
         font-size: 11px;
         padding: 4px 8px;
@@ -36,7 +34,6 @@
         text-transform: uppercase;
     }
 
-    /* Avatar */
     .user-avatar-sm {
         width: 34px;
         height: 34px;
@@ -57,7 +54,6 @@
     .avatar-wakasek { background: #2563eb; }
     .avatar-kabeng { background: #16a34a; }
 
-    /* Card */
     .log-card {
         border: 0;
         border-radius: 12px;
@@ -83,7 +79,6 @@
         padding: 0;
     }
 
-    /* Header Halaman */
     .page-header {
         gap: 10px;
     }
@@ -101,7 +96,7 @@
         color: #64748b;
     }
 
-    /* Mobile */
+    /* MOBILE FIX */
     @media (max-width: 768px) {
         .page-header {
             flex-direction: column;
@@ -142,6 +137,11 @@
             max-width: 200px;
             word-wrap: break-word;
         }
+
+        /* spacing biar ga mepet */
+        .log-table tbody tr {
+            padding-bottom: 12px !important;
+        }
     }
 </style>
 
@@ -158,6 +158,45 @@
         </span>
     </div>
 
+    {{-- FILTER --}}
+    <div class="card mb-4 p-3 shadow-sm" style="border-radius: 12px;">
+        <form method="GET" class="row g-3">
+
+            <div class="col-md-3 col-6">
+                <input type="text" name="keyword" value="{{ request('keyword') }}"
+                    class="form-control" placeholder="Cari aksi / nama user">
+            </div>
+
+            <div class="col-md-2 col-6">
+                <select name="role" class="form-control">
+                    <option value="">Semua Role</option>
+                    <option value="admin" {{ request('role')=='admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="wakasek" {{ request('role')=='wakasek' ? 'selected' : '' }}>Wakasek</option>
+                    <option value="kabeng" {{ request('role')=='kabeng' ? 'selected' : '' }}>Kabeng</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 col-6">
+                <input type="date" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}" class="form-control">
+            </div>
+
+            <div class="col-md-2 col-6">
+                <input type="date" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}" class="form-control">
+            </div>
+
+            <div class="col-md-3 col-12 d-flex gap-2">
+                <button class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Filter
+                </button>
+                <a href="{{ route('admin.logAktivitas') }}" class="btn btn-secondary w-50">
+    Reset
+</a>
+
+            </div>
+
+        </form>
+    </div>
+
     {{-- CARD CONTENT --}}
     <div class="card log-card">
         <div class="card-body">
@@ -171,6 +210,7 @@
                             <th style="min-width: 130px;">Waktu</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @forelse ($logs as $log)
                             @php
@@ -192,30 +232,35 @@
                             <tr>
                                 <td class="d-flex align-items-center">
                                     <div class="user-avatar-sm {{ $avatarClass }}">
-                                        {{ strtoupper(substr($log->user->name ?? '?', 0, 1)) }}
+                                        {{ strtoupper(substr($log->user->name ?? 'X', 0, 1)) }}
                                     </div>
                                     <div>
-                                        <strong class="d-block">{{ $log->user->name ?? '-' }}</strong>
-                                        <small class="text-muted">{{ $log->user->email ?? '' }}</small>
+                                        <strong class="d-block">{{ $log->user->name ?? 'User dihapus' }}</strong>
+                                        <small class="text-muted">{{ $log->user->email ?? '-' }}</small>
                                     </div>
                                 </td>
+
                                 <td>
                                     <span class="badge bg-{{ $badgeClass }} badge-role">
-                                        {{ ucfirst($log->role) }}
+                                        {{ ucfirst($log->role ?? '-') }}
                                     </span>
                                 </td>
+
                                 <td>
                                     <i class="bi bi-journal-text text-muted me-1"></i>
                                     <span>{{ $log->aksi }}</span>
                                 </td>
+
                                 <td class="text-muted time-cell">
                                     <i class="bi bi-clock me-1"></i>
                                     {{ $log->created_at->translatedFormat('d M Y, H:i') }}
+
                                     <div class="d-md-none small mt-1">
                                         ({{ $log->created_at->diffForHumans() }})
                                     </div>
                                 </td>
                             </tr>
+
                         @empty
                             <tr>
                                 <td colspan="4" class="text-center py-5 text-muted">
@@ -225,6 +270,7 @@
                             </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
         </div>
