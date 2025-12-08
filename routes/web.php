@@ -20,6 +20,8 @@ use App\Http\Controllers\ProfileKabengController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\KabengLaporanController;
 use App\Http\Controllers\LogAktivitasController;
+use App\Http\Controllers\WakasekDashboardController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -184,7 +186,8 @@ Route::patch('admin/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::
 // 🔹 WAKASEK AREA
 // ==========================
 Route::middleware(['auth', 'role:wakasek'])->prefix('wakasek')->group(function () {
-    Route::get('/dashboard', fn() => view('wakasek.dashboard'))->name('wakasek.dashboard');
+    Route::get('/dashboard', [WakasekDashboardController::class, 'index'])
+        ->name('wakasek.dashboard');
     Route::get('/laporan', fn() => view('wakasek.laporan'))->name('wakasek.laporan');
 
     //laporan wakasek
