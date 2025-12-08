@@ -32,6 +32,61 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
 }
 .btn-add:hover { background: #e0e7ff; transform: translateY(-2px); }
 
+/* SEARCH BAR */
+.search-container form {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.search-container input,
+.search-container button,
+.search-container .btn-reset {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    border-radius: 8px;
+}
+.search-container input {
+    border: 1px solid #cbd5e1;
+    padding: 0 1rem;
+    width: 220px;
+}
+.search-container button {
+    padding: 0 1.1rem;
+    border: none;
+    background: #2563eb;
+    color: white;
+}
+.search-container button:hover { background: #1e40af; transform: translateY(-2px); }
+
+.search-container .btn-reset {
+    padding: 0 1.1rem;
+    background: #6b7280;
+    color: white;
+    border: none;
+}
+.search-container .btn-reset:hover { background: #4b5563; transform: translateY(-2px); }
+
+/* Responsive search bar */
+@media (max-width: 576px) {
+    .search-container form {
+        flex-wrap: nowrap !important;
+        width: 100%;
+        gap: 0.4rem;
+    }
+    .search-container input {
+        flex: 1;
+        min-width: 0;
+    }
+    .search-container button,
+    .search-container .btn-reset {
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+    .page-title { font-size: 1.3rem !important; }
+}
+
 /* Card & Table */
 .card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
 .table { border-collapse: separate; border-spacing: 0 0.5rem; text-align: center; }
@@ -64,6 +119,20 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
         <a href="{{ route('admin.barangkeluar.create') }}" class="btn btn-add">
             <i class="bi bi-plus-circle"></i> Tambah Barang Keluar
         </a>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-container mb-4">
+        <form action="{{ route('admin.barangkeluar.index') }}" method="GET">
+            <input type="text" name="search" placeholder="Cari barang / lokasi / penerima..."
+                   value="{{ request('search') }}">
+
+            <button type="submit"><i class="bi bi-search"></i> Cari</button>
+
+            @if(request('search'))
+                <a href="{{ route('admin.barangkeluar.index') }}" class="btn-reset">Reset</a>
+            @endif
+        </form>
     </div>
 
     <!-- Card Table -->

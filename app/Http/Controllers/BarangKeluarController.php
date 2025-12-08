@@ -9,11 +9,26 @@ use Illuminate\Http\Request;
 class BarangKeluarController extends Controller
 {
     /** 🔹 Tampilkan daftar semua barang keluar */
-    public function index()
-    {
-        $barangKeluar = BarangKeluar::with('barang')->latest()->get();
-        return view('admin.BarangKeluar.index', compact('barangKeluar'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->search;
+
+    $barangKeluar = BarangKeluar::with('barang')
+        ->when($search, function ($query) use ($search) {
+            $query->whereHas('barang', function ($q) use ($search) {
+                $q->where('nama_barang', 'like', '%' . $search . '%');
+            })
+            ->orWhere('tanggal_keluar', 'like', '%' . $search . '%')
+            ->orWhere('jumlah', 'like', '%' . $search . '%')
+            ->orWhere('lokasi', 'like', '%' . $search . '%')
+            ->orWhere('penerima', 'like', '%' . $search . '%');
+        })
+        ->latest()
+        ->get();
+
+    return view('admin.BarangKeluar.index', compact('barangKeluar', 'search'));
+}
+
 
     /** 🔹 Tampilkan form tambah barang keluar */
     public function create()
