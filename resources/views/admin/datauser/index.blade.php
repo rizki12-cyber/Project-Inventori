@@ -57,11 +57,11 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
         <h2 class="page-title">
             <i class="bi bi-people-fill me-2"></i>
-            Data User
+            Data Pengguna
         </h2>
 
         <a href="{{ route('admin.datauser.create') }}" class="btn btn-add">
-            <i class="bi bi-person-plus-fill"></i> Tambah User
+            <i class="bi bi-person-plus-fill"></i> Tambah Pengguna
         </a>
     </div>
 
