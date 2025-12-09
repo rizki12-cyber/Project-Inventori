@@ -3,109 +3,87 @@
 @section('title', 'Profil Wakasek')
 
 @section('content')
-<div class="container py-5">
-
-    <div class="row justify-content-center">
-        <div class="col-xl-6 col-lg-7 col-md-10">
-
-            <!-- Card Profil -->
-            <div class="card shadow-sm border-0 rounded-4 animate__animated animate__fadeIn">
-                
-                <!-- Header -->
-                <div class="card-header bg-primary text-white rounded-top-4 py-4 text-center position-relative">
-                    <h4 class="mb-0 fw-bold">Profil Wakasek</h4>
-                    <p class="mb-0 text-white-50 small">Manajemen data profil Wakil Kepala Sekolah</p>
-                </div>
-
-                <!-- Body -->
-                <div class="card-body p-4">
-
-                    <!-- Foto Profil -->
-                    <div class="text-center mb-4">
-                        <img src="{{ $wakasek->avatar ? asset('storage/' . $wakasek->avatar) : asset('default/user.png') }}" 
-                             class="rounded-circle border shadow-sm"
-                             style="width: 120px; height: 120px; object-fit: cover;">
-                    </div>
-
-                    <!-- FORM -->
-                    <form action="{{ route('wakasek.profile.update') }}" 
-                          method="POST" 
-                          enctype="multipart/form-data"
-                          class="row g-3">
-
-                        @csrf
-                        @method('PUT')
-
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Nama Lengkap</label>
-                            <input type="text" name="nama" class="form-control shadow-sm"
-                                   value="{{ $wakasek->nama }}" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">NIP</label>
-                            <input type="text" name="nip" class="form-control shadow-sm"
-                                   value="{{ $wakasek->nip }}" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Jabatan</label>
-                            <input type="text" name="jabatan" class="form-control shadow-sm"
-                                   value="{{ $wakasek->jabatan }}" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Email</label>
-                            <input type="email" name="email" class="form-control shadow-sm"
-                                   value="{{ $wakasek->email }}" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Nomor HP</label>
-                            <input type="text" name="no_hp" class="form-control shadow-sm"
-                                   value="{{ $wakasek->no_hp }}">
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Foto Profil (Opsional)</label>
-                            <input type="file" name="avatar" class="form-control shadow-sm">
-                            <small class="text-muted">Ukuran max: 2MB | Format: JPG, PNG</small>
-                        </div>
-
-                        <div class="col-12 mt-3">
-                            <button class="btn btn-primary px-4 py-2 shadow-sm w-100 fw-semibold">
-                                <i class="fas fa-save me-1"></i> Simpan Perubahan
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-</div>
 
 <style>
-    body {
-        font-family: "Poppins", sans-serif;
-    }
+body { font-family: 'Poppins', sans-serif; color: #1e293b; }
+.profile-container { animation: fadeSlideIn 0.7s ease forwards; opacity: 0; transform: translateY(20px); }
 
-    .card {
-        transition: 0.25s ease-in-out;
-    }
-    .card:hover {
-        transform: translateY(-3px);
-    }
+@keyframes fadeSlideIn { 
+    to { opacity: 1; transform: translateY(0); } 
+}
 
-    .form-control {
-        border-radius: 10px;
-    }
+.page-title {
+    font-weight: 700; 
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+}
 
-    .btn {
-        border-radius: 10px;
-    }
+.card-profile {
+    border: none; 
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    padding: 2rem;
+}
+
+/* Lingkaran ikon profil */
+.header-circle {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1.5rem auto;
+    color: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.header-circle i {
+    font-size: 55px;
+}
+
+.label-text { 
+    font-weight: 600; 
+    margin-bottom: 6px; 
+}
+
+.value-box {
+    padding: 12px 16px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
 </style>
+
+<div class="container py-5 profile-container">
+
+    <h2 class="page-title">
+        <i class="bi bi-person-vcard-fill me-2"></i>Profil Wakasek
+    </h2>
+
+    <div class="card-profile">
+
+        <!-- Bulat ikon profil -->
+        <div class="header-circle">
+            <i class="bi bi-person-fill"></i>
+        </div>
+
+        <div class="mb-3">
+            <div class="label-text">Nama Lengkap</div>
+            <div class="value-box">{{ $wakasek->name }}</div>
+        </div>
+
+        <div class="mb-3">
+            <div class="label-text">Alamat Email</div>
+            <div class="value-box">{{ $wakasek->email }}</div>
+        </div>
+
+    </div>
+</div>
 
 @endsection
