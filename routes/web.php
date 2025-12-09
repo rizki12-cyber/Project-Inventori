@@ -21,7 +21,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\KabengLaporanController;
 use App\Http\Controllers\LogAktivitasController;
 use App\Http\Controllers\WakasekDashboardController;
-
+use App\Http\Controllers\KabengDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -225,7 +225,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 // 🔹 KABENG AREA
 // ==========================
 Route::middleware(['auth', 'role:kabeng'])->prefix('kabeng')->group(function () {
-    Route::get('/dashboard', fn() => view('kabeng.dashboard'))->name('kabeng.dashboard');
+    Route::get('/dashboard', [KabengDashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('kabeng.dashboard');
 
     Route::get('/barang', [BarangController::class, 'index'])->name('kabeng.barang.index');
     Route::get('/barang/create', [BarangController::class, 'create'])->name('kabeng.barang.create');

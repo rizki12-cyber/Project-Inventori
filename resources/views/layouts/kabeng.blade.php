@@ -6,9 +6,12 @@
 <title>@yield('title', 'Dashboard Kabeng')</title>
 
 <link rel="icon" href="{{ asset($pengaturan->favicon ?? 'assets/images/logo1.png') }}" type="image/png" sizes="32x32">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 :root {
@@ -44,8 +47,12 @@ body {
     box-shadow: 4px 0 15px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
-    padding-bottom: 20px;
+    position: relative;
+    z-index: 1000;
+    transition: var(--transition);
+    height: 100vh;
     overflow-y: auto;
+    padding-bottom: 20px;
 }
 
 #sidebar-wrapper .sidebar-heading {
@@ -55,14 +62,11 @@ body {
     padding: 1.2rem 0;
     border-bottom: 1px solid #f0f0f0;
     color: var(--primary-color);
-    letter-spacing: 0.5px;
 }
 
-#sidebar-wrapper .jurusan-text {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #607d8b;
-    margin-top: 4px;
+#sidebar-wrapper .list-group {
+    padding: 1rem 0;
+    flex-grow: 1;
 }
 
 #sidebar-wrapper .list-group-item {
@@ -77,6 +81,7 @@ body {
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
+    cursor: pointer;
 }
 
 #sidebar-wrapper .list-group-item:hover {
@@ -91,6 +96,7 @@ body {
     font-weight: 600;
 }
 
+/* Page Content */
 #page-content-wrapper {
     flex: 1;
     display: flex;
@@ -106,11 +112,24 @@ body {
     padding: 0.75rem 1.5rem;
 }
 
-/* User dropdown */
-.user-dropdown {
-    position: relative;
+.header-info {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
 }
 
+.header-info img {
+    height: 30px;
+    margin-right: 10px;
+}
+
+.header-info h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* User Dropdown */
 .user-profile {
     display: flex;
     align-items: center;
@@ -139,85 +158,87 @@ body {
 
 .dropdown-menu {
     border: none;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     border-radius: 10px;
     padding: 0.5rem;
-    min-width: 200px;
 }
 
 .dropdown-item.logout {
     color: #e74c3c;
 }
 
-.dropdown-item.logout:hover {
-    background-color: #ffeaea;
-}
-
+/* Main Content */
 #main-content {
     flex: 1;
     overflow-y: auto;
     padding: 24px;
-    background-color: #f8f9fa;
 }
 
-footer {
-    text-align: center;
-    padding: 12px 0;
-    background-color: #fff;
-    border-top: 1px solid #dee2e6;
-}
-
+/* Toggle Sidebar */
 #wrapper.toggled #sidebar-wrapper {
     margin-left: -250px;
 }
 </style>
 </head>
+
 <body>
 
 <div id="wrapper">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">KABENG</div>
-        <div class="jurusan-text">
-    {{ Auth::user()->konsentrasi?->nama_konsentrasi ?? 'Konsentrasi Tidak Diketahui' }}
-        </div>
 
         <div class="list-group list-group-flush">
-            <a href="{{ route('kabeng.dashboard') }}" class="list-group-item {{ request()->routeIs('kabeng.dashboard') ? 'active' : '' }}">
+
+            <a href="{{ route('kabeng.dashboard') }}"
+               class="list-group-item {{ request()->routeIs('kabeng.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
 
-            <a href="{{ route('kabeng.barang.index') }}" class="list-group-item {{ request()->routeIs('kabeng.barang.*') ? 'active' : '' }}">
+            <a href="{{ route('kabeng.barang.index') }}"
+               class="list-group-item {{ request()->routeIs('kabeng.barang.*') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Data Barang Jurusan
             </a>
 
-            <a href="{{ route('kabeng.laporan') }}" class="list-group-item">
+            <a href="{{ route('kabeng.laporan') }}"
+               class="list-group-item {{ request()->routeIs('kabeng.laporan') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i> Laporan Barang
             </a>
 
         </div>
     </div>
 
-    <!-- Main content -->
+    <!-- CONTENT -->
     <div id="page-content-wrapper">
 
         <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
             <div class="container-fluid">
 
-                <button class="btn btn-outline-primary" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                <button class="btn btn-outline-primary" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
 
-                <h5 class="ms-3 mb-0 d-none d-sm-block">@yield('title')</h5>
+                <div class="header-info d-none d-sm-flex">
+                    <img src="{{ asset($pengaturan->logo_sekolah ?? 'assets/images/logo1.png') }}" alt="Logo">
+                    <h5>SMKN 1 TALAGA</h5>
+                </div>
+
+                @php
+                    $kabeng = Auth::user();
+                    $avatar = strtoupper(substr($kabeng->name, 0, 1));
+                @endphp
 
                 <div class="ms-auto user-dropdown">
-                    <div class="user-profile" id="userDropdown" data-bs-toggle="dropdown">
-                        <div class="user-avatar">
-                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
-                        </div>
+                    <div class="user-profile" data-bs-toggle="dropdown">
+
+                        <div class="user-avatar">{{ $avatar }}</div>
+
                         <div class="d-none d-md-block">
-                            <div class="fw-semibold">{{ Auth::user()->name }}</div>
+                            <div class="fw-semibold">{{ $kabeng->name }}</div>
                             <small class="text-muted">Kepala Bengkel</small>
                         </div>
+
                         <i class="bi bi-chevron-down"></i>
                     </div>
 
@@ -227,17 +248,16 @@ footer {
                                 <i class="bi bi-person"></i> Profil
                             </a>
                         </li>
-                    
+
                         <li><hr class="dropdown-divider"></li>
-                    
+
                         <li>
                             <a class="dropdown-item logout" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="bi bi-box-arrow-right"></i> Logout
+                                <i class="bi bi-box-arrow-right"></i> Keluar
                             </a>
                         </li>
                     </ul>
-                    
                 </div>
 
             </div>
@@ -247,17 +267,15 @@ footer {
             @yield('content')
         </div>
 
-        <footer>
-            &copy; {{ date('Y') }} SMKN 1 TALAGA - Sistem Inventori Barang.
+        <footer class="text-center py-3 bg-white border-top">
+            {!! $pengaturan->footer_text ?? ('&copy; ' . date('Y') . ' SMKN 1 TALAGA - Sistem Inventori') !!}
         </footer>
 
     </div>
+
 </div>
 
-
-<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-    @csrf
-</form>
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -267,7 +285,7 @@ document.getElementById('sidebarToggle').addEventListener('click', () => {
 });
 </script>
 
-@yield('scripts')
+@stack('scripts')
 
 </body>
 </html>

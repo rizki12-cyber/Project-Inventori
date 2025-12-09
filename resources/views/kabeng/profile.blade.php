@@ -3,80 +3,95 @@
 @section('title', 'Profil Kabeng')
 
 @section('content')
+
 <style>
-    /* --- PROFILE PAGE STYLE --- */
+body { font-family: 'Poppins', sans-serif; color: #1e293b; }
+.profile-container { animation: fadeSlideIn 0.7s ease forwards; opacity: 0; transform: translateY(20px); }
 
-    .profile-card {
-        max-width: 800px;
-        margin: auto;
-        padding: 30px;
-        border-radius: 20px;
-        background: white;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    }
+@keyframes fadeSlideIn { 
+    to { opacity: 1; transform: translateY(0); } 
+}
 
-    .profile-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
+/* Judul tetap BIRU */
+.page-title {
+    font-weight: 700; 
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #2563eb, #1e40af); /* BIRU */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+}
 
-    .profile-header img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid #3b82f6;
-    }
+.card-profile {
+    border: none; 
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    padding: 2rem;
+}
 
-    .info-box {
-        background: #f8fafc;
-        padding: 15px 20px;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        border-left: 5px solid #2563eb;
-    }
+/* Bulat ikon profil - HIJAU */
+.header-circle {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #16a34a, #065f46); /* Warna hijau */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1.5rem auto;
+    color: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
 
-    .info-box label {
-        font-weight: 600;
-        margin-bottom: 3px;
-        display: block;
-        color: #475569;
-    }
+.header-circle img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
-    .info-box p {
-        margin: 0;
-        font-size: 15px;
-        color: #1e293b;
-        font-weight: 500;
-    }
+.label-text { 
+    font-weight: 600; 
+    margin-bottom: 6px; 
+}
+
+.value-box {
+    padding: 12px 16px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
 </style>
 
-<div class="container mt-4">
-    <div class="profile-card">
+<div class="container py-5 profile-container">
 
-        {{-- PROFILE HEADER --}}
-        <div class="profile-header">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode($kabeng->name) }}&background=3b82f6&color=fff&size=128" alt="Avatar">
+    <h2 class="page-title">
+        <i class="bi bi-person-vcard-fill me-2"></i>Profil Kabeng
+    </h2>
 
-            <h3 class="mt-3 fw-bold">{{ $kabeng->name }}</h3>
-            <p class="text-muted">{{ $kabeng->email }}</p>
+    <div class="card-profile">
+
+        <!-- Avatar kabeng -->
+        <div class="header-circle">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode($kabeng->name) }}&background=16a34a&color=fff&size=128" alt="avatar">
         </div>
 
-        {{-- PROFILE INFO READ ONLY --}}
-        <div class="info-box">
-            <label>Nama Lengkap</label>
-            <p>{{ $kabeng->name }}</p>
+        <div class="mb-3">
+            <div class="label-text">Nama Lengkap</div>
+            <div class="value-box">{{ $kabeng->name }}</div>
         </div>
 
-        <div class="info-box">
-            <label>Email</label>
-            <p>{{ $kabeng->email }}</p>
+        <div class="mb-3">
+            <div class="label-text">Alamat Email</div>
+            <div class="value-box">{{ $kabeng->email }}</div>
         </div>
 
-        <div class="info-box">
-            <label>Role</label>
-            <p>Kabeng</p>
+        <div>
+            <div class="label-text">Role</div>
+            <div class="value-box">Kabeng</div>
         </div>
+
     </div>
 </div>
 
