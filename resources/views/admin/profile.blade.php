@@ -42,7 +42,7 @@ body { font-family: 'Poppins', sans-serif; color: #1e293b; }
 .avatar-circle {
     width: 95px;
     height: 95px;
-    background: #2563eb;
+    background: #e03131;
     display: flex;
     justify-content: center;
     align-items: center;
